@@ -1,0 +1,44 @@
+import type { User } from "../user/user.interface";
+import type { BaseEntity } from "./baes.interface";
+
+export interface ISession extends BaseEntity {
+    expiredAt: Date;
+    ip: string;
+    browser: string;
+    operatingSystem: string;
+    user: User;
+}
+
+export interface RequestPasswordResetDto {
+    email: string;
+}
+
+export interface VerifyResetCodeDto {
+    email: string;
+    resetCode: string;
+}
+
+export interface ResetPasswordDto {
+    email: string;
+    resetCode: string;
+    newPassword: string;
+}
+
+export interface AuthResponse {
+    accessToken: string;
+    refreshToken: string;
+    user: User;
+}
+
+
+export interface SignUp {
+    email: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+}
+
+export interface ConfirmEmailRequest {
+    email: string;
+    emailCode: string;
+}
