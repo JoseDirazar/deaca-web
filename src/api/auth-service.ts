@@ -1,10 +1,10 @@
-import type { User } from "@/types/user/user.interface";
+import type { AuthResponse, RequestPasswordResetDto, ResetPasswordDto, SignUp, VerifyEmailDto } from "../types/common/api-request.interface";
+import type { User } from "../types/user/user.interface";
 import api from "./axios-instance";
-import type { AuthResponse, ConfirmEmailRequest, RequestPasswordResetDto, ResetPasswordDto, SignUp } from "@/types/common/api-request.interface";
 
 export const authService = {
     signUp: (data: SignUp) => api.post("/auth/sign-up", data),
-    confirmEmail: (data: ConfirmEmailRequest) =>
+    confirmEmail: (data: VerifyEmailDto) =>
         api.post("/auth/confirm-email", data),
     resendVerificationEmail: (email: string) =>
         api.post("/auth/resend-verification-email", { email }),
@@ -12,8 +12,8 @@ export const authService = {
         data: Partial<User>,
     ): Promise<{ data: AuthResponse }> =>
         api.post("/auth/sign-in", data),
-    signInWithGoogle: (token: string) =>
-        api.post("/auth/sign-in-with-google", { token }),
+    signInWithGoogle: (accessToken: string) =>
+        api.post("/auth/google-auth", { accessToken }),
     refreshToken: (
         refreshToken: string,
     ): Promise<{ data: AuthResponse }> =>

@@ -28,6 +28,7 @@ export interface AuthResponse {
     accessToken: string;
     refreshToken: string;
     user: User;
+    ok: boolean;
 }
 
 
@@ -38,7 +39,7 @@ export interface SignUp {
     lastName: string;
 }
 
-export interface ConfirmEmailRequest {
+export interface VerifyEmailDto {
     email: string;
     emailCode: string;
 }

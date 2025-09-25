@@ -2,27 +2,23 @@ import { AxiosError } from "axios";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
-import { authService } from "@/api/auth-service";
-import type {
-  ConfirmEmailRequest,
-  RequestPasswordResetDto,
-  ResetPasswordDto,
-  SignUp,
-} from "@/types/common/api-request.interface";
-import type { User } from "@/types/user/user.interface";
-import { useUserStore } from "@/context/useUserStore";
-import { userService } from "@/api/user-service";
-import type { PreviousWindowLocation } from "@/types/common/previous-window-location.interface";
+import { useUserStore } from "../context/useUserStore";
+import type { User } from "../types/user/user.interface";
+import { authService } from "../api/auth-service";
+import type { RequestPasswordResetDto, ResetPasswordDto, SignUp, VerifyEmailDto } from "../types/common/api-request.interface";
+import type { PreviousWindowLocation } from "../types/common/previous-window-location.interface";
+
 
 type SignInWithGoogleResponse = {
   ok: boolean;
   accessToken: string;
   refreshToken: string;
+  user: User
 };
 
-export const saveTokens = (token: string, refreshToken: string) => {
-  localStorage.setItem("access_token", token);
-  localStorage.setItem("refresh_token", refreshToken);
+export const saveTokens = async (token: string, refreshToken?: string) => {
+  await localStorage.setItem("access_token", token);
+  if (refreshToken) await localStorage.setItem("refresh_token", refreshToken);
 };
 
 const clearTokens = () => {
@@ -41,9 +37,9 @@ export const useAuth = () => {
       return authService.signUp(data as SignUp);
     },
     onSuccess: async (response) => {
-      const { token, refreshToken } = response.data;
-      if (token && refreshToken) {
-        saveTokens(token, refreshToken);
+      const { accessToken, refreshToken, ok } = response.data;
+      if (ok) {
+        await saveTokens(accessToken, refreshToken);
         toast.success(
           "Successfully signed up! Please check your email to verify your account."
         );
@@ -58,7 +54,7 @@ export const useAuth = () => {
   });
 
   const confirmEmail = useMutation({
-    mutationFn: (data: ConfirmEmailRequest) => authService.confirmEmail(data),
+    mutationFn: (data: VerifyEmailDto) => authService.confirmEmail(data),
     onSuccess: () => {
       toast.success("Email verified successfully!");
       localStorage.removeItem("pending_email");
@@ -73,17 +69,10 @@ export const useAuth = () => {
   const signIn = useMutation({
     mutationFn: (data: Partial<User>) => authService.signIn(data),
     onSuccess: async (response) => {
-      const { accessToken, refreshToken } = response.data;
-      if (accessToken && refreshToken) {
-        saveTokens(accessToken, refreshToken);
-        const data = await userService.getUser({
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-        localStorage.setItem("access_token", accessToken);
-        localStorage.setItem("refresh_token", refreshToken);
-        setUser(data.data.user);
+      const { accessToken, refreshToken, ok, user } = response.data;
+      if (ok) {
+        await saveTokens(accessToken, refreshToken);
+        setUser(user);
         toast.success("Successfully signed in!");
       }
     },
@@ -98,16 +87,10 @@ export const useAuth = () => {
     mutationFn: (accessToken: string) =>
       authService.signInWithGoogle(accessToken),
     onSuccess: async (response: { data: SignInWithGoogleResponse }) => {
-      const { accessToken, refreshToken } = response.data;
-      if (accessToken && refreshToken) {
-        saveTokens(accessToken, refreshToken);
-        const user = await userService.getUser({
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-        setUser(user.data.user);
-
+      const { accessToken, refreshToken, user, ok } = response.data;
+      if (ok) {
+        await saveTokens(accessToken, refreshToken);
+        setUser(user);
         toast.success("Successfully signed in with Google!");
         const from =
           (window.history.state as PreviousWindowLocation)?.from?.pathname ||
@@ -128,9 +111,9 @@ export const useAuth = () => {
     mutationFn: (refreshToken: string) =>
       authService.refreshToken(refreshToken),
     onSuccess: async (response) => {
-      const { accessToken } = response.data;
-      if (accessToken && refreshToken) {
-        localStorage.setItem("access_token", accessToken);
+      const { accessToken, ok } = response.data;
+      if (ok) {
+        await saveTokens(accessToken);
       }
     },
   });
@@ -168,8 +151,15 @@ export const useAuth = () => {
     onSuccess: async (response) => {
       const { token, refreshToken, user } = response.data;
       if (token && refreshToken) {
-        saveTokens(token, refreshToken);
+        await saveTokens(token, refreshToken);
         setUser(user);
+      }
+    },
+    onError: (error: unknown) => {
+      if (error instanceof AxiosError) {
+        toast.error(
+          error?.response?.data?.message || "Failed to reset password"
+        );
       }
     },
   });
@@ -183,7 +173,7 @@ export const useAuth = () => {
       if (error instanceof AxiosError) {
         toast.error(
           error?.response?.data?.message ||
-            "Failed to resend verification email"
+          "Failed to resend verification email"
         );
       }
     },
