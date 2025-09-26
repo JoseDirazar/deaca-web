@@ -1,5 +1,6 @@
+import { useAuth } from "@/hooks/useAuth.hook";
 import { useEffect } from "react";
-import { useAuth } from "../../hooks/useAuth.hook";
+
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 export default function GoogleBtn() {
@@ -24,5 +25,5 @@ export default function GoogleBtn() {
       size: "large",
     });
   }, []);
-  return <div id="googleBtn"></div>;
+  return <div className="my-6 rounded" id="googleBtn"></div>;
 }

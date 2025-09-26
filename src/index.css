@@ -1,1 +1,46 @@
 @import "tailwindcss";
+
+::root {
+  margin: 0;
+  padding: 0;
+}
+
+@theme {
+  --breakpoint-xs: 30rem;
+  --color-primary: #a3b18a;
+  --color-secondary: #dad7cd;
+  --color-third: #6c634c;
+  --color-fourth: #bd612a;
+  --color-fifth: #eceae5;
+  --font-nueva-bold: "nueva-std-bold", sans-serif;
+  --font-nueva-bold-cond: "nueva-std-bold-cond", sans-serif;
+  --font-century-gothic: "century-gothic", sans-serif;
+  --font-century-gothic-bold: "century-gothic-bold", sans-serif;
+}
+
+@font-face {
+  font-family: "nueva-std-bold";
+  src: url("./assets/fonts/nueva-std/NuevaStd-Bold.otf") format("truetype");
+  font-weight: bold;
+  font-style: normal;
+}
+@font-face {
+  font-family: "nueva-std-bold-cond";
+  src: url("./assets/fonts/nueva-std/NuevaStd-BoldCond.otf") format("truetype");
+  font-weight: bolder;
+  font-style: normal;
+}
+@font-face {
+  font-family: "century-gothic-bold";
+  src: url("./assets/fonts/century-gothic/centurygothic_bold.ttf")
+    format("truetype");
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "century-gothic";
+  src: url("./assets/fonts/century-gothic/centurygothic.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}

@@ -1,12 +1,16 @@
 import { useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { toast } from "sonner";
-import GoogleBtn from "../../component/auth/GoogleBtn";
-import type { PreviousWindowLocation } from "../../types/common/previous-window-location.interface";
-import { useAuth } from "../../hooks/useAuth.hook";
+import { useAuth } from "@/hooks/useAuth.hook";
+import Input from "@/component/ui/Input";
+import Button from "@/component/ui/Button";
+import AuthOutletHeader from "@/component/ui/auth/AuthOutletHeader";
+import AuthOutletForm from "@/component/ui/auth/AuthOutletForm";
+import AuthOutletFooter from "@/component/ui/auth/AuthOutletFooter";
+import GoogleBtn from "@/component/auth/GoogleBtn";
+import type { PreviousWindowLocation } from "@/types/common/previous-window-location.interface";
 
 export default function SigninPage() {
-  const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -14,7 +18,6 @@ export default function SigninPage() {
   const location = useLocation();
   const { signIn } = useAuth();
 
-  // Get the return path from location state, or default to home
   const from =
     (location.state as PreviousWindowLocation)?.from?.pathname ?? "/";
 
@@ -38,51 +41,36 @@ export default function SigninPage() {
   };
 
   return (
-    <div style={{ maxWidth: 420, margin: "2rem auto" }}>
-      <h2 style={{ marginBottom: 16 }}>Inicia sesión</h2>
-      <form onSubmit={handleLogin} style={{ display: "grid", gap: 12 }}>
-        <div>
-          <label>Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="tucorreo@ejemplo.com"
-          />
-        </div>
-        <div>
-          <label>Contraseña</label>
-          <div style={{ display: "flex", gap: 8 }}>
-            <input
-              type={showPassword ? "text" : "password"}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Tu contraseña"
-            />
-            <button type="button" onClick={() => setShowPassword((s) => !s)}>
-              {showPassword ? "Ocultar" : "Ver"}
-            </button>
-          </div>
-        </div>
-        <button type="submit" disabled={signIn.isPending}>
-          {signIn.isPending ? "Ingresando..." : "Ingresar"}
-        </button>
-      </form>
-
-      <div style={{ margin: "16px 0", textAlign: "center" }}>o</div>
+    <div>
+      <AuthOutletHeader
+        title="Inicia sesión"
+        description="Ingresa Google en un paso!"
+      />
       <GoogleBtn />
+      <AuthOutletForm onSubmit={handleLogin}>
+        <Input
+          id="email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          title="Correo Electronico"
+        />
 
-      <p style={{ marginTop: 12 }}>
-        ¿No tienes cuenta? <Link to="/auth/sign-up">Crear cuenta</Link>
-      </p>
-      <p style={{ marginTop: 12 }}>
-        ¿Olvidaste tu contraseña?{" "}
-        <Link to="/auth/forgot-password">Recuperar contraseña</Link>
-      </p>
-      <p>
-        Recibiste un correo de verificación?{" "}
-        <Link to="/auth/verify-email">Verificar correo</Link>
-      </p>
+        <Input
+          id="password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          title="Contraseña"
+        />
+        <Button
+          type="submit"
+          disabled={signIn.isPending}
+          label={signIn.isPending ? "Ingresando..." : "Ingresar"}
+        />
+      </AuthOutletForm>
+
+      <AuthOutletFooter signUpLink sendRecoverLink resetPasswordLink />
     </div>
   );
 }

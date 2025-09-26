@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router";
+import RootLayout from "./pages/RootLayout";
 import LandingPage from "./pages/LandingPage";
 import SigninPage from "./pages/auth/SigninPage";
 import SignupPage from "./pages/auth/SignupPage";
@@ -12,22 +13,24 @@ import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="auth/*" element={<AuthLayout />}>
-        <Route path="sign-in" element={<SigninPage />} />
-        <Route path="sign-up" element={<SignupPage />} />
-        <Route path="verify-email" element={<EmailVerificationCodePage />} />
-        <Route path="reset-password" element={<ResetPasswordPage />} />
-        <Route path="forgot-password" element={<ForgotPasswordPage />} />
+      <Route path="/" element={<RootLayout />}>
+        <Route index element={<LandingPage />} />
+        <Route path="auth/*" element={<AuthLayout />}>
+          <Route path="sign-in" element={<SigninPage />} />
+          <Route path="sign-up" element={<SignupPage />} />
+          <Route path="verify-email" element={<EmailVerificationCodePage />} />
+          <Route path="reset-password" element={<ResetPasswordPage />} />
+          <Route path="forgot-password" element={<ForgotPasswordPage />} />
+        </Route>
+        <Route
+          path="/protected"
+          element={
+            <RequireAuth>
+              <ProtectedExamplePage />
+            </RequireAuth>
+          }
+        />
       </Route>
-      <Route
-        path="/protected"
-        element={
-          <RequireAuth>
-            <ProtectedExamplePage />
-          </RequireAuth>
-        }
-      />
     </Routes>
   );
 }

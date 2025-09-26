@@ -1,8 +1,13 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
-import { useAuth } from "../../hooks/useAuth.hook";
+import { useAuth } from "@/hooks/useAuth.hook";
+import AuthOutletHeader from "@/component/ui/auth/AuthOutletHeader";
+import Input from "@/component/ui/Input";
+import Button from "@/component/ui/Button";
+import AuthOutletForm from "@/component/ui/auth/AuthOutletForm";
+import AuthOutletFooter from "@/component/ui/auth/AuthOutletFooter";
 
 export default function ForgotPasswordPage() {
   const navigate = useNavigate();
@@ -27,10 +32,11 @@ export default function ForgotPasswordPage() {
     } catch (error) {
       if (error instanceof AxiosError) {
         toast.error(
-          error?.response?.data?.message || "Failed to request password reset"
+          error?.response?.data?.message ||
+            "Algo salio mal al enviar el correo",
         );
       } else {
-        toast.error("An unexpected error occurred");
+        toast.error("Algo salio mal al enviar el correo");
       }
       console.error("Password reset request error:", error);
     } finally {
@@ -39,87 +45,48 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="flex min-h-screen">
-      {/* Left side - Form */}
-      <div className="flex w-full flex-col justify-center p-8 lg:w-1/2">
-        <div className="mx-auto w-full max-w-md">
-          <Link to="/" className="mb-4 inline-block">
-            <img src="/pawshake-logo.png" alt="Pawlinkd" className="h-10" />
-          </Link>
+    <div className="flex flex-col">
+      <AuthOutletHeader
+        title="¿Olvidaste tu contraseña?"
+        description="No te preocupes. Ingresa tu correo electrónica a continuación y te enviaremos un enlace para restablecer tu contraseña."
+      />
+      {!isSubmitted ? (
+        <>
+          <AuthOutletForm onSubmit={handleSubmit}>
+            <Input
+              id="email"
+              type="email"
+              className="w-full py-5"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              disabled={isLoading}
+              title="Correo Electronico"
+            />
 
-          <Link
-            to="/login"
-            className="mb-8 inline-flex items-center text-gray-600"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="mr-2"
-            >
-              <path d="m15 18-6-6 6-6" />
-            </svg>
-            Go back
-          </Link>
-
-          <h1 className="mb-6 text-3xl font-semibold text-primary">
-            Forgot your password?
-          </h1>
-
-          {!isSubmitted ? (
-            <>
-              <p className="mb-8 text-gray-600">
-                Don't worry. Enter your e-mail address below and we'll send you
-                a link to reset your password.
-              </p>
-
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <input
-                    id="email"
-                    type="email"
-                    placeholder="E-mail"
-                    className="w-full py-5"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    disabled={isLoading}
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  className="hover:bg-primary-600 w-full bg-primary py-6 text-white"
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Sending..." : "Reset password"}
-                </button>
-              </form>
-            </>
-          ) : (
-            <div className="rounded-lg border border-green-200 bg-green-50 p-6 text-green-800">
-              <h2 className="mb-2 text-lg font-semibold">Check your email</h2>
-              <p>
-                We've sent a password reset link to <strong>{email}</strong>.
-                Please check your inbox and follow the instructions to reset
-                your password.
-              </p>
-              <button
-                onClick={() => navigate("/auth/reset-password")}
-                className="mt-4"
-              >
-                Reset Password
-              </button>
-            </div>
-          )}
+            <Button
+              type="submit"
+              label={isLoading ? "Sending..." : "Reset password"}
+              disabled={isLoading}
+            />
+          </AuthOutletForm>
+          <AuthOutletFooter resetPasswordLink />
+        </>
+      ) : (
+        <div className="rounded-lg border border-green-200 bg-green-50 p-6 text-green-800">
+          <h2 className="mb-2 text-lg font-semibold">Check your email</h2>
+          <p>
+            Hemos enviado un enlace para restablecer tu contraseña a{" "}
+            <strong>{email}</strong>. Por favor, revisa tu correo electrónico y
+            sigue las instrucciones para restablecer tu contraseña.
+          </p>
+          <Button
+            onClick={() => navigate("/auth/reset-password")}
+            className="mt-4"
+            label="Restablecer Contraseña"
+          />
         </div>
-      </div>
+      )}
     </div>
   );
 }

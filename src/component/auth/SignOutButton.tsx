@@ -1,12 +1,15 @@
 import { useNavigate } from "react-router";
-import { useAuth } from "../../hooks/useAuth.hook";
+import { useAuth } from "@/hooks/useAuth.hook";
 
 interface Props {
   redirectTo?: string;
   label?: string;
 }
 
-export default function SignOutButton({ redirectTo = "/", label = "Cerrar sesión" }: Props) {
+export default function SignOutButton({
+  redirectTo = "/",
+  label = "Cerrar sesión",
+}: Props) {
   const { signOut } = useAuth();
   const navigate = useNavigate();
 

@@ -2,12 +2,11 @@ import { AxiosError } from "axios";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
-import { useUserStore } from "../context/useUserStore";
-import type { User } from "../types/user/user.interface";
-import { authService } from "../api/auth-service";
-import type { RequestPasswordResetDto, ResetPasswordDto, SignUp, VerifyEmailDto } from "../types/common/api-request.interface";
-import type { PreviousWindowLocation } from "../types/common/previous-window-location.interface";
-
+import { useUserStore } from "@/context/useUserStore";
+import type { User } from "@/types/user/user.interface";
+import { authService } from "@/api/auth-service";
+import type { RequestPasswordResetDto, ResetPasswordDto, SignUp, VerifyEmailDto } from "@/types/common/api-request.interface";
+import type { PreviousWindowLocation } from "@/types/common/previous-window-location.interface";
 
 type SignInWithGoogleResponse = {
   ok: boolean;

@@ -1,7 +1,13 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { toast } from "sonner";
-import { useAuth } from "../../hooks/useAuth.hook";
+import { useAuth } from "@/hooks/useAuth.hook";
+import Input from "@/component/ui/Input";
+import Button from "@/component/ui/Button";
+import AuthOutletHeader from "@/component/ui/auth/AuthOutletHeader";
+import AuthOutletForm from "@/component/ui/auth/AuthOutletForm";
+import AuthOutletFooter from "@/component/ui/auth/AuthOutletFooter";
+import GoogleBtn from "@/component/auth/GoogleBtn";
 
 export default function SignupPage() {
   const { signUp } = useAuth();
@@ -11,8 +17,6 @@ export default function SignupPage() {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  const [showPassword, setShowPassword] = useState(false);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,66 +28,59 @@ export default function SignupPage() {
 
     try {
       await signUp.mutateAsync({ firstName, lastName, email, password });
-      toast.success("Registro exitoso. Revisa tu email para verificar tu cuenta.");
+      toast.success(
+        "Registro exitoso. Revisa tu email para verificar tu cuenta.",
+      );
       navigate("/auth/sign-in", { replace: true });
     } catch (e) {
       // useAuth ya muestra toast de error
+      console.error(e);
     }
   };
 
   return (
-    <div style={{ maxWidth: 420, margin: "2rem auto" }}>
-      <h2 style={{ marginBottom: 16 }}>Crear cuenta</h2>
-      <form onSubmit={onSubmit} style={{ display: "grid", gap: 12 }}>
-        <div>
-          <label>Nombre</label>
-          <input
-            type="text"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-            placeholder="Tu nombre"
-          />
-        </div>
-        <div>
-          <label>Apellido</label>
-          <input
-            type="text"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-            placeholder="Tu apellido"
-          />
-        </div>
-        <div>
-          <label>Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="tucorreo@ejemplo.com"
-          />
-        </div>
-        <div>
-          <label>Contraseña</label>
-          <div style={{ display: "flex", gap: 8 }}>
-            <input
-              type={showPassword ? "text" : "password"}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Mínimo 8 caracteres"
-            />
-            <button type="button" onClick={() => setShowPassword((s) => !s)}>
-              {showPassword ? "Ocultar" : "Ver"}
-            </button>
-          </div>
-        </div>
+    <div>
+      <AuthOutletHeader
+        title="Crear cuenta"
+        description="Registrate con Google en un paso!"
+      ></AuthOutletHeader>
+      <GoogleBtn />
+      <AuthOutletForm onSubmit={onSubmit}>
+        <Input
+          type="text"
+          value={firstName}
+          onChange={(e) => setFirstName(e.target.value)}
+          title="Nombre"
+        />
 
-        <button type="submit" disabled={signUp.isPending}>
-          {signUp.isPending ? "Creando..." : "Crear cuenta"}
-        </button>
-      </form>
-      <p style={{ marginTop: 12 }}>
-        ¿Ya tienes cuenta? <Link to="/auth/sign-in">Inicia sesión</Link>
-      </p>
+        <Input
+          type="text"
+          value={lastName}
+          onChange={(e) => setLastName(e.target.value)}
+          title="Apellido"
+        />
+
+        <Input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          title="Correo Electronico"
+        />
+
+        <Input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          title="Contraseña"
+        />
+
+        <Button
+          type="submit"
+          disabled={signUp.isPending}
+          label={signUp.isPending ? "Creando..." : "Crear cuenta"}
+        />
+      </AuthOutletForm>
+      <AuthOutletFooter signInLink />
     </div>
   );
 }

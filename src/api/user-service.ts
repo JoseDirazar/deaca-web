@@ -1,4 +1,4 @@
-import type { User } from "../types/user/user.interface";
+import type { User } from "@/types/user/user.interface";
 import api from "./axios-instance";
 
 export const userService = {

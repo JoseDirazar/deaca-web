@@ -1,6 +1,7 @@
-import type { AuthResponse, RequestPasswordResetDto, ResetPasswordDto, SignUp, VerifyEmailDto } from "../types/common/api-request.interface";
-import type { User } from "../types/user/user.interface";
+import type { SignUp } from "@/types/common/api-request.interface";
 import api from "./axios-instance";
+import type { AuthResponse, RequestPasswordResetDto, ResetPasswordDto, VerifyEmailDto } from "@/types/common/api-request.interface";
+import type { User } from "@/types/user/user.interface";
 
 export const authService = {
     signUp: (data: SignUp) => api.post("/auth/sign-up", data),

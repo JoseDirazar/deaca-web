@@ -1,5 +1,5 @@
-import { useUserStore } from "../context/useUserStore";
-import SignOutButton from "../component/auth/SignOutButton";
+import { useUserStore } from "@/context/useUserStore";
+import SignOutButton from "@/component/auth/SignOutButton";
 
 export default function ProtectedExamplePage() {
   const { user } = useUserStore();

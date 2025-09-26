@@ -6,8 +6,9 @@ import { BrowserRouter } from "react-router";
 import { Toaster } from "sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { useUserStore } from "./context/useUserStore";
-import { userService } from "./api/user-service";
+import { useUserStore } from "@/context/useUserStore";
+import { userService } from "@/api/user-service";
+
 const queryClient = new QueryClient();
 
 function Bootstrapper() {
@@ -52,5 +53,5 @@ createRoot(document.getElementById("root")!).render(
         <Bootstrapper />
       </QueryClientProvider>
     </BrowserRouter>
-  </StrictMode>
+  </StrictMode>,
 );

@@ -1,7 +1,7 @@
 import axios from "axios";
-import { useUserStore } from "../context/useUserStore";
+import { useUserStore } from "@/context/useUserStore";
 
-const baseURL = import.meta.env.VITE_PUBLIC_API_URL;
+export const baseURL = import.meta.env.VITE_PUBLIC_API_URL;
 const api = axios.create({
     baseURL,
 });

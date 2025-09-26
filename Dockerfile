@@ -21,5 +21,5 @@ COPY . .
 RUN pnpm run build
 
 # Exponer el puerto en el que se ejecutará la aplicación
-EXPOSE 4174
-CMD ["pnpm", "preview", "--host", "--port", "4174"]
+EXPOSE 4175
+CMD ["pnpm", "preview", "--host", "--port", "4175"]
