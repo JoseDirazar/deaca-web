@@ -1,4 +1,5 @@
 import AuthOutletContainer from "@/component/ui/auth/AuthOutletContainer";
+import { publicBackground } from "@/lib/constants/public-backgrounds";
 
 export default function AuthLayout() {
   return (
@@ -9,13 +10,15 @@ export default function AuthLayout() {
       <div className="relative hidden overflow-hidden bg-secondary lg:flex lg:w-1/2">
         <div className="absolute inset-0 bg-[url('/fondos/bg-blob.svg')] bg-cover bg-no-repeat fill-primary"></div>
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="">
-            <img
-              src="/fondos/arroyo.jpg"
-              alt="arroyo"
-              className="h-full object-cover"
-            />
-          </div>
+          <img
+            src={
+              publicBackground[
+                Math.floor(Math.random() * publicBackground.length)
+              ]
+            }
+            alt="arroyo"
+            className="h-screen object-cover"
+          />
         </div>
       </div>
     </div>

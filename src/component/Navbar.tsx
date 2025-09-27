@@ -1,16 +1,26 @@
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import { useUserStore } from "@/context/useUserStore";
 import SignOutButton from "./auth/SignOutButton";
+import DLink from "./ui/DLink";
+import { FaSignInAlt } from "react-icons/fa";
+import { navLinks } from "@/lib/constants/nav-links";
+import { MdAdminPanelSettings } from "react-icons/md";
+import { useState } from "react";
 
 export default function Navbar() {
   const { user } = useUserStore();
+  const pathname = useLocation().pathname;
+  const [showDropdownMenu, setShowDropdownMenu] = useState(false);
 
   return (
-    <nav className="bg-fifth text-white shadow-lg">
+    <nav className="bg-fifth shadow-lg">
       <h1 className="hidden">deacá guia de Olavarría</h1>
       <div className="container mx-auto px-4 py-3">
-        <div className="flex items-center justify-between">
-          <Link to="/" className="flex items-center justify-center text-2xl">
+        <div className="flex items-center">
+          <Link
+            to="/"
+            className="-mt-1 flex items-center justify-center text-2xl"
+          >
             <img
               src="/logos/logo-horizontal-a-color.png"
               alt="logo"
@@ -19,20 +29,53 @@ export default function Navbar() {
               className=""
             />{" "}
           </Link>
-          <p className="hidden items-center pt-1 text-center font-century-gothic-bold text-base text-primary transform-content xs:flex sm:text-2xl md:justify-center">
-            De Turno
-          </p>
+          <div className="hidden w-full items-center gap-4 p-4 font-century-gothic-bold text-primary xs:flex">
+            {navLinks.map((link) => (
+              <Link
+                className={
+                  link.active.includes(pathname)
+                    ? "text-fourth"
+                    : "text-primary"
+                }
+                key={link.to}
+                to={link.to}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
           <div>
             {user ? (
-              <div className="flex items-center gap-2">
-                <Link to="/protected">Ir a protegida</Link>
-                <SignOutButton />
+              <div className="relative flex w-44 items-center justify-end gap-2">
+                {user.role === "admin" && (
+                  <Link to="/admin">
+                    <MdAdminPanelSettings size={30} />
+                  </Link>
+                )}
+                <button
+                  onClick={() => setShowDropdownMenu(!showDropdownMenu)}
+                  className="relative"
+                >
+                  <img
+                    src={user.avatar}
+                    alt="avatar"
+                    className="w-14 rounded-full"
+                  />
+                </button>
+                {showDropdownMenu && (
+                  <div className="absolute top-15 z-10 flex w-44 origin-top flex-col divide-y-2 divide-primary rounded bg-fifth p-2 drop-shadow-xl">
+                    <button className="py-2">Perfil</button>
+                    <button className="py-2">Mis emprendimientos</button>
+                    <SignOutButton />
+                  </div>
+                )}
               </div>
             ) : (
-              <div className="flex items-center gap-2">
-                <Link to="/auth/sign-in">Iniciar sesión</Link>
-                <Link to="/auth/sign-up">Registrarse</Link>
-              </div>
+              <DLink
+                to="/auth/sign-in"
+                label="Ingresar"
+                icon={<FaSignInAlt size={20} />}
+              />
             )}
           </div>
         </div>

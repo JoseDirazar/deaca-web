@@ -5,17 +5,19 @@ interface DLinkProps {
   to: string;
   label: string;
   className?: string;
+  icon?: React.ReactNode;
 }
 
-export default function DLink({ to, label, className }: DLinkProps) {
+export default function DLink({ to, label, className, icon }: DLinkProps) {
   return (
     <Link
       to={to}
       className={cn(
-        "rounded-xl px-3 py-2 text-center font-century-gothic-bold text-primary hover:underline",
+        "flex items-center gap-2 rounded-xl px-3 py-2 text-center font-century-gothic-bold text-primary hover:underline",
         className,
       )}
     >
+      {icon}
       {label}
     </Link>
   );

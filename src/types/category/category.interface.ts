@@ -1,4 +1,4 @@
-import type { BaseEntity } from "../common/baes.interface";
+import type { BaseEntity } from "../common/base.interface";
 import type { Subcategory } from "./subcategory.interface";
 import type { Establishment } from "../establishment/etablihment.interface";
 

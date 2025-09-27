@@ -23,7 +23,11 @@ export default function SignOutButton({
   };
 
   return (
-    <button onClick={onClick} disabled={signOut.isPending}>
+    <button
+      onClick={onClick}
+      disabled={signOut.isPending}
+      className="py-2 text-fourth"
+    >
       {signOut.isPending ? "Cerrando..." : label}
     </button>
   );

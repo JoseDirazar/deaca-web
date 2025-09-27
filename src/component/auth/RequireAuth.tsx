@@ -13,6 +13,7 @@ export default function RequireAuth({ children }: Props) {
   if (!isUserLoaded) return null;
 
   if (!user) {
+    // TODO redirigir a la ruta correspondiente una vez logueado el usuario
     return <Navigate to="/auth/sign-in" state={{ from: location }} replace />;
   }
 

@@ -1,14 +1,18 @@
 import { Routes, Route } from "react-router";
-import RootLayout from "./pages/RootLayout";
+import RootLayout from "./layout/RootLayout";
 import LandingPage from "./pages/LandingPage";
 import SigninPage from "./pages/auth/SigninPage";
 import SignupPage from "./pages/auth/SignupPage";
-import ProtectedExamplePage from "./pages/ProtectedExamplePage";
 import RequireAuth from "./component/auth/RequireAuth";
 import EmailVerificationCodePage from "./pages/auth/EmailVerificationCodePage";
-import AuthLayout from "./pages/auth/AuthLayout";
+import AuthLayout from "./layout/AuthLayout";
 import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
+import AdminLayout from "./layout/AdminLayout";
+import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
+import AdminUsersPage from "./pages/admin/AdminUsersPage";
+import AdminEstablishmentsPage from "./pages/admin/AdminEstablishmentsPage";
+import AdminCategoriesPage from "./pages/admin/AdminCategoriesPage";
 
 function App() {
   return (
@@ -22,14 +26,12 @@ function App() {
           <Route path="reset-password" element={<ResetPasswordPage />} />
           <Route path="forgot-password" element={<ForgotPasswordPage />} />
         </Route>
-        <Route
-          path="/protected"
-          element={
-            <RequireAuth>
-              <ProtectedExamplePage />
-            </RequireAuth>
-          }
-        />
+      </Route>
+      <Route path="/admin/*" element={<AdminLayout />}>
+        <Route index element={<AdminDashboardPage />} />
+        <Route path="users" element={<AdminUsersPage />} />
+        <Route path="establishments" element={<AdminEstablishmentsPage />} />
+        <Route path="categories" element={<AdminCategoriesPage />} />
       </Route>
     </Routes>
   );

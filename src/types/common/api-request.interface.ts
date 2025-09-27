@@ -1,5 +1,5 @@
 import type { User } from "../user/user.interface";
-import type { BaseEntity } from "./baes.interface";
+import type { BaseEntity } from "./base.interface";
 
 export interface ISession extends BaseEntity {
     expiredAt: Date;

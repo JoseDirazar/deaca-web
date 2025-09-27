@@ -1,4 +1,4 @@
-import type { BaseEntity } from "../common/baes.interface";
+import type { BaseEntity } from "./base.interface";
 import type { User } from "../user/user.interface";
 
 export interface Session extends BaseEntity {

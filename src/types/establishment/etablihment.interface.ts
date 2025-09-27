@@ -1,4 +1,4 @@
-import type { BaseEntity } from "../common/baes.interface";
+import type { BaseEntity } from "../common/base.interface";
 import type { Category } from "../category/category.interface";
 import type { User } from "../user/user.interface";
 import type { Subcategory } from "../category/subcategory.interface";
@@ -17,9 +17,9 @@ export interface Establishment extends BaseEntity {
     facebook: string;
     latitude: string;
     longitude: string;
-    reviewsReceived: Review[] | null;
+    reviewsReceived?: Review[] | null;
     categories: Category[]
     subcategories: Subcategory[];
-    images: Image[] | null;
+    images?: Image[] | null;
     user: User;
 }

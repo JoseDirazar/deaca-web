@@ -26,7 +26,8 @@ export default function Input({
   title,
 }: InputProps) {
   const [showPassword, setShowPassword] = useState(false);
-
+  const isPassword =
+    id === "password" || id === "newPassword" || id === "confirmPassword";
   return (
     <div className="relative w-full md:min-w-md">
       {/* Input con peer */}
@@ -54,7 +55,7 @@ export default function Input({
       </label>
 
       {/* Toggle password */}
-      {id === "password" && (
+      {isPassword && (
         <button
           type="button"
           className="absolute top-1/2 right-3 -translate-y-1/2 text-primary hover:text-fourth"

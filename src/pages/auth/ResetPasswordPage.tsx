@@ -21,6 +21,13 @@ export default function ResetPasswordPage() {
   const { isPending: isResettingPassword, mutateAsync: resetPasswordAsync } =
     resetPassword;
 
+  const handleInputs = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setResetPasswordState({
+      ...resetPasswordState,
+      [e.target.id]: e.target.value,
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -73,12 +80,7 @@ export default function ResetPasswordPage() {
           id="email"
           type="email"
           value={resetPasswordState.email}
-          onChange={(e) =>
-            setResetPasswordState({
-              ...resetPasswordState,
-              email: e.target.value,
-            })
-          }
+          onChange={handleInputs}
           required
           disabled={isResettingPassword}
           title="Correo Electronico"
@@ -88,27 +90,17 @@ export default function ResetPasswordPage() {
           id="resetCode"
           type="text"
           value={resetPasswordState.resetCode}
-          onChange={(e) =>
-            setResetPasswordState({
-              ...resetPasswordState,
-              resetCode: e.target.value,
-            })
-          }
+          onChange={handleInputs}
           required
           disabled={isResettingPassword}
           title="Codigo de Restablecimiento"
         />
 
         <Input
-          id="password"
+          id="newPassword"
           type="password"
           value={resetPasswordState.newPassword}
-          onChange={(e) =>
-            setResetPasswordState({
-              ...resetPasswordState,
-              newPassword: e.target.value,
-            })
-          }
+          onChange={handleInputs}
           required
           disabled={isResettingPassword}
           title="Nueva Contraseña"
@@ -119,12 +111,7 @@ export default function ResetPasswordPage() {
           type="password"
           className="w-full py-5 pr-16"
           value={resetPasswordState.confirmPassword}
-          onChange={(e) =>
-            setResetPasswordState({
-              ...resetPasswordState,
-              confirmPassword: e.target.value,
-            })
-          }
+          onChange={handleInputs}
           required
           disabled={isResettingPassword}
           title="Confirmar Contraseña"
