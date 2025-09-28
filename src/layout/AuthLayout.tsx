@@ -13,7 +13,7 @@ export default function AuthLayout() {
           <img
             src={
               publicBackground[
-                Math.floor(Math.random() * publicBackground.length)
+                Math.floor(Math.random() * (publicBackground.length - 1))
               ]
             }
             alt="arroyo"

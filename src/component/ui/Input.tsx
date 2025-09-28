@@ -9,7 +9,7 @@ interface InputProps {
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   name?: string;
   disabled?: boolean;
-  id?: string;
+  id: string;
   required?: boolean;
   title: string;
 }
@@ -48,6 +48,7 @@ export default function Input({
 
       {/* Label flotante */}
       <label
+        onClick={() => document.getElementById(id)?.focus()}
         htmlFor={id}
         className="absolute -top-[10px] left-3 bg-fifth px-1 text-sm text-primary transition-all duration-200 select-none peer-placeholder-shown:top-[10px] peer-placeholder-shown:text-base peer-placeholder-shown:text-primary peer-focus:-top-[10px] peer-focus:text-sm peer-focus:text-primary"
       >

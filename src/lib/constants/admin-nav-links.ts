@@ -2,8 +2,9 @@ import { FaUsers } from "react-icons/fa";
 import { MdDashboard } from "react-icons/md";
 import { MdCategory } from "react-icons/md";
 import { IoBusiness } from "react-icons/io5";
+import type { NavbarRoutes } from "@/types/common/navbar-routes.interface";
 
-export const adminRoutes = [
+export const adminRoutes: NavbarRoutes = [
     {
         label: "Dashboard",
         icon: MdDashboard,

@@ -13,6 +13,9 @@ import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
 import AdminUsersPage from "./pages/admin/AdminUsersPage";
 import AdminEstablishmentsPage from "./pages/admin/AdminEstablishmentsPage";
 import AdminCategoriesPage from "./pages/admin/AdminCategoriesPage";
+import UserDashboardLayout from "./layout/UserDashboardLayout";
+import UserProfilePage from "./pages/user/UserProfilePage";
+import UserEstablishmentPage from "./pages/user/UserEstablishmentPage";
 
 function App() {
   return (
@@ -32,6 +35,10 @@ function App() {
         <Route path="users" element={<AdminUsersPage />} />
         <Route path="establishments" element={<AdminEstablishmentsPage />} />
         <Route path="categories" element={<AdminCategoriesPage />} />
+      </Route>
+      <Route path="/user/*" element={<UserDashboardLayout />}>
+        <Route index element={<UserProfilePage />} />
+        <Route path="establishments" element={<UserEstablishmentPage />} />
       </Route>
     </Routes>
   );

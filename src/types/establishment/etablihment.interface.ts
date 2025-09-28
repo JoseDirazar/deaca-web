@@ -17,6 +17,8 @@ export interface Establishment extends BaseEntity {
     facebook: string;
     latitude: string;
     longitude: string;
+    verified?: boolean;
+    isComplete?: boolean;
     reviewsReceived?: Review[] | null;
     categories: Category[]
     subcategories: Subcategory[];

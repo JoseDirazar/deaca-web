@@ -7,18 +7,23 @@ import type { Subcategory } from "@/types/category/subcategory.interface";
 
 export default function AdminCategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+    null,
+  );
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Create/Update form state
   const [newCategoryName, setNewCategoryName] = useState("");
-  const [editingCategoryId, setEditingCategoryId] = useState<string | null>(null);
+  const [editingCategoryId, setEditingCategoryId] = useState<string | null>(
+    null,
+  );
   const [editingCategoryName, setEditingCategoryName] = useState("");
 
   const [newSubcategoryName, setNewSubcategoryName] = useState("");
-  const [editingSubcategoryId, setEditingSubcategoryId] = useState<string | null>(null);
+  const [editingSubcategoryId, setEditingSubcategoryId] = useState<
+    string | null
+  >(null);
   const [editingSubcategoryName, setEditingSubcategoryName] = useState("");
 
   async function loadCategories() {
@@ -83,11 +88,17 @@ export default function AdminCategoriesPage() {
     setLoading(true);
     setError(null);
     try {
-      await categoryService.updateCategory(categoryId, editingCategoryName.trim());
+      await categoryService.updateCategory(
+        categoryId,
+        editingCategoryName.trim(),
+      );
       await loadCategories();
       // Update selectedCategory name if it's the one edited
       if (selectedCategory?.id === categoryId) {
-        setSelectedCategory({ ...selectedCategory, name: editingCategoryName.trim() });
+        setSelectedCategory({
+          ...selectedCategory,
+          name: editingCategoryName.trim(),
+        });
       }
       cancelEditCategory();
     } catch (e) {
@@ -210,7 +221,7 @@ export default function AdminCategoriesPage() {
       {/* Create Category */}
       <form
         onSubmit={handleCreateCategory}
-        className="flex flex-col gap-3 rounded-lg border border-gray-200 bg-white p-4 shadow-sm md:flex-row md:items-end"
+        className="flex flex-col gap-3 rounded-lg border border-gray-200 bg-fifth p-4 shadow-sm md:flex-row md:items-end"
       >
         <div className="flex-1">
           <Input
@@ -227,7 +238,7 @@ export default function AdminCategoriesPage() {
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {/* Categories List */}
-        <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+        <div className="rounded-lg border border-gray-200 bg-fifth p-4 shadow-sm">
           <h2 className="mb-3 text-lg font-semibold text-gray-800">Listado</h2>
           <div className="divide-y divide-gray-100">
             {categories.length === 0 ? (
@@ -239,7 +250,9 @@ export default function AdminCategoriesPage() {
                 <div
                   key={cat.id}
                   className={`flex items-center justify-between gap-2 py-3 ${
-                    selectedCategory?.id === cat.id ? "bg-gray-50" : ""
+                    selectedCategory?.id === cat.id
+                      ? "bg-primary text-white"
+                      : ""
                   }`}
                 >
                   <div className="flex-1">
@@ -248,14 +261,16 @@ export default function AdminCategoriesPage() {
                         <input
                           className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
                           value={editingCategoryName}
-                          onChange={(e) => setEditingCategoryName(e.target.value)}
+                          onChange={(e) =>
+                            setEditingCategoryName(e.target.value)
+                          }
                         />
                         <Button
                           label="Guardar"
                           onClick={() => handleUpdateCategory(cat.id)}
                         />
                         <button
-                          className="rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-gray-100"
+                          className="rounded-md px-3 py-2 text-sm hover:bg-fourth"
                           type="button"
                           onClick={cancelEditCategory}
                         >
@@ -294,8 +309,10 @@ export default function AdminCategoriesPage() {
         </div>
 
         {/* Subcategories Panel */}
-        <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-          <h2 className="mb-3 text-lg font-semibold text-gray-800">Subcategorías</h2>
+        <div className="rounded-lg border border-gray-200 bg-fifth p-4 shadow-sm">
+          <h2 className="mb-3 text-lg font-semibold text-gray-800">
+            Subcategorías
+          </h2>
           {!selectedCategory ? (
             <div className="py-8 text-center text-gray-500">
               Selecciona una categoría para ver sus subcategorías
@@ -328,14 +345,19 @@ export default function AdminCategoriesPage() {
                   </div>
                 ) : (
                   subcategories.map((sub) => (
-                    <div key={sub.id} className="flex items-center justify-between gap-2 py-3">
+                    <div
+                      key={sub.id}
+                      className="flex items-center justify-between gap-2 py-3"
+                    >
                       <div className="flex-1">
                         {editingSubcategoryId === sub.id ? (
                           <div className="flex items-center gap-2">
                             <input
                               className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
                               value={editingSubcategoryName}
-                              onChange={(e) => setEditingSubcategoryName(e.target.value)}
+                              onChange={(e) =>
+                                setEditingSubcategoryName(e.target.value)
+                              }
                             />
                             <Button
                               label="Guardar"
@@ -350,7 +372,9 @@ export default function AdminCategoriesPage() {
                             </button>
                           </div>
                         ) : (
-                          <span className="font-medium text-gray-800">{sub.name}</span>
+                          <span className="font-medium text-gray-800">
+                            {sub.name}
+                          </span>
                         )}
                       </div>
                       {editingSubcategoryId !== sub.id && (

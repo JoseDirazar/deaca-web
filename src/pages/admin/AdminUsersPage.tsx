@@ -12,6 +12,10 @@ import {
 import { useUsersFilters } from "@/hooks/useUsersFilters.hook";
 import { useGetPaginatedUsers } from "@/hooks/useUsers.hook";
 import type { User } from "@/types/user/user.interface";
+import { format, formatDistanceToNow } from "date-fns";
+import { es } from "date-fns/locale";
+import { generateImageUrl } from "@/lib/generate-image-url";
+import Input from "@/component/ui/Input";
 
 export default function AdminUsersPage() {
   const { state, queryString, setPage, setLimit, setSearch, setSorting } =
@@ -20,6 +24,25 @@ export default function AdminUsersPage() {
 
   const columns = useMemo<ColumnDef<User>[]>(
     () => [
+      {
+        header: () => (
+          <button
+            onClick={() => toggleSort("avatar")}
+            className="font-semibold"
+          >
+            Nombre
+            {renderSortIndicator("avatar")}
+          </button>
+        ),
+        accessorKey: "avatar",
+        cell: (info) => (
+          <img
+            className="h-10 w-10 rounded-full"
+            src={generateImageUrl("user", info.getValue() as string)}
+            alt="Avatar"
+          />
+        ),
+      },
       {
         header: () => (
           <button
@@ -79,7 +102,13 @@ export default function AdminUsersPage() {
         accessorKey: "createdAt",
         cell: (info) =>
           info.getValue()
-            ? new Date(String(info.getValue())).toLocaleString()
+            ? format(
+                new Date(info?.getValue() as string),
+                "dd/MM/yyyy, HH:mm:ss",
+                {
+                  locale: es,
+                },
+              )
             : "",
       },
       {
@@ -95,7 +124,10 @@ export default function AdminUsersPage() {
         accessorKey: "lastLogin",
         cell: (info) =>
           info.getValue()
-            ? new Date(String(info.getValue())).toLocaleString()
+            ? formatDistanceToNow(new Date(info?.getValue() as string), {
+                addSuffix: true,
+                locale: es,
+              })
             : "",
       },
     ],
@@ -128,13 +160,16 @@ export default function AdminUsersPage() {
   }
 
   return (
-    <div className="space-y-4 p-4">
-      <h1 className="text-xl font-bold">Usuarios</h1>
+    <div className="space-y-4 bg-fifth p-4">
+      <h1 className="font-century-gothic-bold text-xl font-bold text-fourth">
+        Usuarios
+      </h1>
 
       <div className="flex items-center gap-2">
-        <input
+        <Input
+          id="admin-user-search"
           type="text"
-          placeholder="Buscar por nombre o email..."
+          title="Buscar por nombre o email..."
           value={state.search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-72 rounded border px-3 py-2"
@@ -151,13 +186,16 @@ export default function AdminUsersPage() {
         </select>
       </div>
 
-      <div className="borde h-fullr overflow-x-auto rounded">
-        <table className="min-w-full">
+      <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
+        <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             {table.getHeaderGroups().map((headerGroup: HeaderGroup<User>) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header: Header<User, unknown>) => (
-                  <th key={header.id} className="p-2 text-left">
+                  <th
+                    key={header.id}
+                    className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -169,24 +207,36 @@ export default function AdminUsersPage() {
               </tr>
             ))}
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-gray-200 bg-white">
             {isLoading ? (
               <tr>
-                <td colSpan={columns.length} className="p-4 text-center">
+                <td
+                  colSpan={columns.length}
+                  className="px-6 py-12 text-center text-gray-500"
+                >
                   Cargando...
                 </td>
               </tr>
             ) : users.length === 0 ? (
               <tr>
-                <td colSpan={columns.length} className="p-4 text-center">
+                <td
+                  colSpan={columns.length}
+                  className="px-6 py-12 text-center text-gray-500"
+                >
                   No hay usuarios
                 </td>
               </tr>
             ) : (
               table.getRowModel().rows.map((row: Row<User>) => (
-                <tr key={row.id} className="border-t">
+                <tr
+                  key={row.id}
+                  className="transition-colors duration-150 hover:bg-gray-50"
+                >
                   {row.getVisibleCells().map((cell: Cell<User, unknown>) => (
-                    <td key={cell.id} className="p-2">
+                    <td
+                      key={cell.id}
+                      className="px-6 py-4 text-sm whitespace-nowrap text-gray-900"
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext(),

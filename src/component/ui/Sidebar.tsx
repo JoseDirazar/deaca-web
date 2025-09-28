@@ -1,19 +1,26 @@
-import { cn } from "@/lib/cn";
-import { Link, useNavigate } from "react-router";
 import { FaHome } from "react-icons/fa";
-import { adminRoutes } from "@/lib/constants/admin-nav-links";
+import DLink from "./DLink";
+import type { NavbarRoutes } from "@/types/common/navbar-routes.interface";
+import { useNavigate } from "react-router";
+import { cn } from "@/lib/cn";
 
-export default function AdminSidebar() {
+export default function Sidebar({
+  routes,
+  title,
+}: {
+  routes: NavbarRoutes;
+  title: string;
+}) {
   const navigate = useNavigate();
   return (
     <div className="flex flex-col border-r bg-white">
       <div className="flex h-16 items-center border-b px-6">
         <h2 className="text font-nueva-bold text-2xl font-semibold text-primary select-none">
-          Panel Administrador
+          {title}
         </h2>
       </div>
       <nav className="flex-1 space-y-1 p-4">
-        {adminRoutes.map((route) => (
+        {routes.map((route) => (
           <button
             key={route.href}
             onClick={() => navigate(route.href)}
@@ -30,13 +37,12 @@ export default function AdminSidebar() {
         ))}
       </nav>
       <div className="w-full p-4">
-        <Link
+        <DLink
           to="/"
           className="flex w-full items-center justify-center rounded-md bg-primary px-4 py-2 text-lg text-white transition-transform hover:scale-110"
-        >
-          <FaHome size={20} className="inline-block" />
-          Home
-        </Link>
+          icon={<FaHome size={20} className="inline-block" />}
+          label="Inicio"
+        />
       </div>
     </div>
   );

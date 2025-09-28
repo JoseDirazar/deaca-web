@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { useUserStore } from "@/context/useUserStore";
 import SignOutButton from "./auth/SignOutButton";
 import DLink from "./ui/DLink";
@@ -6,11 +6,13 @@ import { FaSignInAlt } from "react-icons/fa";
 import { navLinks } from "@/lib/constants/nav-links";
 import { MdAdminPanelSettings } from "react-icons/md";
 import { useState } from "react";
+import { generateImageUrl } from "@/lib/generate-image-url";
 
 export default function Navbar() {
   const { user } = useUserStore();
   const pathname = useLocation().pathname;
   const [showDropdownMenu, setShowDropdownMenu] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <nav className="bg-fifth shadow-lg">
@@ -57,15 +59,22 @@ export default function Navbar() {
                   className="relative"
                 >
                   <img
-                    src={user.avatar}
+                    src={generateImageUrl("user", user?.avatar)}
                     alt="avatar"
                     className="w-14 rounded-full"
                   />
                 </button>
                 {showDropdownMenu && (
                   <div className="absolute top-15 z-10 flex w-44 origin-top flex-col divide-y-2 divide-primary rounded bg-fifth p-2 drop-shadow-xl">
-                    <button className="py-2">Perfil</button>
-                    <button className="py-2">Mis emprendimientos</button>
+                    <button className="py-2" onClick={() => navigate("/user")}>
+                      Perfil
+                    </button>
+                    <button
+                      className="py-2"
+                      onClick={() => navigate("/user/establishments")}
+                    >
+                      Mis emprendimientos
+                    </button>
                     <SignOutButton />
                   </div>
                 )}

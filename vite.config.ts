@@ -12,6 +12,6 @@ export default defineConfig({
     },
   },
   preview: {
-    allowedHosts: ["deacaolavarria.com", "www.deacaolavarria.com", "deacolavarria.forgebyteslab.com"],
+    allowedHosts: ["deacaolavarria.com", "www.deacaolavarria.com", "deacolavarria.forgebyteslab.com", "lh3.googleusercontent.com"],
   },
 });

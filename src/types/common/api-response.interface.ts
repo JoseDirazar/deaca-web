@@ -1,6 +1,8 @@
 export interface ApiResponse<T> {
-    ok: boolean;
-    data: T;
+    data: {
+        ok: boolean;
+        data: T;
+    }
 }
 
 export interface ApiError {
