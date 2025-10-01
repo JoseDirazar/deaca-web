@@ -9,22 +9,35 @@ import {
   type Row,
   type Cell,
 } from "@tanstack/react-table";
-import { useEstablishmentsFilters } from "@/hooks/useEstablishmentsFilters.hook";
-import { useGetPaginatedEstablishments } from "@/hooks/useEstablishments.hook";
 import type { Establishment } from "@/types/establishment/etablihment.interface";
-import type { SortBy } from "@/hooks/useEstablishmentsFilters.hook";
+import {
+  useEstablishmentsFilters,
+  type SortBy,
+} from "@/hooks/useEstablishmentsFilters.hook";
+import { useEstablishmentApi } from "@/hooks/useEstablishmentApi";
 
 export default function EstablishmentsTable() {
-  const { state, queryString, setPage, setLimit, setName, setAddress, setSorting } =
-    useEstablishmentsFilters();
-
-  const { establishments, meta, isLoading } =
-    useGetPaginatedEstablishments(queryString);
-
+  const {
+    state,
+    queryString,
+    setPage,
+    setLimit,
+    setName,
+    setAddress,
+    setSorting,
+  } = useEstablishmentsFilters();
+  const { getEstablishments } = useEstablishmentApi();
+  const { data, isPending, isError, error } = getEstablishments(
+    queryString,
+    state.page,
+    state.limit,
+    state.sortBy ?? "createdAt",
+    state.sortOrder ?? "DESC",
+  );
   const columns = useMemo<ColumnDef<Establishment>[]>(
     () => [
       {
-        header: ({ column }) => (
+        header: () => (
           <button
             className="flex items-center font-semibold hover:text-blue-600"
             onClick={() => toggleSort("name")}
@@ -37,7 +50,7 @@ export default function EstablishmentsTable() {
         cell: (info) => info.getValue() as string,
       },
       {
-        header: ({ column }) => (
+        header: () => (
           <button
             className="flex items-center font-semibold hover:text-blue-600"
             onClick={() => toggleSort("address")}
@@ -74,7 +87,7 @@ export default function EstablishmentsTable() {
         ),
       },
       {
-        header: ({ column }) => (
+        header: () => (
           <button
             className="flex items-center font-semibold hover:text-blue-600"
             onClick={() => toggleSort("createdAt")}
@@ -102,11 +115,11 @@ export default function EstablishmentsTable() {
   );
 
   const table = useReactTable({
-    data: establishments || [],
+    data: data?.data || [],
     columns,
     getCoreRowModel: getCoreRowModel(),
     manualPagination: true,
-    pageCount: meta?.totalPages ?? 1,
+    pageCount: data?.meta?.totalPages ?? 1,
     state: {
       pagination: {
         pageIndex: (state.page ?? 1) - 1,
@@ -132,9 +145,9 @@ export default function EstablishmentsTable() {
     );
   }
 
-  const currentPage = meta?.currentPage ?? state.page ?? 1;
-  const totalPages = meta?.totalPages ?? 1;
-  const totalItems = meta?.totalItems ?? establishments?.length ?? 0;
+  const currentPage = data?.meta?.currentPage ?? state.page ?? 1;
+  const totalPages = data?.meta?.totalPages ?? 1;
+  const totalItems = data?.meta?.totalItems ?? data?.data?.length ?? 0;
 
   return (
     <div className="space-y-4 p-4">
@@ -147,7 +160,7 @@ export default function EstablishmentsTable() {
 
       {/* Filtros y controles */}
       <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
-        <div className="flex-1 grid w-full grid-cols-1 gap-3 sm:grid-cols-2">
+        <div className="grid w-full flex-1 grid-cols-1 gap-3 sm:grid-cols-2">
           <input
             type="text"
             placeholder="Buscar por nombre..."
@@ -209,7 +222,7 @@ export default function EstablishmentsTable() {
                 ))}
             </thead>
             <tbody className="divide-y divide-gray-200 bg-white">
-              {isLoading ? (
+              {isPending ? (
                 <tr>
                   <td
                     colSpan={columns.length}
@@ -221,7 +234,7 @@ export default function EstablishmentsTable() {
                     </div>
                   </td>
                 </tr>
-              ) : !establishments || establishments.length === 0 ? (
+              ) : !data?.data || data?.data.length === 0 ? (
                 <tr>
                   <td
                     colSpan={columns.length}
@@ -290,7 +303,7 @@ export default function EstablishmentsTable() {
           <button
             className="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors duration-150 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
             onClick={() => setPage(Math.max(1, currentPage - 1))}
-            disabled={currentPage <= 1 || isLoading}
+            disabled={currentPage <= 1 || isPending}
           >
             ← Anterior
           </button>
@@ -318,7 +331,7 @@ export default function EstablishmentsTable() {
                       ? "bg-blue-600 text-white"
                       : "text-gray-700 hover:bg-gray-100"
                   }`}
-                  disabled={isLoading}
+                  disabled={isPending}
                 >
                   {pageNum}
                 </button>
@@ -329,7 +342,7 @@ export default function EstablishmentsTable() {
           <button
             className="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors duration-150 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
             onClick={() => setPage(Math.min(totalPages, currentPage + 1))}
-            disabled={currentPage >= totalPages || isLoading}
+            disabled={currentPage >= totalPages || isPending}
           >
             Siguiente →
           </button>

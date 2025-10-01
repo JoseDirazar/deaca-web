@@ -1,39 +1,16 @@
 import type { Establishment } from "@/types/establishment/etablihment.interface";
 import api from "./axios-instance";
-import type { ApiPaginatedResponse, ApiResponse } from "@/types/common/api-response.interface";
+import type { CreateEstablishmentResponse, DeleteMyEstablishmentResponse, GetEstablishmentByIdResponse, GetEstablishmentsResponse, GetMyEstablishmentsResponse, UpdateMyEstablishmentResponse, UploadEstablishmentAvatarResponse, UploadEstablishmentImagesResponse, VerifyEstablishmentResponse } from "@/types/common/api-response.interface";
+import type { CreateEstablishmentDto, EditEstablishmentDto } from "@/types/common/api-request.interface";
 
 export const establishmentService = {
-  getEstablishments: (
-    query: string,
-  ): Promise<ApiPaginatedResponse<Establishment[]>> => api.get("/establishment" + query),
-
-  getById: (id: string): Promise<ApiResponse<Establishment>> => api.get(`/establishment/${id}`),
-
-  // Owner scoped
-  getMine: (): Promise<ApiResponse<Establishment[]>> => api.get("/establishment/mine"),
-  createMine: (payload: Partial<Establishment>): Promise<ApiResponse<Establishment>> =>
-    api.post("/establishment/mine", payload),
-  updateMine: (id: string, payload: Partial<Establishment>): Promise<ApiResponse<Establishment>> =>
-    api.put(`/establishment/${id}`, payload),
-  deleteMine: (id: string): Promise<{ data: { ok: boolean } }> => api.delete(`/establishment/${id}`),
-
-  // Uploads
-  uploadImage: (id: string, file: File): Promise<{ data: any }> => {
-    const formData = new FormData();
-    formData.append("file", file);
-    return api.post(`/establishment/${id}/images`, formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-  },
-  uploadAvatar: (id: string, file: File): Promise<{ data: any }> => {
-    const formData = new FormData();
-    formData.append("file", file);
-    return api.post(`/establishment/${id}/avatar`, formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-  },
-
-  // Admin
-  verify: (id: string, verified: boolean): Promise<ApiResponse<Establishment>> =>
-    api.patch(`/establishment/${id}/verify`, { verified }),
+  getEstablishments: (query: string): GetEstablishmentsResponse => api.get("/establishment" + query),
+  getById: (id: string): GetEstablishmentByIdResponse => api.get(`/establishment/${id}`),
+  getMine: (): GetMyEstablishmentsResponse => api.get("/establishment/mine"),
+  createMine: (payload: CreateEstablishmentDto): CreateEstablishmentResponse => api.post("/establishment/mine", payload),
+  updateMine: (id: string, payload: EditEstablishmentDto): UpdateMyEstablishmentResponse => api.put(`/establishment/${id}`, payload),
+  deleteMine: (id: string): DeleteMyEstablishmentResponse => api.delete(`/establishment/${id}`),
+  uploadImages: (id: string, formData: FormData): UploadEstablishmentImagesResponse => api.postForm(`/establishment/${id}/images`, formData),
+  uploadAvatar: (id: string, formData: FormData): UploadEstablishmentAvatarResponse => api.postForm(`/establishment/${id}/avatar`, formData),
+  verify: (id: string, verified: boolean): VerifyEstablishmentResponse => api.patch(`/establishment/${id}/verify`, { verified }),
 };

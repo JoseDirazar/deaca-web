@@ -1,42 +1,38 @@
 import api from "./axios-instance";
-import type { Category } from "@/types/category/category.interface";
-import type { Subcategory } from "@/types/category/subcategory.interface";
+import type { CreateCategoryResponse, CreateSubcategoryResponse, DeleteCategoryResponse, DeleteSubcategoryResponse, GetCategoriesResponse, GetSubcategoriesByCategoryResponse, GetSubcategoriesResponse, UpdateCategoryResponse, UpdateSubcategoryResponse } from "@/types/common/api-response.interface";
 
 export const categoryService = {
   // Categories
-  getCategories: (): Promise<{ data: { categories: Category[] } }> =>
+  getCategories: (): GetCategoriesResponse =>
     api.get("/category"),
 
-  createCategory: (name: string): Promise<{ data: { category: Category } }> =>
+  getSubcategories: (): GetSubcategoriesResponse => api.get("/category/subcategories"),
+
+  createCategory: (name: string): CreateCategoryResponse =>
     api.post("/category", { name }),
+
+  createSubcategory: (categoryId: string, name: string): CreateSubcategoryResponse => api.post("/category/subcategories", { name, categoryId }),
 
   updateCategory: (
     id: string,
     name: string,
-  ): Promise<{ data: { category: Category } }> => api.put(`/category/${id}`, { name }),
+  ): UpdateCategoryResponse => api.put(`/category/${id}`, { name }),
+  updateSubcategory: (
+    id: string,
+    name: string,
+  ): UpdateSubcategoryResponse =>
+    api.put(`/category/subcategories/${id}`, { name }),
 
-  deleteCategory: (id: string): Promise<{ data: { category: Category } }> =>
+  deleteCategory: (id: string): DeleteCategoryResponse =>
     api.delete(`/category/${id}`),
+
+  deleteSubcategory: (id: string): DeleteSubcategoryResponse =>
+    api.delete(`/category/subcategories/${id}`),
 
   // Subcategories
   getSubcategoriesByCategory: (
     categoryId: string,
-  ): Promise<{ data: { subcategories: Subcategory[] } }> =>
+  ): GetSubcategoriesByCategoryResponse =>
     api.get(`/category/${categoryId}/subcategories`),
 
-  createSubcategory: (
-    name: string,
-    categoryId: string,
-  ): Promise<{ data: { subcategory: Subcategory } }> =>
-    api.post("/category/subcategories", { name, categoryId }),
-
-  updateSubcategory: (
-    id: string,
-    name: string,
-  ): Promise<{ data: { subcategory: Subcategory } }> =>
-    api.put(`/category/subcategories/${id}`, { name }),
-
-  deleteSubcategory: (
-    id: string,
-  ): Promise<{ data: { subcategory: Subcategory } }> => api.delete(`/category/subcategories/${id}`),
 };

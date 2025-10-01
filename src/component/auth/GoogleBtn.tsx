@@ -1,10 +1,16 @@
-import { useAuth } from "@/hooks/useAuth.hook";
+import { useAuthApi } from "@/hooks/useAuthApi.hook";
 import { useEffect } from "react";
 
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 export default function GoogleBtn() {
-  const { signInWithGoogle } = useAuth();
+  const { signInWithGoogle } = useAuthApi();
+  const {
+    mutateAsync: signInWithGoogleAsync,
+    isPending: isSigningInWithGoogle,
+    isError: isSigningInWithGoogleError,
+    error: signInWithGoogleError,
+  } = signInWithGoogle;
   let accessToken = "";
   useEffect(() => {
     // @ts-ignore
@@ -15,7 +21,7 @@ export default function GoogleBtn() {
         const credential = response.credential;
         // mandarlo al backend vía tu hook
         accessToken = response;
-        signInWithGoogle.mutateAsync(credential);
+        signInWithGoogleAsync(credential);
       },
     });
 
@@ -25,5 +31,11 @@ export default function GoogleBtn() {
       size: "large",
     });
   }, []);
-  return <div className="my-6 rounded" id="googleBtn"></div>;
+  return (
+    <button
+      className="my-6 rounded disabled:opacity-50"
+      id="googleBtn"
+      disabled={isSigningInWithGoogle}
+    ></button>
+  );
 }

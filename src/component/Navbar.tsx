@@ -13,7 +13,6 @@ export default function Navbar() {
   const pathname = useLocation().pathname;
   const [showDropdownMenu, setShowDropdownMenu] = useState(false);
   const navigate = useNavigate();
-
   return (
     <nav className="bg-fifth shadow-lg">
       <h1 className="hidden">deacá guia de Olavarría</h1>
@@ -61,7 +60,7 @@ export default function Navbar() {
                   <img
                     src={generateImageUrl("user", user?.avatar)}
                     alt="avatar"
-                    className="w-14 rounded-full"
+                    className="h-14 w-14 rounded-full"
                   />
                 </button>
                 {showDropdownMenu && (

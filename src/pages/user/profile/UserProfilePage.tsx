@@ -1,0 +1,102 @@
+import Button from "@/component/ui/Button";
+import OutletForm from "@/component/ui/form/OutletForm";
+import OutletHeader from "@/component/ui/form/OutletHeader";
+import Input from "@/component/ui/Input";
+import SectionContainer from "@/component/ui/SectionContainer";
+import UserAvatar from "@/component/ui/user/UserAvatar";
+import { useUserStore } from "@/context/useUserStore";
+import { LuLoader } from "react-icons/lu";
+import type { User } from "@/types/user/user.interface";
+import { useState } from "react";
+import { IoAdd } from "react-icons/io5";
+import { useUserApi } from "@/hooks/useUserApi.hook";
+
+export default function UserProfilePage() {
+  const { user } = useUserStore();
+  const [form, setForm] = useState<Partial<User>>({
+    avatar: user?.avatar,
+    firstName: user?.firstName,
+    lastName: user?.lastName,
+  });
+
+  const { updateAvatar, updateUser } = useUserApi();
+
+  const {
+    mutateAsync: updateUserAsync,
+    isPending: isUpdatingUser,
+    isError: isErrorUpdateUser,
+    error: errorUpdateUser,
+  } = updateUser;
+  const {
+    mutateAsync: updateAvatarAsync,
+    isPending: isUpdatingAvatar,
+    isError: isErrorUpdateAvatar,
+    error: errorUpdateAvatar,
+  } = updateAvatar;
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const formData = new FormData();
+    formData.append("file", file);
+    await updateAvatarAsync(formData);
+  };
+  return (
+    <div>
+      <SectionContainer>
+        <OutletHeader
+          title="Perfil"
+          description="Gestiona tu perfil de usuario"
+        />
+        <OutletForm onSubmit={() => updateUserAsync(form)}>
+          <div className="relative w-fit">
+            <input
+              type="file"
+              id="photo"
+              className="hidden"
+              accept="image/*"
+              onChange={handlePhotoUpload}
+            />
+            <UserAvatar avatar={user?.avatar} />
+            <Button
+              type="button"
+              onClick={() => document.getElementById("photo")?.click()}
+              disabled={isUpdatingAvatar}
+              icon={
+                isUpdatingAvatar ? <LuLoader size={20} /> : <IoAdd size={20} />
+              }
+              className="absolute right-0 bottom-0 rounded-full p-2"
+            />
+          </div>
+          <Input
+            type="text"
+            id="firstName"
+            title="Nombre"
+            value={form.firstName}
+            onChange={(e) => setForm({ ...form, firstName: e.target.value })}
+          />
+          <Input
+            type="text"
+            id="lastName"
+            title="Apellido"
+            value={form.lastName}
+            onChange={(e) => setForm({ ...form, lastName: e.target.value })}
+          />
+          <Input
+            type="email"
+            id="email"
+            title="Email"
+            value={user?.email}
+            disabled
+          />
+
+          <Button
+            type="submit"
+            disabled={isUpdatingUser}
+            label={isUpdatingUser ? "Actualizando..." : "Actualizar perfil"}
+          />
+        </OutletForm>
+      </SectionContainer>
+    </div>
+  );
+}

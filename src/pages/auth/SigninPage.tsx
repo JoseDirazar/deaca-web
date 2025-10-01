@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { toast } from "sonner";
-import { useAuth } from "@/hooks/useAuth.hook";
+import { useAuthApi } from "@/hooks/useAuthApi.hook";
 import Input from "@/component/ui/Input";
 import Button from "@/component/ui/Button";
-import AuthOutletHeader from "@/component/ui/auth/AuthOutletHeader";
-import AuthOutletForm from "@/component/ui/auth/AuthOutletForm";
+import AuthOutletHeader from "@/component/ui/form/OutletHeader";
+import AuthOutletForm from "@/component/ui/form/OutletForm";
 import AuthOutletFooter from "@/component/ui/auth/AuthOutletFooter";
 import GoogleBtn from "@/component/auth/GoogleBtn";
 import type { PreviousWindowLocation } from "@/types/common/previous-window-location.interface";
@@ -16,7 +16,7 @@ export default function SigninPage() {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const { signIn } = useAuth();
+  const { signIn } = useAuthApi();
 
   const from =
     (location.state as PreviousWindowLocation)?.from?.pathname ?? "/";
@@ -29,15 +29,8 @@ export default function SigninPage() {
       return;
     }
 
-    try {
-      await signIn.mutateAsync({ email, password });
-      toast.success("Login successful!");
-      navigate(from, { replace: true });
-    } catch (error) {
-      toast.error("Invalid email or password");
-      console.error("Login error:", error);
-    } finally {
-    }
+    await signIn.mutateAsync({ email, password });
+    navigate(from, { replace: true });
   };
 
   return (
@@ -49,7 +42,7 @@ export default function SigninPage() {
       <GoogleBtn />
       <AuthOutletForm onSubmit={handleLogin}>
         <Input
-          id="email"
+          id="signin-email"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -57,7 +50,7 @@ export default function SigninPage() {
         />
 
         <Input
-          id="password"
+          id="signin-password"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}

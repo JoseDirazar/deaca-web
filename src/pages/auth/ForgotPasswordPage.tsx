@@ -1,47 +1,29 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
-import { AxiosError } from "axios";
-import { useAuth } from "@/hooks/useAuth.hook";
-import AuthOutletHeader from "@/component/ui/auth/AuthOutletHeader";
+import { useAuthApi } from "@/hooks/useAuthApi.hook";
+import AuthOutletHeader from "@/component/ui/form/OutletHeader";
 import Input from "@/component/ui/Input";
 import Button from "@/component/ui/Button";
-import AuthOutletForm from "@/component/ui/auth/AuthOutletForm";
+import AuthOutletForm from "@/component/ui/form/OutletForm";
 import AuthOutletFooter from "@/component/ui/auth/AuthOutletFooter";
 
 export default function ForgotPasswordPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const { requestPasswordReset } = useAuth();
+  const { requestPasswordReset } = useAuthApi();
+  const { isPending: isLoading, mutateAsync, isSuccess } = requestPasswordReset;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!email) {
-      toast.error("Please enter your email address");
+      toast.error("Por favor ingresa tu correo electrónica");
       return;
     }
 
-    setIsLoading(true);
-    try {
-      await requestPasswordReset.mutateAsync({ email });
-      setIsSubmitted(true);
-      toast.success("Password reset link sent to your email");
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        toast.error(
-          error?.response?.data?.message ||
-            "Algo salio mal al enviar el correo",
-        );
-      } else {
-        toast.error("Algo salio mal al enviar el correo");
-      }
-      console.error("Password reset request error:", error);
-    } finally {
-      setIsLoading(false);
-    }
+    await mutateAsync({ email });
+    navigate("/auth/reset-password");
   };
 
   return (
@@ -50,7 +32,7 @@ export default function ForgotPasswordPage() {
         title="¿Olvidaste tu contraseña?"
         description="No te preocupes. Ingresa tu correo electrónica a continuación y te enviaremos un enlace para restablecer tu contraseña."
       />
-      {!isSubmitted ? (
+      {!isSuccess ? (
         <>
           <AuthOutletForm onSubmit={handleSubmit}>
             <Input
@@ -66,7 +48,7 @@ export default function ForgotPasswordPage() {
 
             <Button
               type="submit"
-              label={isLoading ? "Sending..." : "Reset password"}
+              label={isLoading ? "Enviando..." : "Restablecer Contraseña"}
               disabled={isLoading}
             />
           </AuthOutletForm>

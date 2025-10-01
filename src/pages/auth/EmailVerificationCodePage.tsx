@@ -1,21 +1,22 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
-import { AxiosError } from "axios";
-import { useAuth } from "@/hooks/useAuth.hook";
+import { useAuthApi } from "@/hooks/useAuthApi.hook";
 import Input from "@/component/ui/Input";
 import Button from "@/component/ui/Button";
-import AuthOutletHeader from "@/component/ui/auth/AuthOutletHeader";
-import AuthOutletForm from "@/component/ui/auth/AuthOutletForm";
+import AuthOutletHeader from "@/component/ui/form/OutletHeader";
+import AuthOutletForm from "@/component/ui/form/OutletForm";
 import AuthOutletFooter from "@/component/ui/auth/AuthOutletFooter";
 
 export default function EmailVerificationCodePage() {
   const [email, setEmail] = useState<string>("");
   const [emailCode, setEmailCode] = useState<string>("");
-  const [isVerifying, setIsVerifying] = useState(false);
-  const [isResending, setIsResending] = useState(false);
-  const { confirmEmail, resendVerificationEmail } = useAuth();
+  const { confirmEmail, resendVerificationEmail } = useAuthApi();
   const navigate = useNavigate();
+
+  const { isPending: isVerifying, mutateAsync: verifyEmail } = confirmEmail;
+  const { isPending: isResending, mutateAsync: resendEmail } =
+    resendVerificationEmail;
 
   useEffect(() => {
     const storedEmail = localStorage.getItem("pending_email");
@@ -28,47 +29,14 @@ export default function EmailVerificationCodePage() {
     e.preventDefault();
 
     if (!email || !emailCode) {
-      toast.error("Please fill in all fields");
+      toast.error(
+        "Por favor ingresa tu correo electrónica y el codigo de verificacion",
+      );
       return;
     }
 
-    setIsVerifying(true);
-    try {
-      await confirmEmail.mutateAsync({ email, emailCode });
-      toast.success("Email verified successfully!");
-      navigate("/sign-in");
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        toast.error(error?.response?.data?.message || "Failed to verify email");
-      } else {
-        toast.error("An unexpected error occurred");
-      }
-      console.error("Email verification error:", error);
-    } finally {
-      setIsVerifying(false);
-    }
-  };
-
-  const handleResend = async () => {
-    if (!email) {
-      toast.error("Email address not found");
-      return;
-    }
-
-    setIsResending(true);
-    try {
-      await resendVerificationEmail.mutateAsync(email);
-      toast.success("Verification email resent");
-    } catch (error) {
-      console.error("Resend email error:", error);
-      if (error instanceof AxiosError) {
-        toast.error(error?.response?.data?.message || "Failed to resend email");
-      } else {
-        toast.error("An unexpected error occurred");
-      }
-    } finally {
-      setIsResending(false);
-    }
+    await verifyEmail({ email, emailCode });
+    navigate("/sign-in");
   };
 
   return (
@@ -116,7 +84,7 @@ export default function EmailVerificationCodePage() {
           No recibiste un código de verificación?
         </p>
         <Button
-          onClick={handleResend}
+          onClick={() => resendEmail(email)}
           className="mx-auto"
           disabled={isResending}
           label={isResending ? "Reenviando..." : "Reenviar"}

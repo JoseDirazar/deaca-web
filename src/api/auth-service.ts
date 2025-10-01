@@ -1,28 +1,22 @@
-import type { SignUp } from "@/types/common/api-request.interface";
 import api from "./axios-instance";
-import type { AuthResponse, RequestPasswordResetDto, ResetPasswordDto, VerifyEmailDto } from "@/types/common/api-request.interface";
-import type { User } from "@/types/user/user.interface";
+import type { RequestPasswordResetDto, ResetPasswordDto, SignInDto, VerifyEmailDto } from "@/types/common/api-request.interface";
+import type { ApiResponse, ConfirmEmailResponse, GoogleAuthResponse, RefreshTokenResponse, RequestPasswordResetResponse, ResetPasswordResponse, SignInResponse, SignOutResponse } from "@/types/common/api-response.interface";
+import type { SignUpDto, } from "@/types/common/api-request.interface";
+
 
 export const authService = {
-    signUp: (data: SignUp) => api.post("/auth/sign-up", data),
-    confirmEmail: (data: VerifyEmailDto) =>
-        api.post("/auth/confirm-email", data),
-    resendVerificationEmail: (email: string) =>
-        api.post("/auth/resend-verification-email", { email }),
-    signIn: (
-        data: Partial<User>,
-    ): Promise<{ data: AuthResponse }> =>
-        api.post("/auth/sign-in", data),
-    signInWithGoogle: (accessToken: string) =>
+    signUp: (data: SignUpDto): ApiResponse<SignUpDto> => api.post("/auth/sign-up", data),
+    signIn: (data: SignInDto): SignInResponse => api.post("/auth/sign-in", data),
+    confirmEmail: (data: VerifyEmailDto): ConfirmEmailResponse => api.post("/auth/confirm-email", data),
+    resendVerificationEmail: (email: string): RequestPasswordResetResponse => api.post("/auth/resend-verification-email", { email }),
+    signInWithGoogle: (accessToken: string): GoogleAuthResponse =>
         api.post("/auth/google-auth", { accessToken }),
-    refreshToken: (
-        refreshToken: string,
-    ): Promise<{ data: AuthResponse }> =>
-        api.post("/auth/refresh-token", { refreshToken }),
-    signOut: () => api.post("/auth/sign-out"),
-    requestPasswordReset: (data: RequestPasswordResetDto) =>
+    refreshAccessToken: (accessToken: string): RefreshTokenResponse =>
+        api.post("/auth/refresh-token", { accessToken }),
+    signOut: (): SignOutResponse => api.post("/auth/sign-out"),
+    requestPasswordReset: (data: RequestPasswordResetDto): RequestPasswordResetResponse =>
         api.post("/auth/request-password-reset", data),
-    resetPassword: (data: ResetPasswordDto) =>
+    resetPassword: (data: ResetPasswordDto): ResetPasswordResponse =>
         api.post("/auth/reset-password", data),
 };
 

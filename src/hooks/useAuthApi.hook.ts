@@ -3,17 +3,9 @@ import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import { useUserStore } from "@/context/useUserStore";
-import type { User } from "@/types/user/user.interface";
 import { authService } from "@/api/auth-service";
-import type { RequestPasswordResetDto, ResetPasswordDto, SignUp, VerifyEmailDto } from "@/types/common/api-request.interface";
+import type { RequestPasswordResetDto, ResetPasswordDto, SignInDto, SignUpDto, VerifyEmailDto } from "@/types/common/api-request.interface";
 import type { PreviousWindowLocation } from "@/types/common/previous-window-location.interface";
-
-type SignInWithGoogleResponse = {
-  ok: boolean;
-  accessToken: string;
-  refreshToken: string;
-  user: User
-};
 
 export const saveTokens = async (token: string, refreshToken?: string) => {
   await localStorage.setItem("access_token", token);
@@ -25,77 +17,66 @@ const clearTokens = () => {
   localStorage.removeItem("refresh_token");
 };
 
-export const useAuth = () => {
+export const useAuthApi = () => {
   const queryClient = useQueryClient();
   const { setUser } = useUserStore();
   const navigate = useNavigate();
 
   const signUp = useMutation({
-    mutationFn: async (data: Partial<User>) => {
+    mutationFn: async (data: SignUpDto) => {
       localStorage.setItem("pending_email", data.email as string);
-      return authService.signUp(data as SignUp);
+      return authService.signUp(data).then(res => res.data.data);
     },
-    onSuccess: async (response) => {
-      const { accessToken, refreshToken, ok } = response.data;
-      if (ok) {
-        await saveTokens(accessToken, refreshToken);
-        toast.success(
-          "Successfully signed up! Please check your email to verify your account."
-        );
-      }
+    onSuccess: async () => {
+      toast.success("Gracias por registrarte. Revisa tu email para verificar tu cuenta.");
     },
     onError: (error: unknown) => {
       console.error(JSON.stringify(error, null, 2));
       if (error instanceof AxiosError) {
-        toast.error(error?.response?.data?.message || "Failed to sign up");
+        toast.error(error?.response?.data?.message || "Algo salio mal");
       }
     },
   });
 
   const confirmEmail = useMutation({
-    mutationFn: (data: VerifyEmailDto) => authService.confirmEmail(data),
+    mutationFn: (data: VerifyEmailDto) => authService.confirmEmail(data).then(res => res.data.data),
     onSuccess: () => {
-      toast.success("Email verified successfully!");
+      toast.success("Email verificado exitosamente!");
       localStorage.removeItem("pending_email");
     },
     onError: (error: unknown) => {
       if (error instanceof AxiosError) {
-        toast.error(error?.response?.data?.message || "Failed to verify email");
+        toast.error(error?.response?.data?.message || "Algo salio mal");
       }
     },
   });
 
   const signIn = useMutation({
-    mutationFn: (data: Partial<User>) => authService.signIn(data),
-    onSuccess: async (response) => {
-      const { accessToken, refreshToken, ok, user } = response.data;
-      if (ok) {
-        await saveTokens(accessToken, refreshToken);
-        setUser(user);
-        toast.success("Successfully signed in!");
-      }
+    mutationFn: (data: SignInDto) => authService.signIn(data).then(res => res.data.data),
+    onSuccess: async ({ accessToken, refreshToken, user }) => {
+      await saveTokens(accessToken, refreshToken);
+      setUser(user);
+      toast.success("Bienvenido!");
+
     },
     onError: (error: unknown) => {
       if (error instanceof AxiosError) {
-        toast.error(error?.response?.data?.message || "Failed to sign in");
+        toast.error(error?.response?.data?.message || "Algo salio mal");
       }
     },
   });
 
   const signInWithGoogle = useMutation({
     mutationFn: (accessToken: string) =>
-      authService.signInWithGoogle(accessToken),
-    onSuccess: async (response: { data: SignInWithGoogleResponse }) => {
-      const { accessToken, refreshToken, user, ok } = response.data;
-      if (ok) {
-        await saveTokens(accessToken, refreshToken);
-        setUser(user);
-        toast.success("Successfully signed in with Google!");
-        const from =
-          (window.history.state as PreviousWindowLocation)?.from?.pathname ||
-          "/";
-        navigate(from, { replace: true });
-      }
+      authService.signInWithGoogle(accessToken).then(res => res.data.data),
+    onSuccess: async ({ accessToken, refreshToken, user }) => {
+      await saveTokens(accessToken, refreshToken);
+      setUser(user);
+      toast.success("Bienvenido!");
+      const from =
+        (window.history.state as PreviousWindowLocation)?.from?.pathname ||
+        "/";
+      navigate(from, { replace: true });
     },
     onError: (error: unknown) => {
       if (error instanceof AxiosError) {
@@ -108,12 +89,9 @@ export const useAuth = () => {
 
   const refreshToken = useMutation({
     mutationFn: (refreshToken: string) =>
-      authService.refreshToken(refreshToken),
-    onSuccess: async (response) => {
-      const { accessToken, ok } = response.data;
-      if (ok) {
-        await saveTokens(accessToken);
-      }
+      authService.refreshAccessToken(refreshToken).then(res => res.data.data),
+    onSuccess: async ({ accessToken }) => {
+      await saveTokens(accessToken);
     },
   });
 
@@ -134,45 +112,44 @@ export const useAuth = () => {
     mutationFn: (data: RequestPasswordResetDto) =>
       authService.requestPasswordReset(data),
     onSuccess: () => {
-      toast.success("Password reset instructions sent to your email");
+      toast.success("Instrucciones para restablecer tu contraseña enviadas a tu correo electrónica");
     },
     onError: (error: unknown) => {
       if (error instanceof AxiosError) {
         toast.error(
-          error?.response?.data?.message || "Failed to request password reset"
+          error?.response?.data?.message || "Algo salio mal"
         );
       }
     },
   });
 
   const resetPassword = useMutation({
-    mutationFn: (data: ResetPasswordDto) => authService.resetPassword(data),
-    onSuccess: async (response) => {
-      const { token, refreshToken, user } = response.data;
-      if (token && refreshToken) {
-        await saveTokens(token, refreshToken);
-        setUser(user);
-      }
+    mutationFn: (data: ResetPasswordDto) => authService.resetPassword(data).then(res => res.data.data),
+    onSuccess: async ({ accessToken, refreshToken, user }) => {
+      await saveTokens(accessToken, refreshToken);
+      setUser(user);
+      toast.success("Restablecimiento de contraseña exitoso!");
+
     },
     onError: (error: unknown) => {
       if (error instanceof AxiosError) {
         toast.error(
-          error?.response?.data?.message || "Failed to reset password"
+          error?.response?.data?.message || "Algo salio mal"
         );
       }
     },
   });
 
   const resendVerificationEmail = useMutation({
-    mutationFn: (email: string) => authService.resendVerificationEmail(email),
+    mutationFn: (email: string) => authService.resendVerificationEmail(email).then(res => res.data.data),
     onSuccess: () => {
-      toast.success("Verification email resent successfully!");
+      toast.success("Correo de verificación reenviado exitosamente!");
     },
     onError: (error: unknown) => {
       if (error instanceof AxiosError) {
         toast.error(
           error?.response?.data?.message ||
-          "Failed to resend verification email"
+          "Algo salio mal"
         );
       }
     },

@@ -6,7 +6,7 @@ export const userDashboardRoutes: NavbarRoutes = [
     {
         label: "Perfil",
         icon: FaUser,
-        href: "/user/perfil",
+        href: "/user",
     },
     {
         label: "Establecimientos",

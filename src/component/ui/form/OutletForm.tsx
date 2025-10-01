@@ -1,4 +1,4 @@
-export default function AuthOutletForm({
+export default function OutletForm({
   onSubmit,
   children,
 }: {

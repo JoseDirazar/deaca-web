@@ -14,8 +14,8 @@ import AdminUsersPage from "./pages/admin/AdminUsersPage";
 import AdminEstablishmentsPage from "./pages/admin/AdminEstablishmentsPage";
 import AdminCategoriesPage from "./pages/admin/AdminCategoriesPage";
 import UserDashboardLayout from "./layout/UserDashboardLayout";
-import UserProfilePage from "./pages/user/UserProfilePage";
-import UserEstablishmentPage from "./pages/user/UserEstablishmentPage";
+import UserProfilePage from "./pages/user/profile/UserProfilePage";
+import UserEstablishmentPage from "./pages/user/establishment/UserEstablishmentPage";
 
 function App() {
   return (

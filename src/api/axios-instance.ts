@@ -1,7 +1,9 @@
 import axios from "axios";
 import { useUserStore } from "@/context/useUserStore";
+import type { GetMyProfileResponse, GetUsersResponse } from "@/types/common/api-response.interface";
 
 export const baseURL = import.meta.env.VITE_PUBLIC_API_URL;
+export const uploadBaseURL = import.meta.env.VITE_PUBLIC_BASE_API_URL;
 const api = axios.create({
     baseURL,
 });
@@ -18,9 +20,9 @@ const failedQueue: {
 const authApi = axios.create({ baseURL });
 
 // Decode JWT payload safely
-function decodeJwt<T = any>(token: string): T | null {
+function decodeJwt<T = any>(accessToken: string): T | null {
     try {
-        const [, payload] = token.split(".");
+        const [, payload] = accessToken.split(".");
         if (!payload) return null;
         const json = atob(payload.replace(/-/g, "+").replace(/_/g, "/"));
         return JSON.parse(decodeURIComponent(escape(json)));
@@ -29,8 +31,8 @@ function decodeJwt<T = any>(token: string): T | null {
     }
 }
 
-function isTokenExpired(token: string, skewSeconds = 30): boolean {
-    const payload = decodeJwt<{ exp?: number }>(token);
+function isTokenExpired(accessToken: string, skewSeconds = 30): boolean {
+    const payload = decodeJwt<{ exp?: number }>(accessToken);
     if (!payload?.exp) return true;
     const now = Math.floor(Date.now() / 1000);
     return payload.exp - skewSeconds <= now;
@@ -39,10 +41,11 @@ function isTokenExpired(token: string, skewSeconds = 30): boolean {
 async function refreshAccessToken(): Promise<string> {
     const storedRefreshToken = localStorage.getItem("refresh_token");
     if (!storedRefreshToken) throw new Error("Missing refresh token");
-    const { data } = await authApi.post("/auth/refresh-token", {
+    // Backend endpoint is `POST /auth/refresh-accesstoken`
+    const response = await authApi.post("/auth/refresh-accesstoken", {
         refreshToken: storedRefreshToken,
     });
-    const accessToken: string | undefined = data?.accessToken;
+    const accessToken: string | undefined = response.data.data.accessToken;
     if (!accessToken) throw new Error("No access token returned");
     localStorage.setItem("access_token", accessToken);
     return accessToken;
@@ -50,11 +53,11 @@ async function refreshAccessToken(): Promise<string> {
 
 // Request interceptor
 api.interceptors.request.use(async (config) => {
-    const token = localStorage.getItem("access_token");
+    const accessToken = localStorage.getItem("access_token");
     const refreshToken = localStorage.getItem("refresh_token");
 
-    // Preemptively refresh if access token is expired and we have a refresh token
-    if (token && refreshToken && isTokenExpired(token) && !isRefreshing) {
+    // Preemptively refresh if access accessToken is expired and we have a refresh accessToken
+    if (accessToken && refreshToken && isTokenExpired(accessToken) && !isRefreshing) {
         try {
             isRefreshing = true;
             const newAccess = await refreshAccessToken();
@@ -81,7 +84,7 @@ api.interceptors.request.use(async (config) => {
 api.interceptors.response.use(
     (response) => {
         // If any response contains user data, persist it into the store
-        const user = (response?.data && (response.data.user || response.data?.data?.user)) as unknown;
+        const user = (response?.data && (response.data.data.user || response.data?.data?.user));
         if (user) {
             try {
                 useUserStore.getState().setUser(user as any);
@@ -149,5 +152,42 @@ api.interceptors.response.use(
         }
     },
 );
+
+// Bootstraps auth on app startup or page reload.
+// - If there is only a refresh token, attempts to get a new access token.
+// - Sets Authorization header for subsequent requests.
+// - Fetches the current user and saves to the store.
+export async function bootstrapAuth(): Promise<void> {
+    const accessToken = localStorage.getItem("access_token");
+    const refreshToken = localStorage.getItem("refresh_token");
+
+    try {
+        let tokenToUse = accessToken || undefined;
+        if (!tokenToUse && refreshToken) {
+            tokenToUse = await refreshAccessToken();
+        } else if (tokenToUse && isTokenExpired(tokenToUse) && refreshToken) {
+            tokenToUse = await refreshAccessToken();
+        }
+
+        if (tokenToUse) {
+            api.defaults.headers.common["Authorization"] = `Bearer ${tokenToUse}`;
+            try {
+                const me = await api.get("/user/me");
+                const user = me?.data?.data;
+                if (user) useUserStore.getState().setUser(user);
+            } catch (error) {
+                console.error(error)
+            }
+        }
+    } catch (err) {
+        // On any failure, ensure clean state
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh_token");
+        try {
+            useUserStore.getState().clearUser();
+        } catch { }
+        // swallow error to not block app boot
+    }
+}
 
 export default api;

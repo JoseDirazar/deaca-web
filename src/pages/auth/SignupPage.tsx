@@ -1,16 +1,17 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
-import { useAuth } from "@/hooks/useAuth.hook";
+import { useAuthApi } from "@/hooks/useAuthApi.hook";
 import Input from "@/component/ui/Input";
 import Button from "@/component/ui/Button";
-import AuthOutletHeader from "@/component/ui/auth/AuthOutletHeader";
-import AuthOutletForm from "@/component/ui/auth/AuthOutletForm";
+import AuthOutletHeader from "@/component/ui/form/OutletHeader";
+import AuthOutletForm from "@/component/ui/form/OutletForm";
 import AuthOutletFooter from "@/component/ui/auth/AuthOutletFooter";
 import GoogleBtn from "@/component/auth/GoogleBtn";
 
 export default function SignupPage() {
-  const { signUp } = useAuth();
+  const { signUp } = useAuthApi();
+  const { isPending: isLoading, mutateAsync } = signUp;
   const navigate = useNavigate();
 
   const [firstName, setFirstName] = useState("");
@@ -20,22 +21,12 @@ export default function SignupPage() {
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!firstName || !lastName || !email || !password) {
       toast.error("Completa todos los campos");
       return;
     }
-
-    try {
-      await signUp.mutateAsync({ firstName, lastName, email, password });
-      toast.success(
-        "Registro exitoso. Revisa tu email para verificar tu cuenta.",
-      );
-      navigate("/auth/sign-in", { replace: true });
-    } catch (e) {
-      // useAuth ya muestra toast de error
-      console.error(e);
-    }
+    await mutateAsync({ firstName, lastName, email, password });
+    navigate("/auth/sign-in", { replace: true });
   };
 
   return (
@@ -47,6 +38,7 @@ export default function SignupPage() {
       <GoogleBtn />
       <AuthOutletForm onSubmit={onSubmit}>
         <Input
+          id="signup-firstName"
           type="text"
           value={firstName}
           onChange={(e) => setFirstName(e.target.value)}
@@ -54,6 +46,7 @@ export default function SignupPage() {
         />
 
         <Input
+          id="signup-lastName"
           type="text"
           value={lastName}
           onChange={(e) => setLastName(e.target.value)}
@@ -61,6 +54,7 @@ export default function SignupPage() {
         />
 
         <Input
+          id="signup-email"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -68,6 +62,7 @@ export default function SignupPage() {
         />
 
         <Input
+          id="signup-password"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -76,8 +71,8 @@ export default function SignupPage() {
 
         <Button
           type="submit"
-          disabled={signUp.isPending}
-          label={signUp.isPending ? "Creando..." : "Crear cuenta"}
+          disabled={isLoading}
+          label={isLoading ? "Creando..." : "Crear cuenta"}
         />
       </AuthOutletForm>
       <AuthOutletFooter signInLink />

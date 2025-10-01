@@ -10,17 +10,30 @@ import {
   type Cell,
 } from "@tanstack/react-table";
 import { useUsersFilters } from "@/hooks/useUsersFilters.hook";
-import { useGetPaginatedUsers } from "@/hooks/useUsers.hook";
 import type { User } from "@/types/user/user.interface";
 import { format, formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 import { generateImageUrl } from "@/lib/generate-image-url";
 import Input from "@/component/ui/Input";
+import { useUserApi } from "@/hooks/useUserApi.hook";
 
 export default function AdminUsersPage() {
   const { state, queryString, setPage, setLimit, setSearch, setSorting } =
     useUsersFilters();
-  const { users, meta, isLoading } = useGetPaginatedUsers(queryString);
+  const { getUsers } = useUserApi();
+  const {
+    data: paginatedUsers,
+    isPending: isLoadingUsers,
+    isError: isGetUsersError,
+    error: getUsersError,
+  } = getUsers(
+    queryString,
+    state.page,
+    state.limit,
+    state.sortBy ?? "createdAt",
+    state.sortOrder ?? "DESC",
+  );
+  console.log(paginatedUsers);
 
   const columns = useMemo<ColumnDef<User>[]>(
     () => [
@@ -135,7 +148,7 @@ export default function AdminUsersPage() {
   );
 
   const table = useReactTable({
-    data: users,
+    data: paginatedUsers?.data ?? [],
     columns,
     getCoreRowModel: getCoreRowModel(),
     manualPagination: true,
@@ -208,7 +221,7 @@ export default function AdminUsersPage() {
             ))}
           </thead>
           <tbody className="divide-y divide-gray-200 bg-white">
-            {isLoading ? (
+            {isLoadingUsers ? (
               <tr>
                 <td
                   colSpan={columns.length}
@@ -217,7 +230,7 @@ export default function AdminUsersPage() {
                   Cargando...
                 </td>
               </tr>
-            ) : users.length === 0 ? (
+            ) : paginatedUsers?.data?.length === 0 ? (
               <tr>
                 <td
                   colSpan={columns.length}
@@ -252,16 +265,23 @@ export default function AdminUsersPage() {
 
       <div className="flex items-center justify-between">
         <div className="text-sm text-gray-600">
-          Página {meta?.currentPage ?? state.page} de {meta?.totalPages ?? 1} •{" "}
-          {meta?.totalItems ?? users.length} registros
+          Página {paginatedUsers?.meta?.currentPage ?? state.page} de{" "}
+          {paginatedUsers?.meta?.totalPages ?? 1} •{" "}
+          {paginatedUsers?.meta?.totalItems ?? paginatedUsers?.data?.length}{" "}
+          registros
         </div>
         <div className="flex items-center gap-2">
           <button
             className="rounded border px-3 py-1 disabled:opacity-50"
             onClick={() =>
-              setPage(Math.max(1, (meta?.currentPage ?? state.page) - 1))
+              setPage(
+                Math.max(
+                  1,
+                  (paginatedUsers?.meta?.currentPage ?? state.page) - 1,
+                ),
+              )
             }
-            disabled={(meta?.currentPage ?? state.page) <= 1}
+            disabled={(paginatedUsers?.meta?.currentPage ?? state.page) <= 1}
           >
             Anterior
           </button>
@@ -270,13 +290,14 @@ export default function AdminUsersPage() {
             onClick={() =>
               setPage(
                 Math.min(
-                  meta?.totalPages ?? 1,
-                  (meta?.currentPage ?? state.page) + 1,
+                  paginatedUsers?.meta?.totalPages ?? 1,
+                  (paginatedUsers?.meta?.currentPage ?? state.page) + 1,
                 ),
               )
             }
             disabled={
-              (meta?.currentPage ?? state.page) >= (meta?.totalPages ?? 1)
+              (paginatedUsers?.meta?.currentPage ?? state.page) >=
+              (paginatedUsers?.meta?.totalPages ?? 1)
             }
           >
             Siguiente

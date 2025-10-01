@@ -1,18 +1,20 @@
-import { useEffect, useState } from "react";
+import { useState, useMemo } from "react";
 import Input from "@/component/ui/Input";
 import Button from "@/component/ui/Button";
-import { categoryService } from "@/api/category-service";
+import { useCategoryApi } from "@/hooks/useCategoryApi.hook";
+import { useSubcategoryApi } from "@/hooks/useSubcategoryApi.hook";
 import type { Category } from "@/types/category/category.interface";
 import type { Subcategory } from "@/types/category/subcategory.interface";
 
 export default function AdminCategoriesPage() {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+  const { getCategories, createCategory, updateCategory, deleteCategory } =
+    useCategoryApi();
+  const { createSubcategory, updateSubcategory, deleteSubcategory } =
+    useSubcategoryApi();
+  console.log(getCategories.data);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
     null,
   );
-  const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const [newCategoryName, setNewCategoryName] = useState("");
   const [editingCategoryId, setEditingCategoryId] = useState<string | null>(
@@ -26,51 +28,33 @@ export default function AdminCategoriesPage() {
   >(null);
   const [editingSubcategoryName, setEditingSubcategoryName] = useState("");
 
-  async function loadCategories() {
-    setLoading(true);
-    setError(null);
-    try {
-      const { data } = await categoryService.getCategories();
-      setCategories(data.categories || []);
-    } catch (e) {
-      setError("No se pudieron cargar las categorías");
-    } finally {
-      setLoading(false);
-    }
-  }
+  // Get categories from React Query
+  const categories = getCategories?.data || [];
+  const isLoading =
+    getCategories.isLoading ||
+    createCategory.isPending ||
+    updateCategory.isPending ||
+    deleteCategory.isPending ||
+    createSubcategory.isPending ||
+    updateSubcategory.isPending ||
+    deleteSubcategory.isPending;
 
-  async function loadSubcategories(catId: string) {
-    setLoading(true);
-    setError(null);
-    try {
-      const { data } = await categoryService.getSubcategoriesByCategory(catId);
-      setSubcategories(data.subcategories || []);
-    } catch (e) {
-      setError("No se pudieron cargar las subcategorías");
-    } finally {
-      setLoading(false);
-    }
-  }
+  // Get selected category and its subcategories from the categories data
+  const selectedCategory = useMemo(() => {
+    return categories.find((cat) => cat.id === selectedCategoryId) || null;
+  }, [categories, selectedCategoryId]);
 
-  useEffect(() => {
-    loadCategories();
-  }, []);
+  const subcategories = selectedCategory?.subcategories || [];
 
   // Handlers: Categories
-  async function handleCreateCategory(e: React.FormEvent) {
+  function handleCreateCategory(e: React.FormEvent) {
     e.preventDefault();
     if (!newCategoryName.trim()) return;
-    setLoading(true);
-    setError(null);
-    try {
-      await categoryService.createCategory(newCategoryName.trim());
-      setNewCategoryName("");
-      await loadCategories();
-    } catch (e) {
-      setError("No se pudo crear la categoría");
-    } finally {
-      setLoading(false);
-    }
+    createCategory.mutate(newCategoryName.trim(), {
+      onSuccess: () => {
+        setNewCategoryName("");
+      },
+    });
   }
 
   function startEditCategory(category: Category) {
@@ -83,71 +67,45 @@ export default function AdminCategoriesPage() {
     setEditingCategoryName("");
   }
 
-  async function handleUpdateCategory(categoryId: string) {
+  function handleUpdateCategory(categoryId: string) {
     if (!editingCategoryName.trim()) return;
-    setLoading(true);
-    setError(null);
-    try {
-      await categoryService.updateCategory(
-        categoryId,
-        editingCategoryName.trim(),
-      );
-      await loadCategories();
-      // Update selectedCategory name if it's the one edited
-      if (selectedCategory?.id === categoryId) {
-        setSelectedCategory({
-          ...selectedCategory,
-          name: editingCategoryName.trim(),
-        });
-      }
-      cancelEditCategory();
-    } catch (e) {
-      setError("No se pudo actualizar la categoría");
-    } finally {
-      setLoading(false);
-    }
+    updateCategory.mutate(
+      { id: categoryId, payload: editingCategoryName.trim() },
+      {
+        onSuccess: () => {
+          cancelEditCategory();
+        },
+      },
+    );
   }
 
-  async function handleDeleteCategory(category: Category) {
+  function handleDeleteCategory(category: Category) {
     const confirmed = window.confirm(
       `¿Seguro que deseas eliminar la categoría "${category.name}"?\nEsto eliminará también todas sus subcategorías asociadas. Esta acción no se puede deshacer.`,
     );
     if (!confirmed) return;
-    setLoading(true);
-    setError(null);
-    try {
-      await categoryService.deleteCategory(category.id);
-      await loadCategories();
-      if (selectedCategory?.id === category.id) {
-        setSelectedCategory(null);
-        setSubcategories([]);
-      }
-    } catch (e) {
-      setError("No se pudo eliminar la categoría");
-    } finally {
-      setLoading(false);
-    }
+    deleteCategory.mutate(category.id, {
+      onSuccess: () => {
+        if (selectedCategoryId === category.id) {
+          setSelectedCategoryId(null);
+        }
+      },
+    });
   }
 
   // Handlers: Subcategories
-  async function handleCreateSubcategory(e: React.FormEvent) {
+  function handleCreateSubcategory(e: React.FormEvent) {
     e.preventDefault();
-    if (!selectedCategory) return;
+    if (!selectedCategoryId) return;
     if (!newSubcategoryName.trim()) return;
-    setLoading(true);
-    setError(null);
-    try {
-      await categoryService.createSubcategory(
-        newSubcategoryName.trim(),
-        selectedCategory.id,
-      );
-      setNewSubcategoryName("");
-      await loadSubcategories(selectedCategory.id);
-    } catch (e) {
-      setError("No se pudo crear la subcategoría");
-    } finally {
-      setLoading(false);
-    }
+    createSubcategory.mutate(
+      { categoryId: selectedCategoryId, name: newSubcategoryName.trim() },
+      {
+        onSuccess: () => {
+          setNewSubcategoryName("");
+        },
+      },
+    );
   }
 
   function startEditSubcategory(sub: Subcategory) {
@@ -160,51 +118,35 @@ export default function AdminCategoriesPage() {
     setEditingSubcategoryName("");
   }
 
-  async function handleUpdateSubcategory(subcategoryId: string) {
+  function handleUpdateSubcategory(subcategoryId: string) {
     if (!editingSubcategoryName.trim()) return;
-    setLoading(true);
-    setError(null);
-    try {
-      await categoryService.updateSubcategory(
-        subcategoryId,
-        editingSubcategoryName.trim(),
-      );
-      if (selectedCategory) await loadSubcategories(selectedCategory.id);
-      cancelEditSubcategory();
-    } catch (e) {
-      setError("No se pudo actualizar la subcategoría");
-    } finally {
-      setLoading(false);
-    }
+    updateSubcategory.mutate(
+      { id: subcategoryId, payload: editingSubcategoryName.trim() },
+      {
+        onSuccess: () => {
+          cancelEditSubcategory();
+        },
+      },
+    );
   }
 
-  async function handleDeleteSubcategory(sub: Subcategory) {
+  function handleDeleteSubcategory(sub: Subcategory) {
     const confirmed = window.confirm(
       `¿Seguro que deseas eliminar la subcategoría "${sub.name}"? Esta acción no se puede deshacer.`,
     );
     if (!confirmed) return;
-    setLoading(true);
-    setError(null);
-    try {
-      await categoryService.deleteSubcategory(sub.id);
-      if (selectedCategory) await loadSubcategories(selectedCategory.id);
-    } catch (e) {
-      setError("No se pudo eliminar la subcategoría");
-    } finally {
-      setLoading(false);
-    }
+    deleteSubcategory.mutate(sub.id);
   }
 
   function onSelectCategory(category: Category) {
-    setSelectedCategory(category);
-    loadSubcategories(category.id);
+    setSelectedCategoryId(category.id);
   }
 
   return (
     <div className="space-y-6 p-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-gray-800">Categorías</h1>
-        {loading && (
+        {isLoading && (
           <div className="flex items-center gap-2 text-sm text-gray-500">
             <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-blue-600"></div>
             <span>Procesando...</span>
@@ -212,9 +154,9 @@ export default function AdminCategoriesPage() {
         )}
       </div>
 
-      {error && (
+      {getCategories.isError && (
         <div className="rounded-md border border-red-300 bg-red-50 p-3 text-red-700">
-          {error}
+          Error al cargar las categorías
         </div>
       )}
 
@@ -250,9 +192,7 @@ export default function AdminCategoriesPage() {
                 <div
                   key={cat.id}
                   className={`flex items-center justify-between gap-2 py-3 ${
-                    selectedCategory?.id === cat.id
-                      ? "bg-primary text-white"
-                      : ""
+                    selectedCategoryId === cat.id ? "bg-primary text-white" : ""
                   }`}
                 >
                   <div className="flex-1">

@@ -15,24 +15,24 @@ export default function AuthOutletFooter({
     <div className="mb-2 flex flex-col text-sm">
       {signInLink && (
         <p className="flex items-center justify-between font-bold text-fourth">
-          ¿Ya tienes cuenta? <DLink to="/auth/sign-in" label="Inicia sesión" />
+          ¿Ya tienes cuenta? <DLink to="/auth/sign-in" label="Iniciar sesión" />
         </p>
       )}
       {signUpLink && (
         <p className="flex items-center justify-between font-bold text-fourth">
-          ¿No tienes cuenta? <DLink to="/auth/sign-up" label="Registrate" />
+          ¿No tienes cuenta? <DLink to="/auth/sign-up" label="Registrarse" />
         </p>
       )}
       {sendRecoverLink && (
         <p className="flex items-center justify-between font-bold text-fourth">
           ¿Olvidaste tu contraseña?{" "}
-          <DLink to="/auth/forgot-password" label="Verifica tu correo" />
+          <DLink to="/auth/forgot-password" label="Restablecer contraseña" />
         </p>
       )}
       {resetPasswordLink && (
         <p className="flex items-center justify-between font-bold text-fourth">
           ¿Tenes un codigo de verificación?{" "}
-          <DLink to="/auth/reset-password" label="Restablece contraseña" />
+          <DLink to="/auth/reset-password" label="Verificar codigo" />
         </p>
       )}
     </div>

@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
-import { AxiosError } from "axios";
-import { useAuth } from "@/hooks/useAuth.hook";
-import AuthOutletHeader from "@/component/ui/auth/AuthOutletHeader";
-import AuthOutletForm from "@/component/ui/auth/AuthOutletForm";
+import AuthOutletHeader from "@/component/ui/form/OutletHeader";
+import AuthOutletForm from "@/component/ui/form/OutletForm";
 import Input from "@/component/ui/Input";
 import AuthOutletFooter from "@/component/ui/auth/AuthOutletFooter";
 import Button from "@/component/ui/Button";
+import { useAuthApi } from "@/hooks/useAuthApi.hook";
 
 export default function ResetPasswordPage() {
   const [resetPasswordState, setResetPasswordState] = useState({
@@ -17,9 +16,8 @@ export default function ResetPasswordPage() {
     confirmPassword: "",
   });
   const navigate = useNavigate();
-  const { resetPassword } = useAuth();
-  const { isPending: isResettingPassword, mutateAsync: resetPasswordAsync } =
-    resetPassword;
+  const { resetPassword } = useAuthApi();
+  const { isPending: isResettingPassword, mutateAsync } = resetPassword;
 
   const handleInputs = (e: React.ChangeEvent<HTMLInputElement>) => {
     setResetPasswordState({
@@ -48,25 +46,12 @@ export default function ResetPasswordPage() {
       toast.error("La contraseña debe tener al menos 8 caracteres");
       return;
     }
-
-    try {
-      await resetPasswordAsync({
-        email: resetPasswordState.email,
-        resetCode: resetPasswordState.resetCode,
-        newPassword: resetPasswordState.newPassword,
-      });
-      toast.success("Restablecimiento de contraseña exitoso!");
-      navigate("/auth/sign-in", { state: { passwordReset: true } });
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        toast.error(
-          error?.response?.data?.message || "Failed to reset password",
-        );
-      } else {
-        toast.error("An unexpected error occurred");
-      }
-      console.error("Password reset error:", error);
-    }
+    await mutateAsync({
+      email: resetPasswordState.email,
+      resetCode: resetPasswordState.resetCode,
+      newPassword: resetPasswordState.newPassword,
+    });
+    navigate("/auth/sign-in", { state: { passwordReset: true } });
   };
 
   return (
@@ -77,7 +62,7 @@ export default function ResetPasswordPage() {
       ></AuthOutletHeader>
       <AuthOutletForm onSubmit={handleSubmit}>
         <Input
-          id="email"
+          id="reset-password-email"
           type="email"
           value={resetPasswordState.email}
           onChange={handleInputs}
@@ -87,7 +72,7 @@ export default function ResetPasswordPage() {
         />
 
         <Input
-          id="resetCode"
+          id="reset-password-resetCode"
           type="text"
           value={resetPasswordState.resetCode}
           onChange={handleInputs}
@@ -97,7 +82,7 @@ export default function ResetPasswordPage() {
         />
 
         <Input
-          id="newPassword"
+          id="reset-password-newPassword"
           type="password"
           value={resetPasswordState.newPassword}
           onChange={handleInputs}
@@ -107,7 +92,7 @@ export default function ResetPasswordPage() {
         />
 
         <Input
-          id="confirmPassword"
+          id="reset-password-confirmPassword"
           type="password"
           className="w-full py-5 pr-16"
           value={resetPasswordState.confirmPassword}

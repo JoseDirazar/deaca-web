@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import { useAuth } from "@/hooks/useAuth.hook";
+import { useAuthApi } from "@/hooks/useAuthApi.hook";
 
 interface Props {
   redirectTo?: string;
@@ -10,12 +10,13 @@ export default function SignOutButton({
   redirectTo = "/",
   label = "Cerrar sesión",
 }: Props) {
-  const { signOut } = useAuth();
+  const { signOut } = useAuthApi();
+  const { mutateAsync: signOutAsync, isPending: isSigningOut } = signOut;
   const navigate = useNavigate();
 
   const onClick = async () => {
     try {
-      await signOut.mutateAsync();
+      await signOutAsync();
       navigate(redirectTo, { replace: true });
     } catch (e) {
       // useAuth ya muestra toast de error
@@ -25,10 +26,10 @@ export default function SignOutButton({
   return (
     <button
       onClick={onClick}
-      disabled={signOut.isPending}
-      className="py-2 text-fourth"
+      disabled={isSigningOut}
+      className="py-2 font-bold text-fourth"
     >
-      {signOut.isPending ? "Cerrando..." : label}
+      {isSigningOut ? "Cerrando..." : label}
     </button>
   );
 }

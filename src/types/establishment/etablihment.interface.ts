@@ -6,22 +6,22 @@ import type { Review } from "../reviews/review.interface";
 import type { Image } from "../common/image.interface";
 
 export interface Establishment extends BaseEntity {
-    name: string;
-    address: string;
-    phone: string;
-    email: string;
-    website: string;
-    description: string;
-    avatar: string;
-    instagram: string;
-    facebook: string;
-    latitude: string;
-    longitude: string;
-    verified?: boolean;
-    isComplete?: boolean;
-    reviewsReceived?: Review[] | null;
-    categories: Category[]
-    subcategories: Subcategory[];
-    images?: Image[] | null;
-    user: User;
+  name: string;
+  address: string;
+  phone: string;
+  email: string;
+  website: string;
+  description: string;
+  avatar: string;
+  instagram: string;
+  facebook: string;
+  latitude: string;
+  longitude: string;
+  verified?: boolean;
+  isComplete?: boolean;
+  reviewsReceived?: Review[] | null;
+  categories: Category[] | Partial<Category>[];
+  subcategories: Subcategory[];
+  images?: Image[] | null;
+  user: User;
 }
