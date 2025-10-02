@@ -34,12 +34,8 @@ export const useEstablishmentApi = () => {
             queryClient.invalidateQueries({ queryKey: ["establishment", "me"] });
         },
         onError: (error) => {
-            if (error instanceof AxiosError) {
-                toast.error(error.response?.data.message)
-            } else {
-                toast.error("Error al crear el establecimiento")
-            }
-
+            if (error instanceof AxiosError) toast.error(error.response?.data.message)
+            else toast.error("Error al crear el establecimiento")
         }
     });
 
@@ -49,11 +45,8 @@ export const useEstablishmentApi = () => {
             queryClient.invalidateQueries({ queryKey: ["establishment", "me"] });
         },
         onError: (error) => {
-            if (error instanceof AxiosError) {
-                toast.error(error.response?.data.message)
-            } else {
-                toast.error("Error al actualizar el establecimiento")
-            }
+            if (error instanceof AxiosError) toast.error(error.response?.data.message)
+            else toast.error("Error al actualizar el establecimiento")
         }
     });
 
@@ -63,11 +56,8 @@ export const useEstablishmentApi = () => {
             queryClient.invalidateQueries({ queryKey: ["establishment", "me"] });
         },
         onError: (error) => {
-            if (error instanceof AxiosError) {
-                toast.error(error.response?.data.message)
-            } else {
-                toast.error("Error al subir la imagen")
-            }
+            if (error instanceof AxiosError) toast.error(error.response?.data.message)
+            else toast.error("Error al subir la imagen")
         }
     });
 
@@ -77,11 +67,20 @@ export const useEstablishmentApi = () => {
             queryClient.invalidateQueries({ queryKey: ["establishment", "me"] });
         },
         onError: (error) => {
-            if (error instanceof AxiosError) {
-                toast.error(error.response?.data.message)
-            } else {
-                toast.error("Error al subir las imágenes")
-            }
+            if (error instanceof AxiosError) toast.error(error.response?.data.message)
+            else toast.error("Error al subir las imágenes")
+        }
+    });
+
+    const deleteEstablishment = useMutation({
+        mutationFn: (id: string) => establishmentService.deleteMine(id).then(res => res.data.data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["my-establishments"] });
+            toast.success("Establecimiento eliminado correctamente");
+        },
+        onError: (error) => {
+            if (error instanceof AxiosError) toast.error(error.response?.data.message)
+            else toast.error("Error al eliminar el establecimiento")
         }
     });
 
@@ -92,6 +91,7 @@ export const useEstablishmentApi = () => {
         updateEstablishment,
         updateEstablishmentAvatar,
         updateEstablishmentImages,
-        createEstablishment
+        createEstablishment,
+        deleteEstablishment
     };
 };

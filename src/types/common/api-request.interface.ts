@@ -1,5 +1,3 @@
-import type { Category } from "../category/category.interface";
-import type { Subcategory } from "../category/subcategory.interface";
 import type { BaseEntity } from "./base.interface";
 import type { Roles } from "./roles.interface";
 
@@ -107,6 +105,6 @@ export interface EditEstablishmentDto extends BaseEntity {
     facebook?: string;
     latitude?: string;
     longitude?: string;
-    categories?: Category[];
-    subcategories?: Subcategory[];
+    categories?: { id: string }[];
+    subcategories?: { id: string }[];
 }

@@ -7,21 +7,29 @@ import {
 } from "react";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
+import ImageUpload from "../ui/ImageUpload";
 import type { Subcategory } from "@/types/category/subcategory.interface";
 import type { Establishment } from "@/types/establishment/etablihment.interface";
 import { useEstablishmentApi } from "@/hooks/useEstablishmentApi";
 import type { CreateEstablishmentDto } from "@/types/common/api-request.interface";
 import { useCategoryApi } from "@/hooks/useCategoryApi.hook";
+import { generateImageUrl } from "@/lib/generate-image-url";
 
 interface UserEstablishmentFormProps {
   setShowModal: Dispatch<SetStateAction<boolean>>;
+  editingEstablishment?: Establishment | null;
+  onEditComplete?: () => void;
 }
 
 export default function UserEstablishmentForm({
   setShowModal,
+  editingEstablishment,
+  onEditComplete,
 }: UserEstablishmentFormProps) {
+  const isEditMode = Boolean(editingEstablishment);
   const {
     createEstablishment,
+    updateEstablishment,
     updateEstablishmentAvatar,
     updateEstablishmentImages,
   } = useEstablishmentApi();
@@ -63,6 +71,7 @@ export default function UserEstablishmentForm({
 
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [galleryFiles, setGalleryFiles] = useState<FileList | null>(null);
+  const [existingImages, setExistingImages] = useState<string[]>([]);
 
   useEffect(() => {
     const subs = categories
@@ -73,6 +82,34 @@ export default function UserEstablishmentForm({
       prev.filter((id) => subs?.some((s) => s.id === id)),
     );
   }, [selectedCategoryIds, categories]);
+
+  // Load editing establishment data
+  useEffect(() => {
+    if (editingEstablishment) {
+      setForm({
+        name: editingEstablishment.name || "",
+        address: editingEstablishment.address || "",
+        phone: editingEstablishment.phone || "",
+        email: editingEstablishment.email || "",
+        website: editingEstablishment.website || "",
+        description: editingEstablishment.description || "",
+        avatar: editingEstablishment.avatar || "",
+        instagram: editingEstablishment.instagram || "",
+        facebook: editingEstablishment.facebook || "",
+        latitude: editingEstablishment.latitude || "",
+        longitude: editingEstablishment.longitude || "",
+      });
+      setSelectedCategoryIds(
+        editingEstablishment.categories?.map((c) => c.id).filter((id): id is string => Boolean(id)) || []
+      );
+      setSelectedSubcategoryIds(
+        editingEstablishment.subcategories?.map((s) => s.id).filter((id): id is string => Boolean(id)) || []
+      );
+      setExistingImages(
+        editingEstablishment.images?.map((img) => img.fileName) || []
+      );
+    }
+  }, [editingEstablishment]);
 
   const resetForm = () => {
     setForm({
@@ -142,13 +179,67 @@ export default function UserEstablishmentForm({
     });
   }
 
+  async function handleUpdate() {
+    if (!editingEstablishment || !canSubmit) return;
+
+    const payload = {
+      id: editingEstablishment.id,
+      createdAt: editingEstablishment.createdAt,
+      updatedAt: editingEstablishment.updatedAt,
+      name: form.name,
+      categories: selectedCategoryIds.map((id) => ({ id })),
+      subcategories: selectedSubcategoryIds.map((id) => ({ id })),
+      address: form.address,
+      phone: form.phone,
+      email: form.email,
+      website: form.website,
+      description: form.description,
+      instagram: form.instagram,
+      facebook: form.facebook,
+      latitude: form.latitude,
+      longitude: form.longitude,
+    };
+
+    try {
+      await updateEstablishment.mutateAsync(payload);
+      
+      // Upload new avatar if provided
+      if (avatarFile) {
+        const formData = new FormData();
+        formData.append("file", avatarFile);
+        await updateEstablishmentAvatar.mutateAsync({
+          id: editingEstablishment.id,
+          formData,
+        });
+      }
+      
+      // Upload new gallery images if provided
+      if (galleryFiles && galleryFiles.length > 0) {
+        const formData = new FormData();
+        for (const f of Array.from(galleryFiles)) {
+          formData.append("files", f);
+        }
+        await updateEstablishmentImages.mutateAsync({
+          id: editingEstablishment.id,
+          formData,
+        });
+      }
+      
+      resetForm();
+      onEditComplete?.();
+      setShowModal(false);
+    } catch (error) {
+      console.error("Error updating establishment:", error);
+    }
+  }
+
   const canSubmit = useMemo(() => {
-    // Dev minimal: name + at least 1 category + avatar selected
+    // Dev minimal: name + at least 1 category + avatar (file or existing)
     const nameOk = (form.name?.trim() || "").length > 0;
     const hasCategory = selectedCategoryIds.length >= 1;
-    const hasAvatar = Boolean(avatarFile);
+    const hasAvatar = Boolean(avatarFile) || (isEditMode && Boolean(form.avatar));
     return nameOk && hasCategory && hasAvatar;
-  }, [form.name, selectedCategoryIds, avatarFile]);
+  }, [form.name, selectedCategoryIds, avatarFile, isEditMode, form.avatar]);
   console.log(galleryFiles);
 
   return (
@@ -277,21 +368,49 @@ export default function UserEstablishmentForm({
             <label className="mb-1 block text-sm font-medium">
               Avatar del establecimiento
             </label>
-            <input
-              type="file"
+            {isEditMode && form.avatar && !avatarFile && (
+              <div className="mb-2">
+                <img
+                  src={generateImageUrl("establishment", form.avatar)}
+                  alt="Avatar actual"
+                  className="h-24 w-24 rounded object-cover"
+                />
+                <p className="text-xs text-gray-500 mt-1">Avatar actual</p>
+              </div>
+            )}
+            <ImageUpload
+              onChange={(files) => setAvatarFile(files?.[0] ?? null)}
               accept="image/*"
-              onChange={(e) => setAvatarFile(e.target.files?.[0] ?? null)}
             />
           </div>
           <div>
             <label className="mb-1 block text-sm font-medium">
-              Galería (mín. 5 imágenes)
+              Galería {isEditMode ? "" : "(mín. 5 imágenes)"}
             </label>
-            <input
+            {isEditMode && existingImages.length > 0 && (
+              <div className="mb-2">
+                <p className="text-xs text-gray-500 mb-2">Imágenes actuales:</p>
+                <div className="flex flex-wrap gap-2">
+                  {existingImages.map((img) => (
+                    <div key={img} className="relative">
+                      <img
+                        src={generateImageUrl("establishment", img)}
+                        alt="Imagen de galería"
+                        className="h-20 w-20 rounded object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-blue-600 mt-2">
+                  Para agregar más imágenes, selecciona nuevos archivos abajo
+                </p>
+              </div>
+            )}
+            <ImageUpload
               multiple
-              type="file"
+              onChange={(files) => setGalleryFiles(files)}
               accept="image/*"
-              onChange={(e) => setGalleryFiles(e.target.files)}
+              maxFiles={10}
             />
           </div>
         </div>
@@ -303,9 +422,17 @@ export default function UserEstablishmentForm({
 
         <div className="flex items-center gap-3">
           <Button
-            label={isLoading ? "Creando..." : "Crear establecimiento"}
+            label={
+              isLoading
+                ? isEditMode
+                  ? "Actualizando..."
+                  : "Creando..."
+                : isEditMode
+                  ? "Actualizar establecimiento"
+                  : "Crear establecimiento"
+            }
             disabled={!canSubmit || isLoading}
-            onClick={handleCreate}
+            onClick={isEditMode ? handleUpdate : handleCreate}
           />
         </div>
 
