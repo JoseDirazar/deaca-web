@@ -17,7 +17,7 @@ export const useEstablishmentApi = () => {
     const getEstablishments = (queryParams: string, page: number, limit: number, sortBy: string, sortOrder: string) => {
         return useQuery({
             queryKey: ["establishments", page, limit, sortBy, sortOrder],
-            queryFn: () => establishmentService.getEstablishments(queryParams).then(res => res?.data?.data || null),
+            queryFn: () => establishmentService.getEstablishments(queryParams).then(res => res?.data || null),
         });
     }
 
@@ -32,6 +32,7 @@ export const useEstablishmentApi = () => {
         mutationFn: (data: CreateEstablishmentDto) => establishmentService.createMine(data).then(res => res?.data?.data || null),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["establishment", "me"] });
+            toast.success("Establecimiento creado");
         },
         onError: (error) => {
             if (error instanceof AxiosError) toast.error(error.response?.data.message)
@@ -43,6 +44,7 @@ export const useEstablishmentApi = () => {
         mutationFn: (data: EditEstablishmentDto) => establishmentService.updateMine(data.id!, data).then(res => res?.data?.data || null),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["establishment", "me"] });
+            toast.success("Establecimiento actualizado");
         },
         onError: (error) => {
             if (error instanceof AxiosError) toast.error(error.response?.data.message)

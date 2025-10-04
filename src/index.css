@@ -1,10 +1,14 @@
 @import "tailwindcss";
 
-::root {
+/* RESET */
+:root {
   margin: 0;
   padding: 0;
 }
 
+/* ====================================================
+   🎨 COLORES Y FUENTES (para usar en Tailwind)
+==================================================== */
 @theme {
   --breakpoint-xs: 30rem;
   --color-primary: #a3b18a;
@@ -12,35 +16,66 @@
   --color-third: #6c634c;
   --color-fourth: #bd612a;
   --color-fifth: #eceae5;
-  --font-nueva-bold: "nueva-std-bold", sans-serif;
-  --font-nueva-bold-cond: "nueva-std-bold-cond", sans-serif;
-  --font-century-gothic: "century-gothic", sans-serif;
-  --font-century-gothic-bold: "century-gothic-bold", sans-serif;
+
+  --font-nueva: "Nueva Std", sans-serif;
+  --font-century-gothic: "Century Gothic", sans-serif;
+}
+
+/* ====================================================
+   🔠 NUEVA STD
+==================================================== */
+@font-face {
+  font-family: "Nueva Std";
+  src: url("/src/assets/fonts/nueva-std/NuevaStd-Light.otf") format("opentype");
+  font-weight: 300;
+  font-style: normal;
 }
 
 @font-face {
-  font-family: "nueva-std-bold";
-  src: url("./assets/fonts/nueva-std/NuevaStd-Bold.otf") format("truetype");
-  font-weight: bold;
+  font-family: "Nueva Std";
+  src: url("/src/assets/fonts/nueva-std/NuevaStd-Regular.otf")
+    format("opentype");
+  font-weight: 400;
   font-style: normal;
 }
+
 @font-face {
-  font-family: "nueva-std-bold-cond";
-  src: url("./assets/fonts/nueva-std/NuevaStd-BoldCond.otf") format("truetype");
-  font-weight: bolder;
+  font-family: "Nueva Std";
+  src: url("/src/assets/fonts/nueva-std/NuevaStd-Italic.otf") format("opentype");
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Nueva Std";
+  src: url("/src/assets/fonts/nueva-std/NuevaStd-Bold.otf") format("opentype");
+  font-weight: 700;
   font-style: normal;
 }
+
 @font-face {
-  font-family: "century-gothic-bold";
-  src: url("./assets/fonts/century-gothic/centurygothic_bold.ttf")
+  font-family: "Nueva Std";
+  src: url("/src/assets/fonts/nueva-std/NuevaStd-BoldCond.otf")
+    format("opentype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* ====================================================
+   🔠 CENTURY GOTHIC
+==================================================== */
+@font-face {
+  font-family: "Century Gothic";
+  src: url("/src/assets/fonts/century-gothic/centurygothic.ttf")
     format("truetype");
-  font-weight: bold;
+  font-weight: 400;
   font-style: normal;
 }
 
 @font-face {
-  font-family: "century-gothic";
-  src: url("./assets/fonts/century-gothic/centurygothic.ttf") format("truetype");
-  font-weight: normal;
+  font-family: "Century Gothic";
+  src: url("/src/assets/fonts/century-gothic/centurygothic_bold.ttf")
+    format("truetype");
+  font-weight: 700;
   font-style: normal;
 }

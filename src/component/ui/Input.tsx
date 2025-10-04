@@ -29,7 +29,7 @@ export default function Input({
   const isPassword =
     id === "password" || id === "newPassword" || id === "confirmPassword";
   return (
-    <div className="relative w-full md:min-w-md">
+    <div className="relative w-full">
       {/* Input con peer */}
       <input
         type={showPassword ? "text" : type}

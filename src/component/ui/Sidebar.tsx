@@ -14,8 +14,8 @@ export default function Sidebar({
   const navigate = useNavigate();
   return (
     <div className="flex flex-col border-r bg-white">
-      <div className="flex h-16 items-center border-b px-6">
-        <h2 className="text font-nueva-bold text-2xl font-semibold text-primary select-none">
+      <div className="flex items-center border-b p-6">
+        <h2 className="text text-center font-century-gothic-bold text-3xl font-semibold text-primary select-none">
           {title}
         </h2>
       </div>

@@ -49,7 +49,7 @@ export default function ImageUpload({
         accept={accept}
         multiple={multiple}
         onChange={handleFileChange}
-        className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+        className="block w-full text-sm font-extrabold text-gray-400 file:mr-4 file:rounded file:border-0 file:bg-fourth/50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-fourth"
       />
       {previews.length > 0 && (
         <div className="mt-3 flex flex-wrap gap-2">
@@ -58,20 +58,18 @@ export default function ImageUpload({
               key={idx}
               src={preview}
               alt={`Preview ${idx + 1}`}
-              className="h-20 w-20 rounded object-cover border border-gray-200"
+              className="h-20 w-20 rounded border border-gray-200 object-cover"
             />
           ))}
         </div>
       )}
       {fileCount > 0 && (
-        <p className="mt-2 text-xs text-green-600">
+        <p className="mt-2 text-xs text-primary">
           {fileCount} archivo(s) seleccionado(s)
         </p>
       )}
       {multiple && maxFiles && (
-        <p className="mt-1 text-xs text-gray-500">
-          Máximo {maxFiles} archivos
-        </p>
+        <p className="mt-1 text-xs text-gray-500">Máximo {maxFiles} archivos</p>
       )}
     </div>
   );

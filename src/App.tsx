@@ -16,12 +16,16 @@ import AdminCategoriesPage from "./pages/admin/AdminCategoriesPage";
 import UserDashboardLayout from "./layout/UserDashboardLayout";
 import UserProfilePage from "./pages/user/profile/UserProfilePage";
 import UserEstablishmentPage from "./pages/user/establishment/UserEstablishmentPage";
+import EstablishmentDetailPage from "./pages/establishment/EstablishmentDetailPage";
+import EditEstablishmentPage from "./pages/user/establishment/EditEstablishmentPage";
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<RootLayout />}>
         <Route index element={<LandingPage />} />
+        <Route path="establishment/:id" element={<EstablishmentDetailPage />} />
+
         <Route path="auth/*" element={<AuthLayout />}>
           <Route path="sign-in" element={<SigninPage />} />
           <Route path="sign-up" element={<SignupPage />} />
@@ -38,7 +42,8 @@ function App() {
       </Route>
       <Route path="/user/*" element={<UserDashboardLayout />}>
         <Route index element={<UserProfilePage />} />
-        <Route path="establishments" element={<UserEstablishmentPage />} />
+        <Route path="establishment" element={<UserEstablishmentPage />} />
+        <Route path="establishment/:id" element={<EditEstablishmentPage />} />
       </Route>
     </Routes>
   );

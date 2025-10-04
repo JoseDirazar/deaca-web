@@ -1,10 +1,4 @@
-import {
-  useEffect,
-  useMemo,
-  useState,
-  type Dispatch,
-  type SetStateAction,
-} from "react";
+import { useEffect, useMemo, useState } from "react";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
 import ImageUpload from "../ui/ImageUpload";
@@ -14,19 +8,18 @@ import { useEstablishmentApi } from "@/hooks/useEstablishmentApi";
 import type { CreateEstablishmentDto } from "@/types/common/api-request.interface";
 import { useCategoryApi } from "@/hooks/useCategoryApi.hook";
 import { generateImageUrl } from "@/lib/generate-image-url";
+import { useLocation, useNavigate } from "react-router";
 
 interface UserEstablishmentFormProps {
-  setShowModal: Dispatch<SetStateAction<boolean>>;
-  editingEstablishment?: Establishment | null;
-  onEditComplete?: () => void;
+  establishment?: Establishment | null;
 }
 
 export default function UserEstablishmentForm({
-  setShowModal,
-  editingEstablishment,
-  onEditComplete,
+  establishment,
 }: UserEstablishmentFormProps) {
-  const isEditMode = Boolean(editingEstablishment);
+  const isEditMode = Boolean(establishment);
+  const navigate = useNavigate();
+  const from = useLocation().state?.from ?? "/user/establishment";
   const {
     createEstablishment,
     updateEstablishment,
@@ -54,7 +47,8 @@ export default function UserEstablishmentForm({
   const [selectedSubcategoryIds, setSelectedSubcategoryIds] = useState<
     string[]
   >([]);
-
+  const [currentCategoryId, setCurrentCategoryId] = useState<string>("");
+  const [currentSubcategoryId, setCurrentSubcategoryId] = useState<string>("");
   const [form, setForm] = useState<Partial<Establishment>>({
     name: "",
     address: "",
@@ -85,31 +79,33 @@ export default function UserEstablishmentForm({
 
   // Load editing establishment data
   useEffect(() => {
-    if (editingEstablishment) {
+    if (establishment) {
       setForm({
-        name: editingEstablishment.name || "",
-        address: editingEstablishment.address || "",
-        phone: editingEstablishment.phone || "",
-        email: editingEstablishment.email || "",
-        website: editingEstablishment.website || "",
-        description: editingEstablishment.description || "",
-        avatar: editingEstablishment.avatar || "",
-        instagram: editingEstablishment.instagram || "",
-        facebook: editingEstablishment.facebook || "",
-        latitude: editingEstablishment.latitude || "",
-        longitude: editingEstablishment.longitude || "",
+        name: establishment.name || "",
+        address: establishment.address || "",
+        phone: establishment.phone || "",
+        email: establishment.email || "",
+        website: establishment.website || "",
+        description: establishment.description || "",
+        avatar: establishment.avatar || "",
+        instagram: establishment.instagram || "",
+        facebook: establishment.facebook || "",
+        latitude: establishment.latitude || "",
+        longitude: establishment.longitude || "",
       });
       setSelectedCategoryIds(
-        editingEstablishment.categories?.map((c) => c.id).filter((id): id is string => Boolean(id)) || []
+        establishment.categories
+          ?.map((c) => c.id)
+          .filter((id): id is string => Boolean(id)) || [],
       );
       setSelectedSubcategoryIds(
-        editingEstablishment.subcategories?.map((s) => s.id).filter((id): id is string => Boolean(id)) || []
+        establishment.subcategories
+          ?.map((s) => s.id)
+          .filter((id): id is string => Boolean(id)) || [],
       );
-      setExistingImages(
-        editingEstablishment.images?.map((img) => img.fileName) || []
-      );
+      setExistingImages(establishment.images?.map((img) => img.fileName) || []);
     }
-  }, [editingEstablishment]);
+  }, [establishment]);
 
   const resetForm = () => {
     setForm({
@@ -174,18 +170,18 @@ export default function UserEstablishmentForm({
           });
         }
         resetForm();
-        setShowModal(false);
+        navigate(from);
       },
     });
   }
 
   async function handleUpdate() {
-    if (!editingEstablishment || !canSubmit) return;
+    if (!establishment || !canSubmit) return;
 
     const payload = {
-      id: editingEstablishment.id,
-      createdAt: editingEstablishment.createdAt,
-      updatedAt: editingEstablishment.updatedAt,
+      id: establishment.id,
+      createdAt: establishment.createdAt,
+      updatedAt: establishment.updatedAt,
       name: form.name,
       categories: selectedCategoryIds.map((id) => ({ id })),
       subcategories: selectedSubcategoryIds.map((id) => ({ id })),
@@ -202,17 +198,17 @@ export default function UserEstablishmentForm({
 
     try {
       await updateEstablishment.mutateAsync(payload);
-      
+
       // Upload new avatar if provided
       if (avatarFile) {
         const formData = new FormData();
         formData.append("file", avatarFile);
         await updateEstablishmentAvatar.mutateAsync({
-          id: editingEstablishment.id,
+          id: establishment.id,
           formData,
         });
       }
-      
+
       // Upload new gallery images if provided
       if (galleryFiles && galleryFiles.length > 0) {
         const formData = new FormData();
@@ -220,31 +216,33 @@ export default function UserEstablishmentForm({
           formData.append("files", f);
         }
         await updateEstablishmentImages.mutateAsync({
-          id: editingEstablishment.id,
+          id: establishment.id,
           formData,
         });
       }
-      
+      navigate(from);
       resetForm();
-      onEditComplete?.();
-      setShowModal(false);
     } catch (error) {
       console.error("Error updating establishment:", error);
     }
   }
-
+  console.log(from);
   const canSubmit = useMemo(() => {
     // Dev minimal: name + at least 1 category + avatar (file or existing)
     const nameOk = (form.name?.trim() || "").length > 0;
     const hasCategory = selectedCategoryIds.length >= 1;
-    const hasAvatar = Boolean(avatarFile) || (isEditMode && Boolean(form.avatar));
+    const hasAvatar =
+      Boolean(avatarFile) || (isEditMode && Boolean(form.avatar));
     return nameOk && hasCategory && hasAvatar;
   }, [form.name, selectedCategoryIds, avatarFile, isEditMode, form.avatar]);
   console.log(galleryFiles);
 
   return (
-    <div className="bg-green-200 md:col-span-2">
-      <div className="space-y-4 rounded-lg border border-gray-200 bg-white p-4">
+    <div className="md:col-span-2">
+      <p className="mb-6 text-2xl font-bold text-primary">
+        {isEditMode ? "Editar establecimiento" : "Nuevo establecimiento"}
+      </p>
+      <div className="space-y-4 rounded-lg">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <Input
             id="name"
@@ -320,52 +318,145 @@ export default function UserEstablishmentForm({
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
-            <label className="mb-1 block text-sm font-medium">
+            <label className="mb-1 block text-sm font-extrabold text-primary">
               Categorías (mín. 1)
             </label>
-            <select
-              multiple
-              className="w-full rounded-md border border-gray-300 p-2"
-              value={selectedCategoryIds}
-              onChange={(e) =>
-                setSelectedCategoryIds(
-                  Array.from(e.target.selectedOptions).map((o) => o.value),
-                )
-              }
-            >
-              {categories?.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
+            <div className="flex gap-2">
+              <select
+                className="flex-1 rounded-md border border-primary p-2 text-primary"
+                value={currentCategoryId}
+                onChange={(e) => setCurrentCategoryId(e.target.value)}
+              >
+                <option value="">Seleccionar categoría...</option>
+                {categories
+                  ?.filter((c) => !selectedCategoryIds.includes(c.id))
+                  .map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+              </select>
+              <button
+                type="button"
+                onClick={() => {
+                  if (
+                    currentCategoryId &&
+                    !selectedCategoryIds.includes(currentCategoryId)
+                  ) {
+                    setSelectedCategoryIds([
+                      ...selectedCategoryIds,
+                      currentCategoryId,
+                    ]);
+                    setCurrentCategoryId("");
+                  }
+                }}
+                disabled={!currentCategoryId}
+                className="rounded-md bg-primary/70 px-4 py-2 font-extrabold text-white hover:bg-primary disabled:cursor-not-allowed disabled:bg-gray-300"
+              >
+                Agregar
+              </button>
+            </div>
+            {selectedCategoryIds.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-2">
+                {selectedCategoryIds.map((catId) => {
+                  const category = categories?.find((c) => c.id === catId);
+                  return (
+                    <div
+                      key={catId}
+                      className="flex items-center gap-2 rounded-full bg-fourth px-3 py-1 text-sm font-extrabold text-white"
+                    >
+                      <span>{category?.name}</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedCategoryIds(
+                            selectedCategoryIds.filter((id) => id !== catId),
+                          );
+                        }}
+                        className="hover:text-black"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium">
+            <label className="mb-1 block text-sm font-extrabold text-primary">
               Subcategorías (mín. 1)
             </label>
-            <select
-              multiple
-              className="w-full rounded-md border border-gray-300 p-2"
-              value={selectedSubcategoryIds}
-              onChange={(e) =>
-                setSelectedSubcategoryIds(
-                  Array.from(e.target.selectedOptions).map((o) => o.value),
-                )
-              }
-            >
-              {availableSubcategories.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.name}
-                </option>
-              ))}
-            </select>
+            <div className="flex gap-2">
+              <select
+                className="flex-1 rounded-md border border-primary p-2 text-primary"
+                value={currentSubcategoryId}
+                onChange={(e) => setCurrentSubcategoryId(e.target.value)}
+                disabled={availableSubcategories.length === 0}
+              >
+                <option value="">Seleccionar subcategoría...</option>
+                {availableSubcategories
+                  .filter((s) => !selectedSubcategoryIds.includes(s.id))
+                  .map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.name}
+                    </option>
+                  ))}
+              </select>
+              <button
+                type="button"
+                onClick={() => {
+                  if (
+                    currentSubcategoryId &&
+                    !selectedSubcategoryIds.includes(currentSubcategoryId)
+                  ) {
+                    setSelectedSubcategoryIds([
+                      ...selectedSubcategoryIds,
+                      currentSubcategoryId,
+                    ]);
+                    setCurrentSubcategoryId("");
+                  }
+                }}
+                disabled={!currentSubcategoryId}
+                className="rounded-md bg-primary/70 px-4 py-2 font-extrabold text-white hover:bg-primary disabled:cursor-not-allowed disabled:bg-gray-300"
+              >
+                Agregar
+              </button>
+            </div>
+            {selectedSubcategoryIds.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-2">
+                {selectedSubcategoryIds.map((subId) => {
+                  const subcategory = availableSubcategories.find(
+                    (s) => s.id === subId,
+                  );
+                  return (
+                    <div
+                      key={subId}
+                      className="flex items-center gap-2 rounded-full bg-fourth px-3 py-1 text-sm font-extrabold text-white"
+                    >
+                      <span>{subcategory?.name}</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedSubcategoryIds(
+                            selectedSubcategoryIds.filter((id) => id !== subId),
+                          );
+                        }}
+                        className="font-bold text-white hover:text-black"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
-            <label className="mb-1 block text-sm font-medium">
+            <label className="mb-1 block text-sm font-extrabold text-primary">
               Avatar del establecimiento
             </label>
             {isEditMode && form.avatar && !avatarFile && (
@@ -375,7 +466,7 @@ export default function UserEstablishmentForm({
                   alt="Avatar actual"
                   className="h-24 w-24 rounded object-cover"
                 />
-                <p className="text-xs text-gray-500 mt-1">Avatar actual</p>
+                <p className="mt-1 text-xs text-gray-500">Avatar actual</p>
               </div>
             )}
             <ImageUpload
@@ -384,12 +475,12 @@ export default function UserEstablishmentForm({
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium">
+            <label className="mb-1 block text-sm font-extrabold text-primary">
               Galería {isEditMode ? "" : "(mín. 5 imágenes)"}
             </label>
             {isEditMode && existingImages.length > 0 && (
               <div className="mb-2">
-                <p className="text-xs text-gray-500 mb-2">Imágenes actuales:</p>
+                <p className="mb-2 text-xs text-gray-500">Imágenes actuales:</p>
                 <div className="flex flex-wrap gap-2">
                   {existingImages.map((img) => (
                     <div key={img} className="relative">
@@ -401,7 +492,7 @@ export default function UserEstablishmentForm({
                     </div>
                   ))}
                 </div>
-                <p className="text-xs text-blue-600 mt-2">
+                <p className="mt-2 text-xs text-blue-600">
                   Para agregar más imágenes, selecciona nuevos archivos abajo
                 </p>
               </div>
@@ -420,7 +511,12 @@ export default function UserEstablishmentForm({
           1 subcategoría.
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex w-full items-center justify-between gap-3">
+          <Button
+            label="Cancelar"
+            type="button"
+            onClick={() => navigate(from)}
+          />
           <Button
             label={
               isLoading
@@ -433,14 +529,6 @@ export default function UserEstablishmentForm({
             }
             disabled={!canSubmit || isLoading}
             onClick={isEditMode ? handleUpdate : handleCreate}
-          />
-        </div>
-
-        <div>
-          <Button
-            label="Cancelar"
-            type="button"
-            onClick={() => setShowModal(false)}
           />
         </div>
       </div>

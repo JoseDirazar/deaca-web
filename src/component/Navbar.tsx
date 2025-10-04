@@ -16,12 +16,9 @@ export default function Navbar() {
   return (
     <nav className="bg-fifth shadow-lg">
       <h1 className="hidden">deacá guia de Olavarría</h1>
-      <div className="container mx-auto px-4 py-3">
-        <div className="flex items-center">
-          <Link
-            to="/"
-            className="-mt-1 flex items-center justify-center text-2xl"
-          >
+      <div className="px-4 py-3">
+        <div className="flex w-full items-center justify-between">
+          <Link to="/" className="-mt-1 flex items-center justify-center">
             <img
               src="/logos/logo-horizontal-a-color.png"
               alt="logo"
@@ -30,7 +27,7 @@ export default function Navbar() {
               className=""
             />{" "}
           </Link>
-          <div className="hidden w-full items-center gap-4 p-4 font-century-gothic-bold text-primary xs:flex">
+          <div className="ml-4 hidden w-full gap-6 p-4 text-center text-xl text-primary xs:flex">
             {navLinks.map((link) => (
               <Link
                 className={
@@ -70,7 +67,7 @@ export default function Navbar() {
                     </button>
                     <button
                       className="py-2"
-                      onClick={() => navigate("/user/establishments")}
+                      onClick={() => navigate("/user/establishment")}
                     >
                       Mis emprendimientos
                     </button>

@@ -11,6 +11,6 @@ export const userDashboardRoutes: NavbarRoutes = [
     {
         label: "Establecimientos",
         icon: IoBusiness,
-        href: "/user/establishments",
+        href: "/user/establishment",
     },
 ]

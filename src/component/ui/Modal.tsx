@@ -15,12 +15,12 @@ export default function Modal({ children, setIsOpen }: ModalProps) {
         onClick={() => setIsOpen(false)}
       />
       <div
-        className="relative z-50 w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-lg bg-white p-6 shadow-lg"
+        className="relative z-50 max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-lg bg-fifth p-8 shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="absolute top-2 right-2">
+        <div className="absolute top-1 right-1">
           <button onClick={() => setIsOpen(false)}>
-            <IoCloseCircle className="h-6 w-6" />
+            <IoCloseCircle className="h-8 w-8 text-fourth" />
           </button>
         </div>
         {children}

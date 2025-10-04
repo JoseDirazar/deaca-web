@@ -1,43 +1,32 @@
-import { useState } from "react";
-import UserEstablishmentForm from "@/component/user/UserEstablishmentForm";
+import Button from "@/component/ui/Button";
 import UserEstablishmentsList from "@/component/user/UserEtablishmentsList";
-import Modal from "@/component/ui/Modal";
 import { useEstablishmentApi } from "@/hooks/useEstablishmentApi";
-import type { Establishment } from "@/types/establishment/etablihment.interface";
+import { FaPlus } from "react-icons/fa6";
+import { useNavigate } from "react-router";
 
 export default function UserEstablishmentPage() {
+  const navigate = useNavigate();
   const { data: myEstablishments, isPending: isLoadingMine } =
     useEstablishmentApi().getMyEstablishments();
 
-  const [showModal, setShowModal] = useState(false);
-  const [editingEstablishment, setEditingEstablishment] = useState<Establishment | null>(null);
-  
-  console.log(myEstablishments);
-  
   return (
-    <div className="mx-auto max-w-6xl space-y-6 p-4">
+    <div className="container w-full">
+      <div className="p-3">
+        <div className="mt-3 flex items-center justify-between py-3">
+          <h2 className="text-3xl font-extrabold text-primary">
+            Mis establecimientos
+          </h2>
+          <Button
+            label="Nuevo establecimiento"
+            onClick={() => navigate("/user/establishment/new")}
+            icon={<FaPlus />}
+          />
+        </div>
+      </div>
       <UserEstablishmentsList
-        setShowModal={setShowModal}
         isLoadingMine={isLoadingMine}
         myEstablishments={myEstablishments}
-        onEdit={(establishment) => {
-          setEditingEstablishment(establishment);
-          setShowModal(true);
-        }}
       />
-
-      {showModal && (
-        <Modal setIsOpen={(open) => {
-          setShowModal(open);
-          if (!open) setEditingEstablishment(null);
-        }}>
-          <UserEstablishmentForm 
-            setShowModal={setShowModal} 
-            editingEstablishment={editingEstablishment}
-            onEditComplete={() => setEditingEstablishment(null)}
-          />
-        </Modal>
-      )}
     </div>
   );
 }
