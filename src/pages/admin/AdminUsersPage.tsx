@@ -20,20 +20,19 @@ import { useUserApi } from "@/hooks/useUserApi.hook";
 export default function AdminUsersPage() {
   const { state, queryString, setPage, setLimit, setSearch, setSorting } =
     useUsersFilters();
-  const { getUsers } = useUserApi();
+  const { useGetUsers } = useUserApi();
   const {
     data: paginatedUsers,
     isPending: isLoadingUsers,
     isError: isGetUsersError,
     error: getUsersError,
-  } = getUsers(
+  } = useGetUsers(
     queryString,
     state.page,
     state.limit,
     state.sortBy ?? "createdAt",
     state.sortOrder ?? "DESC",
   );
-  console.log(paginatedUsers);
 
   const columns = useMemo<ColumnDef<User>[]>(
     () => [

@@ -3,27 +3,34 @@ import GoogleMaps from "@/component/GoogleMaps";
 import Button from "@/component/ui/Button";
 import { useUserStore } from "@/context/useUserStore";
 import { useEstablishmentApi } from "@/hooks/useEstablishmentApi";
+import { useReviewsApi } from "@/hooks/useReviewsApi.hook";
 import { generateImageUrl } from "@/lib/generate-image-url";
 import type { Image } from "@/types/common/image.interface";
-import type { Establishment } from "@/types/establishment/etablihment.interface";
 import type { Review } from "@/types/reviews/review.interface";
 import { useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import { FaFacebook, FaInstagram, FaWebAwesome } from "react-icons/fa6";
 import { useNavigate, useParams } from "react-router";
+import ReviewForm from "@/component/establishment/ReviewForm";
+import StarRating from "@/component/ui/StarRating";
+import UserAvatar from "@/component/ui/user/UserAvatar";
 
 export default function EstablishmentDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useUserStore();
   const { getEstablishment } = useEstablishmentApi();
+  const { useGetEstablishmentReviews, createReview, updateReview, deleteReview } = useReviewsApi()
   const {
     data: establishment,
     isPending,
     isError,
   } = getEstablishment(id as string);
-
+  
+  const { data: reviews, } = useGetEstablishmentReviews(establishment?.id as string)
   const [imageSelected, setImageSelected] = useState<Image | null>(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingReview, setEditingReview] = useState<Review | null>(null);
 
   const handleSelectedImage = (imageId: string, motion: "r" | "l") => {
     if (!establishment?.images) return;
@@ -126,7 +133,60 @@ export default function EstablishmentDetailPage() {
           {establishment.description}
         </p>
         <div className="flex-grow font-century-gothic">
-          <Reviews reviews={establishment.reviewsReceived || []} />
+          <div className="mb-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <StarRating rating={Math.round(establishment.rating || 0)} readonly size={22} />
+              <span className="text-lg">{Number(establishment.rating || 0).toFixed(1)}</span>
+              <span className="text-sm text-gray-400">({reviews?.length || 0} reseñas)</span>
+            </div>
+            {user && (
+              <Button
+                onClick={() => {
+                  const myReview = (reviews || []).find(r => r.reviewer.id === user.id) || null;
+                  setEditingReview(myReview);
+                  setIsFormOpen(true);
+                }}
+                label={(reviews || []).some(r => r.reviewer.id === user.id) ? "Editar mi reseña" : "Escribir reseña"}
+              />
+            )}
+          </div>
+
+          {isFormOpen && user && (
+            <div className="mb-6 rounded-lg border border-primary/30 p-4">
+              <ReviewForm
+                initialReview={editingReview || undefined}
+                isLoading={createReview.isPending || updateReview.isPending}
+                onCancel={() => { setIsFormOpen(false); setEditingReview(null); }}
+                onSubmit={async (rating, comment) => {
+                  if (!establishment?.id) return;
+                  try {
+                    if (editingReview) {
+                      await updateReview.mutateAsync({ review: { ...editingReview, rating, comment } as Review });
+                    } else {
+                      await createReview.mutateAsync({ establishmentId: establishment.id, review: { rating, comment } });
+                    }
+                    setIsFormOpen(false);
+                    setEditingReview(null);
+                  } catch {
+                    // Swallow error; UI libs likely handle toasts globally
+                  }
+                }}
+              />
+            </div>
+          )}
+
+          <Reviews
+            reviews={reviews || []}
+            currentUserId={user?.id}
+            onEdit={(review) => { setEditingReview(review); setIsFormOpen(true); }}
+            onDelete={async (review) => {
+              try {
+                await deleteReview.mutateAsync({ reviewId: review.id });
+              } catch {
+                // Swallow error
+              }
+            }}
+          />
         </div>
       </div>
       <EstablishmentGallery
@@ -139,16 +199,52 @@ export default function EstablishmentDetailPage() {
   );
 }
 
-function Reviews({ reviews }: { reviews: Review[] }) {
+function Reviews({ 
+  reviews, 
+  currentUserId,
+  onEdit,
+  onDelete
+}: { 
+  reviews: Review[],
+  currentUserId?: string,
+  onEdit: (review: Review) => void,
+  onDelete: (review: Review) => void,
+}) {
   return (
     <div className="flex-grow">
       {reviews.length > 0 ? (
-        reviews.map((review) => (
-          <div key={review.id}>
-            <p>{review.rating}</p>
-            <p>{review.comment}</p>
-          </div>
-        ))
+        <div className="space-y-4">
+          {reviews.map((review) => (
+            <div key={review.id} className="flex gap-4 rounded-lg border border-primary/20 p-4">
+              <UserAvatar avatar={review.reviewer.avatar} />
+              <div className="flex-1">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-century-gothic-bold text-lg">
+                      {review.reviewer.firstName} {review.reviewer.lastName}
+                    </p>
+                    <StarRating rating={review.rating} readonly size={18} />
+                  </div>
+                  {currentUserId === review.reviewer.id && (
+                    <div className="flex gap-2">
+                      <Button 
+                        label="Editar" 
+                        onClick={() => onEdit(review)}
+                        className="bg-secondary hover:bg-secondary/90"
+                      />
+                      <Button 
+                        label="Eliminar" 
+                        onClick={() => onDelete(review)}
+                        className="bg-red-500 hover:bg-red-600"
+                      />
+                    </div>
+                  )}
+                </div>
+                <p className="mt-2 text-fourth">{review.comment}</p>
+              </div>
+            </div>
+          ))}
+        </div>
       ) : (
         <div className="text-center text-2xl text-gray-400">
           <p>No hay reseñas</p> <p>Sea el primero en calificar</p>

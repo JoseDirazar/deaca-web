@@ -6,7 +6,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 export const useReviewsApi = () => {
     const qc = useQueryClient();
 
-    const getReviewsByEstablishmentId = (establishmentId: string) => {
+    const useGetEstablishmentReviews = (establishmentId: string) => {
         return useQuery({
             queryFn: () => reviewService.getReviewsByEstablishmentId(establishmentId).then((res) => res.data.data),
             queryKey: ["reviews", establishmentId],
@@ -29,7 +29,7 @@ export const useReviewsApi = () => {
     });
 
     return {
-        getReviewsByEstablishmentId,
+        useGetEstablishmentReviews,
         createReview,
         updateReview,
         deleteReview,

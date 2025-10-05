@@ -13,7 +13,7 @@ export const useUserApi = () => {
         queryFn: () => userService.getUser().then(res => res?.data?.data || null),
     });
 
-    const getUsers = (queryParams: string, page: number, limit: number, sortBy: string, sortOrder: string) => {
+    const useGetUsers = (queryParams: string, page: number, limit: number, sortBy: string, sortOrder: string) => {
         return useQuery({
             queryKey: ["users", page, limit, sortBy, sortOrder],
             queryFn: () => userService.getUsers(queryParams).then(res => res?.data || null),
@@ -48,7 +48,7 @@ export const useUserApi = () => {
 
     return {
         getUser,
-        getUsers,
+        useGetUsers,
         updateUser,
         updateAvatar,
     }
