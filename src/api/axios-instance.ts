@@ -1,6 +1,5 @@
 import axios from "axios";
 import { useUserStore } from "@/context/useUserStore";
-import type { GetMyProfileResponse, GetUsersResponse } from "@/types/common/api-response.interface";
 
 export const baseURL = import.meta.env.VITE_PUBLIC_API_URL;
 export const uploadBaseURL = import.meta.env.VITE_PUBLIC_BASE_API_URL;

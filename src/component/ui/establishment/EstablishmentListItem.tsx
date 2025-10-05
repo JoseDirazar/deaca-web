@@ -27,8 +27,8 @@ export function EstablishmentListItem({
             {establishment.name}
           </button>
           <p className="text-sm text-gray-500">
-            {establishment.description.split(" ").length > 20
-              ? `${establishment.description.split(" ").slice(0, 20).join(" ")}...`
+            {establishment.description.split(" ").length > 14
+              ? `${establishment.description.split(" ").slice(0, 14).join(" ")}...`
               : establishment.description}
           </p>
         </div>

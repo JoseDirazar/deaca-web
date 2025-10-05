@@ -15,7 +15,7 @@ export default function GoogleMaps({
       } // Olavarría
       defaultZoom={isSingleMarker ? 16 : 10}
       mapId={import.meta.env.VITE_GOOGLE_MAPS_ID} // Requerido para AdvancedMarker
-      className="w-1/2"
+      className="flex-grow"
     >
       {markers?.map((marker, index) => (
         <AdvancedMarker key={index} position={marker}>

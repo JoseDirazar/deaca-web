@@ -108,3 +108,8 @@ export interface EditEstablishmentDto extends BaseEntity {
     categories?: { id: string }[];
     subcategories?: { id: string }[];
 }
+
+export interface CreateReviewDto {
+    rating: number;
+    comment: string;
+}

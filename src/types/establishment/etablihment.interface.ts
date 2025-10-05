@@ -19,6 +19,7 @@ export interface Establishment extends BaseEntity {
   longitude: string;
   verified?: boolean;
   isComplete?: boolean;
+  rating: number;
   reviewsReceived?: Review[] | null;
   categories: Category[] | Partial<Category>[];
   subcategories: Subcategory[];

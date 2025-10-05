@@ -3,6 +3,7 @@ import type { User } from "../user/user.interface";
 import type { Establishment } from "../establishment/etablihment.interface";
 import type { Category } from "../category/category.interface";
 import type { Subcategory } from "../category/subcategory.interface";
+import type { Review } from "../reviews/review.interface";
 
 export type ApiPayload<T> = {
     ok: boolean;
@@ -58,3 +59,9 @@ export type UpdateCategoryResponse = ApiResponse<Category>;
 export type UpdateSubcategoryResponse = ApiResponse<Subcategory>;
 export type DeleteCategoryResponse = ApiResponse<void>;
 export type DeleteSubcategoryResponse = ApiResponse<void>;
+// -------- REVIEW ---------------- REVIEW ---------------- REVIEW --------
+export type GetReviewsByEstablishmentIdResponse = ApiResponse<Review[]>;
+export type CreateReviewResponse = ApiResponse<Review>;
+export type UpdateReviewResponse = ApiResponse<Review>;
+export type DeleteReviewResponse = ApiResponse<Review>;
+

@@ -1,4 +1,3 @@
-import type { Establishment } from "@/types/establishment/etablihment.interface";
 import api from "./axios-instance";
 import type { CreateEstablishmentResponse, DeleteMyEstablishmentResponse, GetEstablishmentByIdResponse, GetEstablishmentsResponse, GetMyEstablishmentsResponse, UpdateMyEstablishmentResponse, UploadEstablishmentAvatarResponse, UploadEstablishmentImagesResponse, VerifyEstablishmentResponse } from "@/types/common/api-response.interface";
 import type { CreateEstablishmentDto, EditEstablishmentDto } from "@/types/common/api-request.interface";

@@ -5,17 +5,11 @@ import { useUserStore } from "@/context/useUserStore";
 import { useEstablishmentApi } from "@/hooks/useEstablishmentApi";
 import { generateImageUrl } from "@/lib/generate-image-url";
 import type { Image } from "@/types/common/image.interface";
-import { Map, Marker } from "@vis.gl/react-google-maps";
-import { useEffect, useState } from "react";
+import type { Establishment } from "@/types/establishment/etablihment.interface";
+import type { Review } from "@/types/reviews/review.interface";
+import { useState } from "react";
 import { FaEdit } from "react-icons/fa";
-import {
-  FaArrowLeft,
-  FaArrowRight,
-  FaFacebook,
-  FaInstagram,
-  FaWebAwesome,
-  FaX,
-} from "react-icons/fa6";
+import { FaFacebook, FaInstagram, FaWebAwesome } from "react-icons/fa6";
 import { useNavigate, useParams } from "react-router";
 
 export default function EstablishmentDetailPage() {
@@ -30,20 +24,6 @@ export default function EstablishmentDetailPage() {
   } = getEstablishment(id as string);
 
   const [imageSelected, setImageSelected] = useState<Image | null>(null);
-
-  const [establishmentLocation, setEstablishmentLocation] = useState({
-    lat: establishment?.latitude,
-    lng: establishment?.longitude,
-  });
-
-  useEffect(() => {
-    if (!establishment?.latitude || !establishment?.longitude) return;
-
-    setEstablishmentLocation({
-      lat: establishment.latitude,
-      lng: establishment.longitude,
-    });
-  }, [establishment]);
 
   const handleSelectedImage = (imageId: string, motion: "r" | "l") => {
     if (!establishment?.images) return;
@@ -75,10 +55,10 @@ export default function EstablishmentDetailPage() {
           onClick={() => navigate(`/user/establishment/${establishment.id}`)}
           icon={<FaEdit />}
           label="Editar"
-          className="absolute top-2 right-2"
+          className="absolute top-2 right-2 z-30"
         />
       )}
-      <div className="relative flex gap-6">
+      <div className="relative flex flex-1 gap-6">
         <div className="grid h-112 max-w-2/3 grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
           {establishment?.images?.slice(0, 5).map((image, index) => (
             <button
@@ -141,10 +121,13 @@ export default function EstablishmentDetailPage() {
           />
         </div>
       </div>
-      <div className="mt-6 max-w-2/3">
-        <p className="text-justify font-century-gothic text-lg text-wrap">
+      <div className="mt-6 flex flex-1">
+        <p className="max-w-2/3 text-justify font-century-gothic text-lg text-wrap">
           {establishment.description}
         </p>
+        <div className="flex-grow font-century-gothic">
+          <Reviews reviews={establishment.reviewsReceived || []} />
+        </div>
       </div>
       <EstablishmentGallery
         imageSelected={imageSelected}
@@ -152,6 +135,25 @@ export default function EstablishmentDetailPage() {
         handleSelectedImage={handleSelectedImage}
         images={establishment.images || []}
       />
+    </div>
+  );
+}
+
+function Reviews({ reviews }: { reviews: Review[] }) {
+  return (
+    <div className="flex-grow">
+      {reviews.length > 0 ? (
+        reviews.map((review) => (
+          <div key={review.id}>
+            <p>{review.rating}</p>
+            <p>{review.comment}</p>
+          </div>
+        ))
+      ) : (
+        <div className="text-center text-2xl text-gray-400">
+          <p>No hay reseñas</p> <p>Sea el primero en calificar</p>
+        </div>
+      )}
     </div>
   );
 }

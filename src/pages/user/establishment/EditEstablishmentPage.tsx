@@ -6,6 +6,7 @@ export default function EditEstablishmentPage() {
   const { id } = useParams();
   const { getEstablishment } = useEstablishmentApi();
   const { data: establishment } = getEstablishment(id as string);
+  console.log(establishment);
   return (
     <div className="p-6">
       <UserEstablishmentForm establishment={establishment} />

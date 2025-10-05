@@ -8,7 +8,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useUserStore } from "@/context/useUserStore";
 import { bootstrapAuth } from "@/api/axios-instance";
-import { APIProvider, Map, Marker } from "@vis.gl/react-google-maps";
+import { APIProvider } from "@vis.gl/react-google-maps";
 
 const queryClient = new QueryClient();
 

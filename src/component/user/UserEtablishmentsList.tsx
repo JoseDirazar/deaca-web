@@ -1,5 +1,4 @@
 import type { Establishment } from "@/types/establishment/etablihment.interface";
-import Button from "../ui/Button";
 
 import { EstablishmentListItem } from "../ui/establishment/EstablishmentListItem";
 import { useNavigate } from "react-router";

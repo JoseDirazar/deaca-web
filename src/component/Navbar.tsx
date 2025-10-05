@@ -61,7 +61,7 @@ export default function Navbar() {
                   />
                 </button>
                 {showDropdownMenu && (
-                  <div className="absolute top-15 z-10 flex w-44 origin-top flex-col divide-y-2 divide-primary rounded bg-fifth p-2 drop-shadow-xl">
+                  <div className="absolute top-15 z-50 flex w-44 origin-top flex-col divide-y-2 divide-primary rounded bg-fifth p-2 drop-shadow-xl">
                     <button className="py-2" onClick={() => navigate("/user")}>
                       Perfil
                     </button>

@@ -9,6 +9,7 @@ import type { CreateEstablishmentDto } from "@/types/common/api-request.interfac
 import { useCategoryApi } from "@/hooks/useCategoryApi.hook";
 import { generateImageUrl } from "@/lib/generate-image-url";
 import { useLocation, useNavigate } from "react-router";
+import SectionContainer from "../ui/SectionContainer";
 
 interface UserEstablishmentFormProps {
   establishment?: Establishment | null;
@@ -76,7 +77,7 @@ export default function UserEstablishmentForm({
       prev.filter((id) => subs?.some((s) => s.id === id)),
     );
   }, [selectedCategoryIds, categories]);
-
+  console.log(selectedSubcategoryIds);
   // Load editing establishment data
   useEffect(() => {
     if (establishment) {
@@ -238,7 +239,7 @@ export default function UserEstablishmentForm({
   console.log(galleryFiles);
 
   return (
-    <div className="md:col-span-2">
+    <SectionContainer className="md:col-span-2">
       <p className="mb-6 text-2xl font-bold text-primary">
         {isEditMode ? "Editar establecimiento" : "Nuevo establecimiento"}
       </p>
@@ -532,6 +533,6 @@ export default function UserEstablishmentForm({
           />
         </div>
       </div>
-    </div>
+    </SectionContainer>
   );
 }

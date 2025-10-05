@@ -1,4 +1,5 @@
 import Button from "@/component/ui/Button";
+import SectionContainer from "@/component/ui/SectionContainer";
 import UserEstablishmentsList from "@/component/user/UserEtablishmentsList";
 import { useEstablishmentApi } from "@/hooks/useEstablishmentApi";
 import { FaPlus } from "react-icons/fa6";
@@ -10,7 +11,7 @@ export default function UserEstablishmentPage() {
     useEstablishmentApi().getMyEstablishments();
 
   return (
-    <div className="container w-full">
+    <SectionContainer className="container w-full">
       <div className="p-3">
         <div className="mt-3 flex items-center justify-between py-3">
           <h2 className="text-3xl font-extrabold text-primary">
@@ -27,6 +28,6 @@ export default function UserEstablishmentPage() {
         isLoadingMine={isLoadingMine}
         myEstablishments={myEstablishments}
       />
-    </div>
+    </SectionContainer>
   );
 }

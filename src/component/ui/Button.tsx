@@ -20,14 +20,14 @@ export default function Button({
     <button
       type={type}
       className={cn(
-        "flex items-center justify-center gap-1 rounded bg-fourth px-3 py-2 text-center font-century-gothic-bold text-white",
+        "font-century-gothic-bold flex items-center justify-center gap-1 rounded bg-fourth px-3 py-2 text-center text-white",
         className,
       )}
       disabled={disabled}
       onClick={onClick}
     >
       {icon}
-      <p>{label}</p>
+      {label}
     </button>
   );
 }
