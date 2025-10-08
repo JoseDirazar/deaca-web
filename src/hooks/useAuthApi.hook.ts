@@ -6,152 +6,118 @@ import { useUserStore } from "@/context/useUserStore";
 import { authService } from "@/api/auth-service";
 import type { RequestPasswordResetDto, ResetPasswordDto, SignInDto, SignUpDto, VerifyEmailDto } from "@/types/common/api-request.interface";
 import type { PreviousWindowLocation } from "@/types/common/previous-window-location.interface";
-
-export const saveTokens = async (token: string, refreshToken?: string) => {
-  await localStorage.setItem("access_token", token);
-  if (refreshToken) await localStorage.setItem("refresh_token", refreshToken);
-};
-
-const clearTokens = () => {
-  localStorage.removeItem("access_token");
-  localStorage.removeItem("refresh_token");
-};
+import { useAuthStore } from "@/context/useAuthStore";
+import { userService } from "@/api/user-service";
 
 export const useAuthApi = () => {
   const queryClient = useQueryClient();
   const { setUser } = useUserStore();
+  const { setAccessToken } = useAuthStore();
   const navigate = useNavigate();
 
   const signUp = useMutation({
     mutationFn: async (data: SignUpDto) => {
       localStorage.setItem("pending_email", data.email as string);
-      return authService.signUp(data).then(res => res.data.data);
+      return authService.signUp(data).then(res => res.data);
     },
-    onSuccess: async () => {
-      toast.success("Gracias por registrarte. Revisa tu email para verificar tu cuenta.");
-    },
-    onError: (error: unknown) => {
-      console.error(JSON.stringify(error, null, 2));
-      if (error instanceof AxiosError) {
-        toast.error(error?.response?.data?.message || "Algo salio mal");
-      }
-    },
-  });
-
-  const confirmEmail = useMutation({
-    mutationFn: (data: VerifyEmailDto) => authService.confirmEmail(data).then(res => res.data.data),
-    onSuccess: () => {
-      toast.success("Email verificado exitosamente!");
-      localStorage.removeItem("pending_email");
+    onSuccess: async ({ message }) => {
+      toast.success(message);
     },
     onError: (error: unknown) => {
-      if (error instanceof AxiosError) {
-        toast.error(error?.response?.data?.message || "Algo salio mal");
-      }
+      toast.error(error instanceof AxiosError ? error?.response?.data?.message : "Algo salio mal");
     },
   });
 
   const signIn = useMutation({
-    mutationFn: (data: SignInDto) => authService.signIn(data).then(res => res.data.data),
-    onSuccess: async ({ accessToken, refreshToken, user }) => {
-      await saveTokens(accessToken, refreshToken);
-      setUser(user);
-      toast.success("Bienvenido!");
-
+    mutationFn: (data: SignInDto) => authService.signIn(data).then(res => res.data),
+    onSuccess: async ({ data: { accessToken }, message }) => {
+      toast.success(message);
+      setAccessToken(accessToken);
+      const userResponse = await userService.getUser();
+      setUser(userResponse.data.data);
     },
     onError: (error: unknown) => {
-      if (error instanceof AxiosError) {
-        toast.error(error?.response?.data?.message || "Algo salio mal");
-      }
+      toast.error(error instanceof AxiosError ? error?.response?.data?.message : "Algo salio mal");
     },
   });
-
   const signInWithGoogle = useMutation({
     mutationFn: (accessToken: string) =>
-      authService.signInWithGoogle(accessToken).then(res => res.data.data),
-    onSuccess: async ({ accessToken, refreshToken, user }) => {
-      await saveTokens(accessToken, refreshToken);
-      setUser(user);
-      toast.success("Bienvenido!");
-      const from =
-        (window.history.state as PreviousWindowLocation)?.from?.pathname ||
-        "/";
+      authService.signInWithGoogle(accessToken).then(res => res.data),
+    onSuccess: async ({ message, data: { accessToken } }) => {
+      toast.success(message);
+      setAccessToken(accessToken);
+      const userResponse = await userService.getUser();
+      setUser(userResponse.data.data);
+      const from = (window.history.state as PreviousWindowLocation)?.from?.pathname || "/";
       navigate(from, { replace: true });
     },
     onError: (error: unknown) => {
-      if (error instanceof AxiosError) {
-        toast.error(
-          error?.response?.data?.message || "Failed to sign in with Google"
-        );
-      }
+      toast.error(error instanceof AxiosError ? error?.response?.data?.message : "Algo salio mal");
     },
   });
 
   const refreshToken = useMutation({
     mutationFn: (refreshToken: string) =>
-      authService.refreshAccessToken(refreshToken).then(res => res.data.data),
-    onSuccess: async ({ accessToken }) => {
-      await saveTokens(accessToken);
+      authService.refreshAccessToken(refreshToken).then(res => res.data),
+    onSuccess: async ({ data: { accessToken } }) => {
+      setAccessToken(accessToken);
     },
   });
 
   const signOut = useMutation({
-    mutationFn: () => authService.signOut(),
-    onSuccess: async () => {
-      clearTokens();
+    mutationFn: () => authService.signOut().then(res => res.data),
+    onSuccess: async ({ message }) => {
       setUser(null);
+      setAccessToken(null);
       queryClient.clear();
-      toast.success("Successfully signed out");
+      toast.success(message);
     },
-    onError: () => {
-      toast.error("Failed to sign out");
+    onError: (error: unknown) => {
+      toast.error(error instanceof AxiosError ? error?.response?.data?.message : "Algo salio mal");
     },
   });
 
-  const requestPasswordReset = useMutation({
-    mutationFn: (data: RequestPasswordResetDto) =>
-      authService.requestPasswordReset(data),
-    onSuccess: () => {
-      toast.success("Instrucciones para restablecer tu contraseña enviadas a tu correo electrónica");
+
+  const confirmEmail = useMutation({
+    mutationFn: (data: VerifyEmailDto) => authService.confirmEmail(data).then(res => res.data),
+    onSuccess: ({ message }) => {
+      toast.success(message);
+      localStorage.removeItem("pending_email");
     },
     onError: (error: unknown) => {
-      if (error instanceof AxiosError) {
-        toast.error(
-          error?.response?.data?.message || "Algo salio mal"
-        );
-      }
+      toast.error(error instanceof AxiosError ? error?.response?.data?.message : "Algo salio mal");
+    },
+  });
+
+
+  const requestPasswordReset = useMutation({
+    mutationFn: (data: RequestPasswordResetDto) =>
+      authService.requestPasswordReset(data).then(res => res.data),
+    onSuccess: ({ message }) => {
+      toast.success(message);
+    },
+    onError: (error: unknown) => {
+      toast.error(error instanceof AxiosError ? error?.response?.data?.message : "Algo salio mal");
     },
   });
 
   const resetPassword = useMutation({
-    mutationFn: (data: ResetPasswordDto) => authService.resetPassword(data).then(res => res.data.data),
-    onSuccess: async ({ accessToken, refreshToken, user }) => {
-      await saveTokens(accessToken, refreshToken);
-      setUser(user);
-      toast.success("Restablecimiento de contraseña exitoso!");
-
+    mutationFn: (data: ResetPasswordDto) => authService.resetPassword(data).then(res => res.data),
+    onSuccess: ({ message }) => {
+      toast.success(message);
     },
     onError: (error: unknown) => {
-      if (error instanceof AxiosError) {
-        toast.error(
-          error?.response?.data?.message || "Algo salio mal"
-        );
-      }
+      toast.error(error instanceof AxiosError ? error?.response?.data?.message : "Algo salio mal");
     },
   });
 
   const resendVerificationEmail = useMutation({
-    mutationFn: (email: string) => authService.resendVerificationEmail(email).then(res => res.data.data),
-    onSuccess: () => {
-      toast.success("Correo de verificación reenviado exitosamente!");
+    mutationFn: (email: string) => authService.resendVerificationEmail(email).then(res => res.data),
+    onSuccess: ({ message }) => {
+      toast.success(message);
     },
     onError: (error: unknown) => {
-      if (error instanceof AxiosError) {
-        toast.error(
-          error?.response?.data?.message ||
-          "Algo salio mal"
-        );
-      }
+      toast.error(error instanceof AxiosError ? error?.response?.data?.message : "Algo salio mal");
     },
   });
 
