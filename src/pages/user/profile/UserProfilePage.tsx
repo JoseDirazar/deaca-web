@@ -2,7 +2,7 @@ import Button from "@/component/ui/Button";
 import OutletForm from "@/component/ui/form/OutletForm";
 import OutletHeader from "@/component/ui/form/OutletHeader";
 import Input from "@/component/ui/Input";
-import SectionContainer from "@/component/ui/SectionContainer";
+import SectionContainer from "@/component/ui/section/SectionContainer";
 import UserAvatar from "@/component/ui/user/UserAvatar";
 import { useUserStore } from "@/context/useUserStore";
 import { LuLoader } from "react-icons/lu";

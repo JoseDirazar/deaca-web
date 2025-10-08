@@ -1,15 +1,13 @@
 import AuthOutletContainer from "@/component/ui/auth/AuthOutletContainer";
+import PageContainer from "@/component/ui/PageContainer";
 import { publicBackground } from "@/lib/constants/public-backgrounds";
 
 export default function AuthLayout() {
   return (
-    <div className="flex min-h-screen">
-      <div className="flex w-full flex-col items-center justify-center bg-white lg:w-1/2">
+    <PageContainer className="relative flex-row">
+      <div className="flex w-full flex-col items-center justify-center p-8 lg:w-1/2 lg:bg-fifth">
         <AuthOutletContainer />
-      </div>
-      <div className="relative hidden overflow-hidden bg-secondary lg:flex lg:w-1/2">
-        <div className="absolute inset-0 bg-[url('/fondos/bg-blob.svg')] bg-cover bg-no-repeat fill-primary"></div>
-        <div className="absolute inset-0 flex items-center justify-center">
+        <div className="absolute inset-0 z-0 overflow-hidden bg-secondary lg:hidden">
           <img
             src={
               publicBackground[
@@ -17,10 +15,21 @@ export default function AuthLayout() {
               ]
             }
             alt="arroyo"
-            className="h-screen object-cover"
+            className="h-full w-full object-cover"
           />
         </div>
       </div>
-    </div>
+      <div className="z-0 hidden overflow-hidden bg-secondary lg:block lg:w-1/2">
+        <img
+          src={
+            publicBackground[
+              Math.floor(Math.random() * (publicBackground.length - 1))
+            ]
+          }
+          alt="arroyo"
+          className="h-full w-full object-cover"
+        />
+      </div>
+    </PageContainer>
   );
 }

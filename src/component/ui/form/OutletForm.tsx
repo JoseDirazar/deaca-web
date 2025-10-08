@@ -6,7 +6,7 @@ export default function OutletForm({
   children: React.ReactNode;
 }) {
   return (
-    <form onSubmit={onSubmit} className="my-10 flex flex-col gap-6">
+    <form onSubmit={onSubmit} className="flex flex-col gap-6">
       {children}
     </form>
   );

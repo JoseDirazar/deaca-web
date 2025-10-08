@@ -12,27 +12,32 @@ export default function AuthOutletFooter({
   sendRecoverLink?: boolean;
 }) {
   return (
-    <div className="mb-2 flex flex-col text-sm">
+    <div className="mt-10 mb-2 flex flex-col text-sm">
       {signInLink && (
-        <p className="flex items-center justify-between font-bold text-fourth">
-          ¿Ya tienes cuenta? <DLink to="/auth/sign-in" label="Iniciar sesión" />
+        <p className="flex items-center justify-between font-thin">
+          ¿Ya tienes cuenta?{" "}
+          <DLink to="/auth/ingresar" label="Iniciar sesión" />
         </p>
       )}
       {signUpLink && (
-        <p className="flex items-center justify-between font-bold text-fourth">
-          ¿No tienes cuenta? <DLink to="/auth/sign-up" label="Registrarse" />
+        <p className="flex items-center justify-between font-thin">
+          ¿No tienes cuenta?{" "}
+          <DLink to="/auth/registrarse" label="Registrarse" />
         </p>
       )}
       {sendRecoverLink && (
-        <p className="flex items-center justify-between font-bold text-fourth">
+        <p className="flex items-center justify-between font-thin">
           ¿Olvidaste tu contraseña?{" "}
-          <DLink to="/auth/forgot-password" label="Restablecer contraseña" />
+          <DLink
+            to="/auth/recuperar-contraseña"
+            label="Restablecer contraseña"
+          />
         </p>
       )}
       {resetPasswordLink && (
-        <p className="flex items-center justify-between font-bold text-fourth">
+        <p className="flex items-center justify-between font-thin">
           ¿Tenes un codigo de verificación?{" "}
-          <DLink to="/auth/reset-password" label="Verificar codigo" />
+          <DLink to="/auth/verificar-codigo" label="Verificar codigo" />
         </p>
       )}
     </div>

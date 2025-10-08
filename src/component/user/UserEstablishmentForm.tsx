@@ -9,7 +9,7 @@ import type { CreateEstablishmentDto } from "@/types/common/api-request.interfac
 import { useCategoryApi } from "@/hooks/useCategoryApi.hook";
 import { generateImageUrl } from "@/lib/generate-image-url";
 import { useLocation, useNavigate } from "react-router";
-import SectionContainer from "../ui/SectionContainer";
+import SectionContainer from "../ui/section/SectionContainer";
 
 interface UserEstablishmentFormProps {
   establishment?: Establishment | null;

@@ -4,6 +4,7 @@ import type { Establishment } from "../establishment/etablihment.interface";
 
 export interface Category extends BaseEntity {
     name: string;
+    icon: string;
     subcategories: Subcategory[];
     establishments: Establishment[];
 }

@@ -10,6 +10,7 @@ export const categoryService = {
 
   createCategory: (name: string): CreateCategoryResponse =>
     api.post("/category", { name }),
+  uploadCategoryIcon: (id: string, formData: FormData): UpdateCategoryResponse => api.putForm(`/category/${id}/icon`, formData),
 
   createSubcategory: (categoryId: string, name: string): CreateSubcategoryResponse => api.post("/category/subcategories", { name, categoryId }),
 

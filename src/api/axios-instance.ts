@@ -2,7 +2,7 @@
 import axios from "axios";
 import { useAuthStore } from "@/context/useAuthStore";
 import { useUserStore } from "@/context/useUserStore";
-import { baseURL } from "@/lib/constants/api";
+import { baseURL } from "@/lib/constants/enviroment-variables";
 
 const api = axios.create({
     baseURL,

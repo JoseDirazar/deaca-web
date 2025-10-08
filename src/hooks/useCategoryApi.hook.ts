@@ -43,10 +43,21 @@ export const useCategoryApi = () => {
         }
     })
 
+    const uploadCategoryIcon = useMutation({
+        mutationFn: ({ id, formData }: { id: string, formData: FormData }) => categoryService.uploadCategoryIcon(id, formData).then((res) => res?.data || null),
+        onSuccess: () => {
+            qc.invalidateQueries({ queryKey: ["categories"] })
+        },
+        onError: () => {
+            toast.error("Error al subir el icono de la categoría")
+        }
+    })
+
     return {
         getCategories,
         createCategory,
         updateCategory,
-        deleteCategory
+        deleteCategory,
+        uploadCategoryIcon
     }
 };

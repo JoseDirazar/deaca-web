@@ -18,32 +18,59 @@ import UserProfilePage from "./pages/user/profile/UserProfilePage";
 import UserEstablishmentPage from "./pages/user/establishment/UserEstablishmentPage";
 import EstablishmentDetailPage from "./pages/establishment/EstablishmentDetailPage";
 import EditEstablishmentPage from "./pages/user/establishment/EditEstablishmentPage";
+import DiscoverEstablishmentsPage from "./pages/establishment/DiscoverEstablishmentsPage";
+import AboutUsPage from "./pages/AboutUsPage";
+import Open24HoursAndWeekendsPage from "./pages/Open24HoursAndWeekendsPage";
+import WhatToDoPage from "./pages/WhatToDoPage";
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<RootLayout />}>
         <Route index element={<LandingPage />} />
-        <Route path="establishment/:id" element={<EstablishmentDetailPage />} />
+        <Route path="sobre-nosotros" element={<AboutUsPage />} />
+        <Route
+          path="24-horas-y-domingos"
+          element={<Open24HoursAndWeekendsPage />}
+        />
+        <Route path="que-hacer" element={<WhatToDoPage />} />
 
+        <Route
+          path="emprendimientos/:id"
+          element={<EstablishmentDetailPage />}
+        />
+        <Route
+          path="emprendimientos"
+          element={<DiscoverEstablishmentsPage />}
+        />
         <Route path="auth/*" element={<AuthLayout />}>
-          <Route path="sign-in" element={<SigninPage />} />
-          <Route path="sign-up" element={<SignupPage />} />
-          <Route path="verify-email" element={<EmailVerificationCodePage />} />
-          <Route path="reset-password" element={<ResetPasswordPage />} />
-          <Route path="forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="ingresar" element={<SigninPage />} />
+          <Route path="registrarse" element={<SignupPage />} />
+          <Route
+            path="verificar-codigo"
+            element={<EmailVerificationCodePage />}
+          />
+          <Route
+            path="restablecer-contraseña"
+            element={<ResetPasswordPage />}
+          />
+          <Route path="recuperar-contraseña" element={<ForgotPasswordPage />} />
+        </Route>
+
+        <Route path="/usuario/*" element={<UserDashboardLayout />}>
+          <Route index element={<UserProfilePage />} />
+          <Route path="emprendimientos" element={<UserEstablishmentPage />} />
+          <Route
+            path="emprendimientos/:id"
+            element={<EditEstablishmentPage />}
+          />
         </Route>
       </Route>
       <Route path="/admin/*" element={<AdminLayout />}>
         <Route index element={<AdminDashboardPage />} />
-        <Route path="users" element={<AdminUsersPage />} />
-        <Route path="establishments" element={<AdminEstablishmentsPage />} />
-        <Route path="categories" element={<AdminCategoriesPage />} />
-      </Route>
-      <Route path="/user/*" element={<UserDashboardLayout />}>
-        <Route index element={<UserProfilePage />} />
-        <Route path="establishment" element={<UserEstablishmentPage />} />
-        <Route path="establishment/:id" element={<EditEstablishmentPage />} />
+        <Route path="usuarios" element={<AdminUsersPage />} />
+        <Route path="emprendimientos" element={<AdminEstablishmentsPage />} />
+        <Route path="categorias" element={<AdminCategoriesPage />} />
       </Route>
     </Routes>
   );

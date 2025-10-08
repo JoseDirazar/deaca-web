@@ -26,15 +26,13 @@ export default function Input({
   title,
 }: InputProps) {
   const [showPassword, setShowPassword] = useState(false);
-  const isPassword =
-    id === "password" || id === "newPassword" || id === "confirmPassword";
+  const isPassword = id.split("-").includes("password");
   return (
-    <div className="relative w-full">
-      {/* Input con peer */}
+    <div className="relative w-full font-century-gothic font-bold">
       <input
         type={showPassword ? "text" : type}
         className={cn(
-          "peer h-12 w-full rounded-md border border-primary bg-transparent p-3 text-lg text-fourth placeholder-transparent focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none disabled:opacity-50",
+          "peer h-12 w-full rounded-md border border-primary bg-transparent p-3 text-lg font-medium tracking-widest text-fourth placeholder-transparent focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none disabled:opacity-50",
           className,
         )}
         value={value}
@@ -46,16 +44,14 @@ export default function Input({
         required={required}
       />
 
-      {/* Label flotante */}
       <label
         onClick={() => document.getElementById(id)?.focus()}
         htmlFor={id}
-        className="absolute -top-[10px] left-3 bg-fifth px-1 text-sm text-primary transition-all duration-200 select-none peer-placeholder-shown:top-[10px] peer-placeholder-shown:text-base peer-placeholder-shown:text-primary peer-focus:-top-[10px] peer-focus:text-sm peer-focus:text-primary"
+        className="absolute -top-[10px] left-3 bg-fifth px-1 text-sm text-primary transition-all duration-200 select-none peer-placeholder-shown:top-[12px] peer-placeholder-shown:text-base peer-placeholder-shown:text-primary peer-focus:-top-[10px] peer-focus:text-sm peer-focus:text-primary"
       >
         {title}
       </label>
 
-      {/* Toggle password */}
       {isPassword && (
         <button
           type="button"

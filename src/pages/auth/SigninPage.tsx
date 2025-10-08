@@ -34,10 +34,10 @@ export default function SigninPage() {
   };
 
   return (
-    <div>
+    <>
       <AuthOutletHeader
         title="Inicia sesión"
-        description="Ingresa Google en un paso!"
+        description="Ingresa con Google en un paso!"
       />
       <GoogleBtn />
       <AuthOutletForm onSubmit={handleLogin}>
@@ -59,11 +59,12 @@ export default function SigninPage() {
         <Button
           type="submit"
           disabled={signIn.isPending}
+          className="w-full py-3"
           label={signIn.isPending ? "Ingresando..." : "Ingresar"}
         />
       </AuthOutletForm>
 
       <AuthOutletFooter signUpLink sendRecoverLink resetPasswordLink />
-    </div>
+    </>
   );
 }

@@ -1,5 +1,5 @@
 import Button from "@/component/ui/Button";
-import SectionContainer from "@/component/ui/SectionContainer";
+import SectionContainer from "@/component/ui/section/SectionContainer";
 import UserEstablishmentsList from "@/component/user/UserEtablishmentsList";
 import { useEstablishmentApi } from "@/hooks/useEstablishmentApi";
 import { FaPlus } from "react-icons/fa6";
@@ -19,7 +19,7 @@ export default function UserEstablishmentPage() {
           </h2>
           <Button
             label="Nuevo establecimiento"
-            onClick={() => navigate("/user/establishment/new")}
+            onClick={() => navigate("/usuario/emprendimientos/nuevo")}
             icon={<FaPlus />}
           />
         </div>

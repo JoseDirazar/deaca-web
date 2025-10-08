@@ -26,11 +26,11 @@ export default function SignupPage() {
       return;
     }
     await mutateAsync({ firstName, lastName, email, password });
-    navigate("/auth/sign-in", { replace: true });
+    navigate("/auth/ingresar", { replace: true });
   };
 
   return (
-    <div>
+    <>
       <AuthOutletHeader
         title="Crear cuenta"
         description="Registrate con Google en un paso!"
@@ -72,10 +72,11 @@ export default function SignupPage() {
         <Button
           type="submit"
           disabled={isLoading}
+          className="w-full"
           label={isLoading ? "Creando..." : "Crear cuenta"}
         />
       </AuthOutletForm>
       <AuthOutletFooter signInLink />
-    </div>
+    </>
   );
 }

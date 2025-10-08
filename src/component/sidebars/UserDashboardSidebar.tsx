@@ -1,4 +1,4 @@
-import { userDashboardRoutes } from "@/lib/constants/user-dashboard-links.interface";
+import { userDashboardRoutes } from "@/lib/constants/user-dashboard-links";
 import Sidebar from "../ui/Sidebar";
 
 export default function UserDashboardSidebar() {

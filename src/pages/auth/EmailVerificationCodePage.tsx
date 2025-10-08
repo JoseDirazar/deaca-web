@@ -30,20 +30,28 @@ export default function EmailVerificationCodePage() {
 
     if (!email || !emailCode) {
       toast.error(
-        "Por favor ingresa tu correo electrónica y el codigo de verificacion",
+        email
+          ? "Por favor ingresa el codigo de verificacion"
+          : "Por favor ingresa tu correo electrónica y el codigo de verificacion",
       );
       return;
     }
-
+    if (email) {
+      localStorage.removeItem("pending_email");
+    }
     await verifyEmail({ email, emailCode });
-    navigate("/sign-in");
+    navigate("/auth/ingresar");
   };
 
   return (
-    <div className="">
+    <>
       <AuthOutletHeader
         title="Verificar su correo electrónica"
-        description="Hemos enviado un codigo de verificacion a <strong>{email}</strong>. Por favor ingrese el codigo de verificacion para verificar su cuenta."
+        description={
+          email
+            ? `Hemos enviado un codigo de verificacion a ${email}. Por favor ingrese el codigo de verificacion para verificar su cuenta.`
+            : "Por favor ingrese su correo electrónica"
+        }
       />
 
       <AuthOutletForm onSubmit={handleVerify}>
@@ -51,7 +59,6 @@ export default function EmailVerificationCodePage() {
           <Input
             id="email"
             type="email"
-            className="w-full py-5"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -63,7 +70,6 @@ export default function EmailVerificationCodePage() {
         <Input
           id="verificationCode"
           type="text"
-          className="w-full py-5"
           value={emailCode}
           onChange={(e) => setEmailCode(e.target.value)}
           required
@@ -73,25 +79,25 @@ export default function EmailVerificationCodePage() {
 
         <Button
           type="submit"
-          className="hover:bg-primary-600 w-full bg-primary py-6 text-white"
+          className="w-full"
           disabled={isVerifying}
           label={isVerifying ? "Verificando..." : "Verificar"}
         />
       </AuthOutletForm>
 
-      <div className="border-t border-gray-200 pt-6 text-center">
+      <div className="mt-10 border-t border-gray-200 text-center">
         <p className="mb-4 text-gray-600">
           No recibiste un código de verificación?
         </p>
         <Button
           onClick={() => resendEmail(email)}
-          className="mx-auto"
           disabled={isResending}
+          className="w-full bg-primary"
           label={isResending ? "Reenviando..." : "Reenviar"}
         />
       </div>
 
       <AuthOutletFooter signInLink />
-    </div>
+    </>
   );
 }

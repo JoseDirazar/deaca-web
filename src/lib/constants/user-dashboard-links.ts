@@ -6,11 +6,11 @@ export const userDashboardRoutes: NavbarRoutes = [
     {
         label: "Perfil",
         icon: FaUser,
-        href: "/user",
+        href: "/usuario",
     },
     {
         label: "Establecimientos",
         icon: IoBusiness,
-        href: "/user/establishment",
+        href: "/usuario/emprendimientos",
     },
 ]

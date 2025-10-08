@@ -1,7 +1,6 @@
 import { useAuthApi } from "@/hooks/useAuthApi.hook";
+import { googleClientId } from "@/lib/constants/enviroment-variables";
 import { useEffect } from "react";
-
-const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 export default function GoogleBtn() {
   const { signInWithGoogle } = useAuthApi();
@@ -11,8 +10,9 @@ export default function GoogleBtn() {
     isError: isSigningInWithGoogleError,
     error: signInWithGoogleError,
   } = signInWithGoogle;
-  let accessToken = "";
+
   useEffect(() => {
+    let accessToken = "";
     // @ts-ignore
     google.accounts.id.initialize({
       client_id: googleClientId,
@@ -27,13 +27,14 @@ export default function GoogleBtn() {
 
     // @ts-ignore
     google.accounts.id.renderButton(document.getElementById("googleBtn"), {
-      theme: "outline",
-      size: "large",
+      theme: "filled_green",
+      size: "expanded",
     });
   }, []);
+
   return (
     <button
-      className="my-6 rounded disabled:opacity-50"
+      className="my-6 mt-3 w-full rounded disabled:opacity-50"
       id="googleBtn"
       disabled={isSigningInWithGoogle}
     ></button>

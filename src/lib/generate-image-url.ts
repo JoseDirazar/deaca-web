@@ -1,7 +1,8 @@
-import { uploadBaseUrl } from "./constants/api";
+import { uploadBaseUrl } from "./constants/enviroment-variables";
+
 
 export const generateImageUrl = (
-  type: "user" | "establishment",
+  type: "user" | "establishment" | "category",
   filename?: string | null,
 ) => {
   if (!filename) return "/default-avatar.png";
@@ -12,5 +13,7 @@ export const generateImageUrl = (
       return `${uploadBaseUrl}/user/avatar/${filename}`;
     case "establishment":
       return `${uploadBaseUrl}/user/establishment/${filename}`;
+    case "category":
+      return `${uploadBaseUrl}/assets/${filename}`;
   }
 };

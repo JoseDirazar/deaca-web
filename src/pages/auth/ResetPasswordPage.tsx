@@ -22,7 +22,7 @@ export default function ResetPasswordPage() {
   const handleInputs = (e: React.ChangeEvent<HTMLInputElement>) => {
     setResetPasswordState({
       ...resetPasswordState,
-      [e.target.id]: e.target.value,
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -51,18 +51,19 @@ export default function ResetPasswordPage() {
       resetCode: resetPasswordState.resetCode,
       newPassword: resetPasswordState.newPassword,
     });
-    navigate("/auth/sign-in", { state: { passwordReset: true } });
+    navigate("/auth/ingresar", { state: { passwordReset: true } });
   };
 
   return (
-    <div>
+    <>
       <AuthOutletHeader
         title="Restablecer Contraseña"
         description="Por favor ingrese su nueva contraseña."
       ></AuthOutletHeader>
       <AuthOutletForm onSubmit={handleSubmit}>
         <Input
-          id="reset-password-email"
+          id="reset-email"
+          name="email"
           type="email"
           value={resetPasswordState.email}
           onChange={handleInputs}
@@ -72,7 +73,8 @@ export default function ResetPasswordPage() {
         />
 
         <Input
-          id="reset-password-resetCode"
+          id="reset-resetCode"
+          name="resetCode"
           type="text"
           value={resetPasswordState.resetCode}
           onChange={handleInputs}
@@ -83,6 +85,7 @@ export default function ResetPasswordPage() {
 
         <Input
           id="reset-password-newPassword"
+          name="newPassword"
           type="password"
           value={resetPasswordState.newPassword}
           onChange={handleInputs}
@@ -93,8 +96,8 @@ export default function ResetPasswordPage() {
 
         <Input
           id="reset-password-confirmPassword"
+          name="confirmPassword"
           type="password"
-          className="w-full py-5 pr-16"
           value={resetPasswordState.confirmPassword}
           onChange={handleInputs}
           required
@@ -104,12 +107,15 @@ export default function ResetPasswordPage() {
 
         <Button
           type="submit"
-          label={isResettingPassword ? "Resetting..." : "Reset Password"}
+          className="w-full"
+          label={
+            isResettingPassword ? "Restableciendo..." : "Restablecer Contraseña"
+          }
           disabled={isResettingPassword}
         />
       </AuthOutletForm>
 
       <AuthOutletFooter signInLink resetPasswordLink sendRecoverLink />
-    </div>
+    </>
   );
 }

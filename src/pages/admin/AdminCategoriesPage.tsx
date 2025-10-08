@@ -5,20 +5,29 @@ import { useCategoryApi } from "@/hooks/useCategoryApi.hook";
 import { useSubcategoryApi } from "@/hooks/useSubcategoryApi.hook";
 import type { Category } from "@/types/category/category.interface";
 import type { Subcategory } from "@/types/category/subcategory.interface";
+import { FaPlus } from "react-icons/fa6";
+import { toast } from "sonner";
+import { generateImageUrl } from "@/lib/generate-image-url";
 
 export default function AdminCategoriesPage() {
-  const { getCategories, createCategory, updateCategory, deleteCategory } =
-    useCategoryApi();
+  const {
+    getCategories,
+    createCategory,
+    updateCategory,
+    deleteCategory,
+    uploadCategoryIcon,
+  } = useCategoryApi();
   const { createSubcategory, updateSubcategory, deleteSubcategory } =
     useSubcategoryApi();
+
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
     null,
   );
-
   const [newCategoryName, setNewCategoryName] = useState("");
   const [editingCategoryId, setEditingCategoryId] = useState<string | null>(
     null,
   );
+  const [iconFile, setIconFile] = useState<File | null>(null);
   const [editingCategoryName, setEditingCategoryName] = useState("");
 
   const [newSubcategoryName, setNewSubcategoryName] = useState("");
@@ -46,14 +55,27 @@ export default function AdminCategoriesPage() {
   const subcategories = selectedCategory?.subcategories || [];
 
   // Handlers: Categories
-  function handleCreateCategory(e: React.FormEvent) {
+  async function handleCreateCategory(e: React.FormEvent) {
     e.preventDefault();
-    if (!newCategoryName.trim()) return;
-    createCategory.mutate(newCategoryName.trim(), {
-      onSuccess: () => {
-        setNewCategoryName("");
+    if (!newCategoryName.trim())
+      return toast.warning("Ingresa un nombre para la nueva categoria.");
+    if (!iconFile)
+      return toast.warning("Selecciona un icono para la nueva categoria.");
+    const form = new FormData();
+    form.append("file", iconFile);
+    const categoryCreated = await createCategory.mutateAsync(
+      newCategoryName.trim(),
+      {
+        onSuccess: () => {
+          setNewCategoryName("");
+        },
       },
+    );
+    const result = await uploadCategoryIcon.mutateAsync({
+      id: categoryCreated.id,
+      formData: form,
     });
+    console.log(result);
   }
 
   function startEditCategory(category: Category) {
@@ -93,11 +115,12 @@ export default function AdminCategoriesPage() {
   }
 
   // Handlers: Subcategories
-  function handleCreateSubcategory(e: React.FormEvent) {
+  async function handleCreateSubcategory(e: React.FormEvent) {
     e.preventDefault();
     if (!selectedCategoryId) return;
-    if (!newSubcategoryName.trim()) return;
-    createSubcategory.mutate(
+    if (!newSubcategoryName.trim() || !iconFile)
+      return toast.warning("Por favor, completa todos los campos.");
+    const categoryCreated = await createSubcategory.mutateAsync(
       { categoryId: selectedCategoryId, name: newSubcategoryName.trim() },
       {
         onSuccess: () => {
@@ -168,7 +191,13 @@ export default function AdminCategoriesPage() {
         onSubmit={handleCreateCategory}
         className="flex flex-col gap-3 rounded-lg border border-gray-200 bg-fifth p-4 shadow-sm md:flex-row md:items-end"
       >
-        <div className="flex-1">
+        <div className="flex flex-1 flex-row">
+          <input
+            type="file"
+            accept="image/*"
+            className="file:text-white"
+            onChange={(e) => setIconFile(e.target.files?.[0] || null)}
+          />
           <Input
             id="categoryName"
             type="text"
@@ -178,7 +207,7 @@ export default function AdminCategoriesPage() {
             required
           />
         </div>
-        <Button type="submit" label="Crear" />
+        <Button type="submit" label="Crear" icon={<FaPlus />} />
       </form>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -225,6 +254,10 @@ export default function AdminCategoriesPage() {
                         className="text-left font-medium text-gray-800 hover:text-blue-600"
                         onClick={() => onSelectCategory(cat)}
                       >
+                        <img
+                          src={generateImageUrl("category", cat.icon)}
+                          alt={cat.name}
+                        />
                         {cat.name}
                       </button>
                     )}

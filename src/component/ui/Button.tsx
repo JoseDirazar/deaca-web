@@ -20,7 +20,7 @@ export default function Button({
     <button
       type={type}
       className={cn(
-        "font-century-gothic-bold flex items-center justify-center gap-1 rounded bg-fourth px-3 py-2 text-center text-white",
+        "flex items-center justify-center gap-1 rounded bg-fourth px-3 py-3 text-center font-century-gothic text-lg font-bold text-white",
         className,
       )}
       disabled={disabled}

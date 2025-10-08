@@ -13,7 +13,7 @@ export default function DLink({ to, label, className, icon }: DLinkProps) {
     <Link
       to={to}
       className={cn(
-        "flex items-center gap-2 rounded-xl px-3 py-2 text-center font-century-gothic-bold text-primary hover:underline",
+        "flex items-center gap-2 rounded-xl px-3 py-2 text-center font-century-gothic font-bold text-primary hover:underline",
         className,
       )}
     >

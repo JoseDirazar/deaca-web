@@ -23,11 +23,11 @@ export default function ForgotPasswordPage() {
     }
 
     await mutateAsync({ email });
-    navigate("/auth/reset-password");
+    navigate("/auth/restablecer-contraseña");
   };
 
   return (
-    <div className="flex flex-col">
+    <>
       <AuthOutletHeader
         title="¿Olvidaste tu contraseña?"
         description="No te preocupes. Ingresa tu correo electrónica a continuación y te enviaremos un enlace para restablecer tu contraseña."
@@ -48,6 +48,7 @@ export default function ForgotPasswordPage() {
 
             <Button
               type="submit"
+              className="w-full"
               label={isLoading ? "Enviando..." : "Restablecer Contraseña"}
               disabled={isLoading}
             />
@@ -64,11 +65,11 @@ export default function ForgotPasswordPage() {
           </p>
           <Button
             onClick={() => navigate("/auth/reset-password")}
-            className="mt-4"
+            className="mt-4 w-full"
             label="Restablecer Contraseña"
           />
         </div>
       )}
-    </div>
+    </>
   );
 }

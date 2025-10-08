@@ -13,16 +13,16 @@ export const adminRoutes: NavbarRoutes = [
     {
         label: "Categorias",
         icon: MdCategory,
-        href: "/admin/categories",
+        href: "/admin/categorias",
     },
     {
         label: "Usuarios",
         icon: FaUsers,
-        href: "/admin/users",
+        href: "/admin/usuarios",
     },
     {
         label: "Establecimientos",
         icon: IoBusiness,
-        href: "/admin/establishments",
+        href: "/admin/emprendimientos",
     },
 ];
