@@ -35,7 +35,7 @@ export const useSubcategoryApi = () => {
     })
 
     const deleteSubcategory = useMutation({
-        mutationFn: (id: string) => categoryService.deleteSubcategory(id).then((res: any) => res?.data.data || null),
+        mutationFn: (id: string) => categoryService.deleteSubcategory(id),
         onSuccess: () => {
             qc.invalidateQueries({ queryKey: ["subcategories"] })
             qc.invalidateQueries({ queryKey: ["categories"] })

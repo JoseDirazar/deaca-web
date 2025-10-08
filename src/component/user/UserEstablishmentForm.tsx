@@ -77,8 +77,7 @@ export default function UserEstablishmentForm({
       prev.filter((id) => subs?.some((s) => s.id === id)),
     );
   }, [selectedCategoryIds, categories]);
-  console.log(selectedSubcategoryIds);
-  // Load editing establishment data
+
   useEffect(() => {
     if (establishment) {
       setForm({
@@ -227,7 +226,6 @@ export default function UserEstablishmentForm({
       console.error("Error updating establishment:", error);
     }
   }
-  console.log(from);
   const canSubmit = useMemo(() => {
     // Dev minimal: name + at least 1 category + avatar (file or existing)
     const nameOk = (form.name?.trim() || "").length > 0;
@@ -236,7 +234,6 @@ export default function UserEstablishmentForm({
       Boolean(avatarFile) || (isEditMode && Boolean(form.avatar));
     return nameOk && hasCategory && hasAvatar;
   }, [form.name, selectedCategoryIds, avatarFile, isEditMode, form.avatar]);
-  console.log(galleryFiles);
 
   return (
     <SectionContainer className="md:col-span-2">

@@ -11,7 +11,6 @@ export default function AdminCategoriesPage() {
     useCategoryApi();
   const { createSubcategory, updateSubcategory, deleteSubcategory } =
     useSubcategoryApi();
-  console.log(getCategories.data);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
     null,
   );
@@ -130,12 +129,16 @@ export default function AdminCategoriesPage() {
     );
   }
 
-  function handleDeleteSubcategory(sub: Subcategory) {
-    const confirmed = window.confirm(
-      `¿Seguro que deseas eliminar la subcategoría "${sub.name}"? Esta acción no se puede deshacer.`,
-    );
-    if (!confirmed) return;
-    deleteSubcategory.mutate(sub.id);
+  async function handleDeleteSubcategory(sub: Subcategory) {
+    try {
+      const confirmed = window.confirm(
+        `¿Seguro que deseas eliminar la subcategoría "${sub.name}"? Esta acción no se puede deshacer.`,
+      );
+      if (!confirmed) return;
+      await deleteSubcategory.mutateAsync(sub.id);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   function onSelectCategory(category: Category) {
