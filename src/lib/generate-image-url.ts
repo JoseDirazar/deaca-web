@@ -1,4 +1,4 @@
-import { uploadBaseURL } from "@/api/axios-instance";
+import { uploadBaseUrl } from "./constants/api";
 
 export const generateImageUrl = (
   type: "user" | "establishment",
@@ -9,8 +9,8 @@ export const generateImageUrl = (
   if (filename.split(".").includes("googleusercontent")) return filename;
   switch (type) {
     case "user":
-      return `${uploadBaseURL}/user/avatar/${filename}`;
+      return `${uploadBaseUrl}/user/avatar/${filename}`;
     case "establishment":
-      return `${uploadBaseURL}/user/establishment/${filename}`;
+      return `${uploadBaseUrl}/user/establishment/${filename}`;
   }
 };

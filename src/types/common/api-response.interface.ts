@@ -5,13 +5,11 @@ import type { Category } from "../category/category.interface";
 import type { Subcategory } from "../category/subcategory.interface";
 import type { Review } from "../reviews/review.interface";
 
-export type ApiPayload<T> = {
-    ok: boolean;
+export interface ApiPayload<T> {
     data: T;
+    message?: string;
 }
-export type ApiPaginatedPayload<T> = {
-    ok: boolean;
-    data: T;
+export interface ApiPaginatedPayload<T> extends ApiPayload<T> {
     meta: {
         itemCount: number;
         itemsPerPage: number;
@@ -24,14 +22,14 @@ export type ApiResponse<T> = Promise<AxiosResponse<ApiPayload<T>>>;
 export type ApiPaginatedResponse<T> = Promise<AxiosResponse<ApiPaginatedPayload<T>>>;
 
 // -------- AUTH ---------------- AUTH ---------------- AUTH --------
-export type SignInResponse = ApiResponse<{ accessToken: string, refreshToken: string, user: User }>
+export type SignUpResponse = ApiResponse<void>
+export type SignInResponse = ApiResponse<{ accessToken: string }>
 export type SignOutResponse = ApiResponse<void>;
-export type SignUpResponse = ApiResponse<{ accessToken: string, refreshToken: string, user: User }>
-export type GoogleAuthResponse = ApiResponse<{ accessToken: string, refreshToken: string, user: User }>
-export type RefreshTokenResponse = ApiResponse<{ accessToken: string, refreshToken: string }>
+export type GoogleAuthResponse = ApiResponse<{ accessToken: string }>
+export type RefreshTokenResponse = ApiResponse<{ accessToken: string }>;
 export type ConfirmEmailResponse = ApiResponse<User>;
 export type RequestPasswordResetResponse = ApiResponse<void>;
-export type ResetPasswordResponse = ApiResponse<{ accessToken: string, refreshToken: string, user: User }>;
+export type ResetPasswordResponse = ApiResponse<void>;
 // -------- ESTABLISHMENT ---------------- ESTABLISHMENT ---------------- ESTABLISHMENT --------
 export type GetEstablishmentsResponse = ApiPaginatedResponse<Establishment[]>;
 export type GetMyEstablishmentsResponse = ApiResponse<Establishment[]>;

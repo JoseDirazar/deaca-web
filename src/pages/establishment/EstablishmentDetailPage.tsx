@@ -264,9 +264,7 @@ function Reviews({
                     </p>
                     <StarRating rating={review.rating} readonly size={18} />
                   </div>
-                  <p>
-                    {user?.id} {review.reviewer.id}
-                  </p>
+
                   {user?.id === review.reviewer.id && (
                     <div className="flex gap-2">
                       <Button
