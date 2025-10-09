@@ -3,7 +3,7 @@ import type { Establishment } from "@/types/establishment/etablihment.interface"
 import { FaEdit } from "react-icons/fa";
 import Button from "../Button";
 
-export function EstablishmentListItem({
+export default function UserEstablishmentsListItem({
   establishment,
   navigate,
 }: {

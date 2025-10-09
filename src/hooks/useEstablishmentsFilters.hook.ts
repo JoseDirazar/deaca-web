@@ -6,7 +6,7 @@ export type SortBy = "name" | "createdAt" | "address";
 export interface EstablishmentsFiltersState {
   page: number;
   limit: number;
-  name: string; // search by name
+  name: string;
   address: string;
   categories?: string[];
   subcategories?: string[];
@@ -32,7 +32,7 @@ export const useEstablishmentsFilters = (initial?: Partial<EstablishmentsFilters
   const setLimit = useCallback((limit: number) => setState((s) => ({ ...s, limit, page: 1 })), []);
   const setName = useCallback((name: string) => setState((s) => ({ ...s, name, page: 1 })), []);
   const setAddress = useCallback((address: string) => setState((s) => ({ ...s, address, page: 1 })), []);
-  const setCategories = useCallback((categories?: string[]) => setState((s) => ({ ...s, categories, page: 1 })), []);
+  const setCategories = useCallback((categories?: string[]) => setState((s) => ({ ...s, categories: [...s.categories || [], ...(categories || [])], page: 1 })), []);
   const setSubcategories = useCallback((subcategories?: string[]) => setState((s) => ({ ...s, subcategories, page: 1 })), []);
   const setSorting = useCallback((sortBy?: SortBy, sortOrder?: SortOrder) => setState((s) => ({ ...s, sortBy, sortOrder })), []);
 

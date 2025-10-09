@@ -87,6 +87,7 @@ export default function EstablishmentDetailPage() {
         />
         {establishment?.latitude && establishment?.longitude && (
           <GoogleMaps
+            className="flex-grow"
             markers={[
               {
                 lat: Number(establishment.latitude),

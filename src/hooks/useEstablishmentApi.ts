@@ -14,7 +14,8 @@ export const useEstablishmentApi = () => {
         });
     }
 
-    const getEstablishments = (queryParams: string, page: number, limit: number, sortBy: string, sortOrder: string) => {
+    //TODO: checkear si vienen las imagenes de galeria no necesarias para la lista
+    const getEstablishments = (queryParams: string, page: number, limit: number, sortBy?: string, sortOrder?: string) => {
         return useQuery({
             queryKey: ["establishments", page, limit, sortBy, sortOrder],
             queryFn: () => establishmentService.getEstablishments(queryParams).then(res => res?.data || null),
