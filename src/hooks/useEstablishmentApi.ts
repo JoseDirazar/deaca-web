@@ -15,12 +15,17 @@ export const useEstablishmentApi = () => {
     }
 
     //TODO: checkear si vienen las imagenes de galeria no necesarias para la lista
-    const getEstablishments = (queryParams: string, page: number, limit: number, sortBy?: string, sortOrder?: string) => {
+    const getEstablishments = (queryParams: string, page: number, limit: number) => {
         return useQuery({
-            queryKey: ["establishments", page, limit, sortBy, sortOrder],
-            queryFn: () => establishmentService.getEstablishments(queryParams).then(res => res?.data || null),
+            // QueryKey ahora incluye el queryParams completo para invalidar cache correctamente
+            queryKey: ["establishments", queryParams],
+            queryFn: () =>
+                establishmentService.getEstablishments(queryParams).then((res) => res?.data || null),
+            // Opciones adicionales recomendadas
+            staleTime: 1000 * 60, // Los datos son frescos por 1 minuto
+            gcTime: 1000 * 60 * 5, // Mantener en cache por 5 minutos (antes era cacheTime)
         });
-    }
+    };
 
     const getMyEstablishments = () => {
         return useQuery({

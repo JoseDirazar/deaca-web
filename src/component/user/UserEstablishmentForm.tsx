@@ -20,7 +20,7 @@ export default function UserEstablishmentForm({
 }: UserEstablishmentFormProps) {
   const isEditMode = Boolean(establishment);
   const navigate = useNavigate();
-  const from = useLocation().state?.from ?? "/user/establishment";
+  const from = useLocation().state?.from ?? "/usuario/emprendimientos";
   const {
     createEstablishment,
     updateEstablishment,
