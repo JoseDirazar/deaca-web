@@ -17,6 +17,7 @@ export default function ImageUpload({
   const [fileCount, setFileCount] = useState(0);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(e.target.files);
     const files = e.target.files;
     if (!files) {
       setPreviews([]);

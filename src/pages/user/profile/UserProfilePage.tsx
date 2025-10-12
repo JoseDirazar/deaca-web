@@ -14,11 +14,10 @@ import { useUserApi } from "@/hooks/useUserApi.hook";
 export default function UserProfilePage() {
   const { user } = useUserStore();
   const [form, setForm] = useState<Partial<User>>({
-    avatar: user?.avatar,
     firstName: user?.firstName,
     lastName: user?.lastName,
   });
-
+  console.log("USER", user);
   const { updateAvatar, updateUser } = useUserApi();
 
   const {
@@ -41,13 +40,19 @@ export default function UserProfilePage() {
     formData.append("file", file);
     await updateAvatarAsync(formData);
   };
+
   return (
     <SectionContainer>
       <OutletHeader
         title="Perfil"
         description="Gestiona tu perfil de usuario"
       />
-      <OutletForm onSubmit={() => updateUserAsync(form)}>
+      <OutletForm
+        onSubmit={(e) => {
+          e.preventDefault();
+          updateUserAsync(form);
+        }}
+      >
         <div className="relative w-fit">
           <input
             type="file"
@@ -95,6 +100,14 @@ export default function UserProfilePage() {
           label={isUpdatingUser ? "Actualizando..." : "Actualizar perfil"}
         />
       </OutletForm>
+      {isErrorUpdateUser && (
+        <p className="text-red-500">{errorUpdateUser?.message}</p>
+      )}
+      {isErrorUpdateAvatar && (
+        <p className="text-red-500">{errorUpdateAvatar?.message}</p>
+      )}
+      {isUpdatingUser && <p className="text-red-500">Actualizando...</p>}
+      {isUpdatingAvatar && <p className="text-red-500">Actualizando...</p>}
     </SectionContainer>
   );
 }

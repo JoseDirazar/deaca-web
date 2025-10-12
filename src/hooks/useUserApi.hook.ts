@@ -10,20 +10,20 @@ export const useUserApi = () => {
 
     const getUser = useQuery({
         queryKey: ["user", "me"],
-        queryFn: () => userService.getUser().then(res => res?.data?.data || null),
+        queryFn: () => userService.getUser().then(res => res?.data),
     });
 
     const useGetUsers = (queryParams: string, page: number, limit: number, sortBy: string, sortOrder: string) => {
         return useQuery({
             queryKey: ["users", page, limit, sortBy, sortOrder],
-            queryFn: () => userService.getUsers(queryParams).then(res => res?.data || null),
+            queryFn: () => userService.getUsers(queryParams).then(res => res?.data),
         });
     }
 
     const updateUser = useMutation({
-        mutationFn: (data: EditProfileDto) => userService.updateUser(data).then(res => res?.data?.data),
-        onSuccess: (response) => {
-            setUser(response)
+        mutationFn: (data: EditProfileDto) => userService.updateUser(data).then(res => res?.data),
+        onSuccess: ({ data }) => {
+            setUser(data)
             toast.success("Avatar updated successfully");
             queryClient.invalidateQueries({ queryKey: ["user", "me"] });
         },
@@ -34,9 +34,9 @@ export const useUserApi = () => {
     });
 
     const updateAvatar = useMutation({
-        mutationFn: (formData: FormData) => userService.updateAvatar(formData).then(res => res?.data?.data),
-        onSuccess: (response) => {
-            setUser(response)
+        mutationFn: (formData: FormData) => userService.updateAvatar(formData).then(res => res?.data),
+        onSuccess: ({ data }) => {
+            setUser(data)
             toast.success("Avatar updated successfully");
             queryClient.invalidateQueries({ queryKey: ["user", "me"] });
         },
