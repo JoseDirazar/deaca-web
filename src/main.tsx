@@ -10,7 +10,15 @@ import { useUserStore } from "@/context/useUserStore";
 import { bootstrapAuth } from "@/api/axios-instance";
 import { APIProvider } from "@vis.gl/react-google-maps";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 10 * 60 * 1000, // 10 minutes
+      gcTime: 15 * 60 * 1000, // 15 minutes
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 function Bootstrapper() {
   const { isUserLoaded, setIsUserLoaded } = useUserStore();

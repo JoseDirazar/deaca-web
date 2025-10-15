@@ -3,14 +3,13 @@ import { generateImageUrl } from "@/lib/generate-image-url";
 import type { Category } from "@/types/category/category.interface";
 import { TbCategory2 } from "react-icons/tb";
 
-export function CategoryListItem({
+export function CategoryList({
   categories,
   className,
 }: {
   categories: Category[];
   className?: string;
 }) {
-  console.log(categories);
   return (
     <>
       {categories.map((category) => (
@@ -27,7 +26,7 @@ export function CategoryListItem({
           ) : (
             <TbCategory2 className="h-12 w-12" />
           )}
-          <p className="font-century-gothic text-base font-bold tracking-wide text-fourth">
+          <p className="text-center font-century-gothic text-base font-bold tracking-wide text-fourth">
             {category.name}
           </p>
         </div>

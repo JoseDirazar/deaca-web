@@ -7,10 +7,11 @@ import { AxiosError } from "axios";
 export const useEstablishmentApi = () => {
     const queryClient = useQueryClient();
 
-    const getEstablishment = (id: string) => {
+    const getEstablishment = (id: string, options?: { enabled?: boolean }) => {
         return useQuery({
             queryKey: ["establishment", id],
             queryFn: () => establishmentService.getById(id).then(res => res?.data?.data || null),
+            enabled: options?.enabled ?? true,
         });
     }
 
@@ -92,6 +93,19 @@ export const useEstablishmentApi = () => {
         }
     });
 
+    const deleteEstablishmentImage = useMutation({
+        mutationFn: ({ id, imageId }: { id: string, imageId: string }) => establishmentService.deleteImage(id, imageId).then(res => res.data.data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["establishment", "me"] });
+            queryClient.refetchQueries({ queryKey: ["establishment", "me"] });
+            toast.success("Imagen eliminada correctamente");
+        },
+        onError: (error) => {
+            if (error instanceof AxiosError) toast.error(error.response?.data.message)
+            else toast.error("Error al eliminar la imagen")
+        }
+    });
+
     return {
         getEstablishment,
         getEstablishments,
@@ -100,6 +114,7 @@ export const useEstablishmentApi = () => {
         updateEstablishmentAvatar,
         updateEstablishmentImages,
         createEstablishment,
-        deleteEstablishment
+        deleteEstablishment,
+        deleteEstablishmentImage
     };
 };

@@ -18,9 +18,9 @@ export default function LandingPage() {
     error: categoriesError,
   } = getCategories;
   const navigate = useNavigate();
-
+  console.log(categories);
   return (
-    <PageContainer>
+    <PageContainer className="gap-12">
       <SearchSection categories={categories || []} />
       <CategorySection categories={categories || []} />
       <TendenciesSection />

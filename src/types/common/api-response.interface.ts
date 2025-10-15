@@ -41,6 +41,7 @@ export type VerifyEstablishmentResponse = ApiResponse<Establishment>;
 export type UploadEstablishmentAvatarResponse = ApiResponse<Establishment>;
 export type UploadEstablishmentImagesResponse = ApiResponse<Establishment>;
 export type RefreshCompletenessResponse = ApiResponse<boolean>;
+export type DeleteEstablishmentImageResponse = ApiResponse<boolean>;
 // -------- USER ---------------- USER ---------------- USER --------
 export type GetUsersResponse = ApiPaginatedResponse<User[]>;
 export type GetMyProfileResponse = ApiResponse<User>;

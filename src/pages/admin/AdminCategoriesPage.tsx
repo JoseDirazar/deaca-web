@@ -75,7 +75,6 @@ export default function AdminCategoriesPage() {
       id: categoryCreated.id,
       formData: form,
     });
-    console.log(result);
   }
 
   function startEditCategory(category: Category) {

@@ -10,6 +10,7 @@ import { useCategoryApi } from "@/hooks/useCategoryApi.hook";
 import { generateImageUrl } from "@/lib/generate-image-url";
 import { useLocation, useNavigate } from "react-router";
 import SectionContainer from "../ui/section/SectionContainer";
+import type { Image } from "@/types/common/image.interface";
 
 interface UserEstablishmentFormProps {
   establishment?: Establishment | null;
@@ -26,6 +27,7 @@ export default function UserEstablishmentForm({
     updateEstablishment,
     updateEstablishmentAvatar,
     updateEstablishmentImages,
+    deleteEstablishmentImage,
   } = useEstablishmentApi();
   const { getCategories } = useCategoryApi();
   const {
@@ -66,7 +68,7 @@ export default function UserEstablishmentForm({
 
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [galleryFiles, setGalleryFiles] = useState<FileList | null>(null);
-  const [existingImages, setExistingImages] = useState<string[]>([]);
+  const [existingImages, setExistingImages] = useState<Image[]>([]);
 
   useEffect(() => {
     const subs = categories
@@ -103,7 +105,7 @@ export default function UserEstablishmentForm({
           ?.map((s) => s.id)
           .filter((id): id is string => Boolean(id)) || [],
       );
-      setExistingImages(establishment.images?.map((img) => img.fileName) || []);
+      setExistingImages(establishment.images || []);
     }
   }, [establishment]);
 
@@ -234,6 +236,12 @@ export default function UserEstablishmentForm({
       Boolean(avatarFile) || (isEditMode && Boolean(form.avatar));
     return nameOk && hasCategory && hasAvatar;
   }, [form.name, selectedCategoryIds, avatarFile, isEditMode, form.avatar]);
+
+  const handleDeleteImage = (imageId: string) => {
+    if (!establishment) return;
+    setExistingImages((prev) => prev.filter((img) => img.id !== imageId));
+    deleteEstablishmentImage.mutate({ id: establishment.id, imageId });
+  };
 
   return (
     <SectionContainer className="md:col-span-2">
@@ -460,7 +468,7 @@ export default function UserEstablishmentForm({
             {isEditMode && form.avatar && !avatarFile && (
               <div className="mb-2">
                 <img
-                  src={generateImageUrl("establishment", form.avatar)}
+                  src={generateImageUrl("establishment-logo", form.avatar)}
                   alt="Avatar actual"
                   className="h-24 w-24 rounded object-cover"
                 />
@@ -481,9 +489,13 @@ export default function UserEstablishmentForm({
                 <p className="mb-2 text-xs text-gray-500">Imágenes actuales:</p>
                 <div className="flex flex-wrap gap-2">
                   {existingImages.map((img) => (
-                    <div key={img} className="relative">
+                    <div
+                      key={img.id}
+                      className="relative"
+                      onClick={() => handleDeleteImage(img.id)}
+                    >
                       <img
-                        src={generateImageUrl("establishment", img)}
+                        src={generateImageUrl("establishment", img.fileName)}
                         alt="Imagen de galería"
                         className="h-20 w-20 rounded object-cover"
                       />

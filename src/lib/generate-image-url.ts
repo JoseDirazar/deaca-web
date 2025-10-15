@@ -2,17 +2,18 @@ import { uploadBaseUrl } from "./constants/enviroment-variables";
 
 
 export const generateImageUrl = (
-  type: "user" | "establishment" | "category",
+  type: "user" | "establishment" | "category" | "establishment-logo",
   filename?: string | null,
 ) => {
   if (!filename) return "/default-avatar.png";
-  console.log(filename);
   switch (type) {
     case "user":
-      return `${uploadBaseUrl}/user/avatar/${filename}`;
+      return `${uploadBaseUrl}/user/${filename}`;
     case "establishment":
-      return `${uploadBaseUrl}/user/establishment/${filename}`;
+      return `${uploadBaseUrl}/establishment/${filename}`;
+    case "establishment-logo":
+      return `${uploadBaseUrl}/establishment/logo/${filename}`;
     case "category":
-      return `${uploadBaseUrl}/assets/${filename}`;
+      return `${uploadBaseUrl}/category/${filename}`;
   }
 };

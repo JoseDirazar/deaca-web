@@ -81,7 +81,7 @@ export default function EstablishmentDetailPage() {
           ))}
         </div>
         <img
-          src={generateImageUrl("establishment", establishment.avatar)}
+          src={generateImageUrl("establishment-logo", establishment.avatar)}
           alt={`${establishment.name} avatar`}
           className="absolute -bottom-5 left-5 h-36 w-36 rounded-full bg-white object-cover p-2"
         />

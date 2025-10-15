@@ -11,7 +11,7 @@ export default function UserEstablishmentsListItem({
   return (
     <div className="relative container flex h-fit max-w-xl rounded-md bg-gray-50 shadow-md">
       <img
-        src={generateImageUrl("establishment", establishment.avatar)}
+        src={generateImageUrl("establishment-logo", establishment.avatar)}
         className="h-40 w-40 rounded-l-md object-cover"
         alt={`Avatar de ${establishment.name}`}
       />

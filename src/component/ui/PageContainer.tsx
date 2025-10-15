@@ -10,7 +10,7 @@ export default function PageContainer({
   className,
 }: PageContainerProps) {
   return (
-    <div className={cn("flex h-[calc(100vh-5rem)] flex-col", className)}>
+    <div className={cn("flex min-h-[calc(100vh-5rem)] flex-col", className)}>
       {children}
     </div>
   );

@@ -1,5 +1,5 @@
 import api from "./axios-instance";
-import type { CreateEstablishmentResponse, DeleteMyEstablishmentResponse, GetEstablishmentByIdResponse, GetEstablishmentsResponse, GetMyEstablishmentsResponse, UpdateMyEstablishmentResponse, UploadEstablishmentAvatarResponse, UploadEstablishmentImagesResponse, VerifyEstablishmentResponse } from "@/types/common/api-response.interface";
+import type { CreateEstablishmentResponse, DeleteEstablishmentImageResponse, DeleteMyEstablishmentResponse, GetEstablishmentByIdResponse, GetEstablishmentsResponse, GetMyEstablishmentsResponse, UpdateMyEstablishmentResponse, UploadEstablishmentAvatarResponse, UploadEstablishmentImagesResponse, VerifyEstablishmentResponse } from "@/types/common/api-response.interface";
 import type { CreateEstablishmentDto, EditEstablishmentDto } from "@/types/common/api-request.interface";
 
 export const establishmentService = {
@@ -12,4 +12,5 @@ export const establishmentService = {
   uploadImages: (id: string, formData: FormData): UploadEstablishmentImagesResponse => api.postForm(`/establishment/${id}/images`, formData),
   uploadAvatar: (id: string, formData: FormData): UploadEstablishmentAvatarResponse => api.postForm(`/establishment/${id}/avatar`, formData),
   verify: (id: string, verified: boolean): VerifyEstablishmentResponse => api.patch(`/establishment/${id}/verify`, { verified }),
+  deleteImage: (id: string, imageId: string): DeleteEstablishmentImageResponse => api.delete(`/establishment/${id}/image/${imageId}`),
 };

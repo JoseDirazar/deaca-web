@@ -22,6 +22,7 @@ import DiscoverEstablishmentsPage from "./pages/establishment/DiscoverEstablishm
 import AboutUsPage from "./pages/AboutUsPage";
 import Open24HoursAndWeekendsPage from "./pages/Open24HoursAndWeekendsPage";
 import WhatToDoPage from "./pages/WhatToDoPage";
+import { Roles } from "@/types/common/roles.interface";
 
 function App() {
   return (
@@ -59,7 +60,14 @@ function App() {
 
         <Route path="/usuario/*" element={<UserDashboardLayout />}>
           <Route index element={<UserProfilePage />} />
-          <Route path="emprendimientos" element={<UserEstablishmentPage />} />
+          <Route
+            path="emprendimientos"
+            element={
+              <RequireAuth roles={[Roles.BUSINESS_OWNER, Roles.ADMIN]}>
+                <UserEstablishmentPage />
+              </RequireAuth>
+            }
+          />
           <Route
             path="emprendimientos/:id"
             element={<EditEstablishmentPage />}

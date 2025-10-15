@@ -17,7 +17,6 @@ export default function UserProfilePage() {
     firstName: user?.firstName,
     lastName: user?.lastName,
   });
-  console.log("USER", user);
   const { updateAvatar, updateUser } = useUserApi();
 
   const {
