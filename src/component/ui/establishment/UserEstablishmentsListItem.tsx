@@ -11,7 +11,7 @@ export default function UserEstablishmentsListItem({
   navigate: (edit?: "edit" | null) => void;
 }) {
   return (
-    <div className="relative container flex h-fit rounded-md bg-fifth shadow-md">
+    <div className="relative container flex h-fit rounded-md bg-gray-50 shadow-md">
       <img
         src={generateImageUrl("establishment", establishment.avatar)}
         className="h-40 w-40 rounded-l-md object-cover"

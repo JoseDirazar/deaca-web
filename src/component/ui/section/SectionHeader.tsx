@@ -1,22 +1,32 @@
 import { cn } from "@/lib/cn";
-import type { ReactNode } from "react";
 
 export default function SectionHeader({
   className,
   title,
   subtitle,
   description,
+  descriptionClassName,
 }: {
   className?: string;
   title?: string;
   subtitle?: string;
   description?: string;
+  descriptionClassName?: string;
 }) {
   return (
-    <div className={cn("bg-fifth p-4", className)}>
-      <p className="font-century-gothic text-4xl font-bold">{title}</p>
+    <div
+      className={cn(
+        "flex flex-col items-center justify-center gap-6 text-center font-century-gothic text-[29px] tracking-wide",
+        className,
+      )}
+    >
+      <p>{title}</p>
       {subtitle && <p>{subtitle}</p>}
-      {description && <p>{description}</p>}
+      {description && (
+        <p className={cn("text-gray-500", descriptionClassName)}>
+          {description}
+        </p>
+      )}
     </div>
   );
 }

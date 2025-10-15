@@ -9,6 +9,6 @@ export default function SectionContainer({
   className?: string;
 }) {
   return (
-    <div className={cn("rounded-lg bg-fifth p-4", className)}>{children}</div>
+    <div className={cn("rounded-lg bg-gray-50 p-4", className)}>{children}</div>
   );
 }

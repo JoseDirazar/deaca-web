@@ -14,7 +14,7 @@ export default function Navbar() {
   const [showDropdownMenu, setShowDropdownMenu] = useState(false);
   const navigate = useNavigate();
   return (
-    <nav className="h-20 border-b border-gray-400 bg-fifth">
+    <nav className="h-20 border-b border-gray-400 bg-gray-50">
       <h1 className="hidden">deacá guia de Olavarría</h1>
       <div className="px-4 py-3">
         <div className="flex w-full items-center justify-between">
@@ -61,7 +61,7 @@ export default function Navbar() {
                   />
                 </button>
                 {showDropdownMenu && (
-                  <div className="absolute top-15 z-50 flex w-44 origin-top flex-col divide-y-2 divide-primary rounded bg-fifth p-2 drop-shadow-xl">
+                  <div className="absolute top-15 z-50 flex w-44 origin-top flex-col divide-y-2 divide-primary rounded bg-gray-50 p-2 drop-shadow-xl">
                     <button
                       className="py-2"
                       onClick={() => navigate("/usuario")}

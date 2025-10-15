@@ -172,7 +172,7 @@ export default function AdminUsersPage() {
   }
 
   return (
-    <div className="space-y-4 bg-fifth p-4">
+    <div className="space-y-4 bg-gray-50 p-4">
       <h1 className="font-century-gothic-bold text-xl font-bold text-fourth">
         Usuarios
       </h1>

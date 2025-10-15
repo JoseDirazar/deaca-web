@@ -189,7 +189,7 @@ export default function AdminCategoriesPage() {
       {/* Create Category */}
       <form
         onSubmit={handleCreateCategory}
-        className="flex flex-col gap-3 rounded-lg border border-gray-200 bg-fifth p-4 shadow-sm md:flex-row md:items-end"
+        className="flex flex-col gap-3 rounded-lg border border-gray-200 bg-gray-50 p-4 shadow-sm md:flex-row md:items-end"
       >
         <div className="flex flex-1 flex-row">
           <input
@@ -212,7 +212,7 @@ export default function AdminCategoriesPage() {
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {/* Categories List */}
-        <div className="rounded-lg border border-gray-200 bg-fifth p-4 shadow-sm">
+        <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 shadow-sm">
           <h2 className="mb-3 text-lg font-semibold text-gray-800">Listado</h2>
           <div className="divide-y divide-gray-100">
             {categories.length === 0 ? (
@@ -285,7 +285,7 @@ export default function AdminCategoriesPage() {
         </div>
 
         {/* Subcategories Panel */}
-        <div className="rounded-lg border border-gray-200 bg-fifth p-4 shadow-sm">
+        <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 shadow-sm">
           <h2 className="mb-3 text-lg font-semibold text-gray-800">
             Subcategorías
           </h2>

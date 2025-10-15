@@ -6,8 +6,7 @@ export const generateImageUrl = (
   filename?: string | null,
 ) => {
   if (!filename) return "/default-avatar.png";
-
-  if (filename.split(".").includes("googleusercontent")) return filename;
+  console.log(filename);
   switch (type) {
     case "user":
       return `${uploadBaseUrl}/user/avatar/${filename}`;
