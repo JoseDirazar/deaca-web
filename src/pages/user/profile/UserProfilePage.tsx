@@ -1,8 +1,6 @@
 import Button from "@/component/ui/Button";
 import OutletForm from "@/component/ui/form/OutletForm";
-import OutletHeader from "@/component/ui/form/OutletHeader";
 import Input from "@/component/ui/Input";
-import SectionContainer from "@/component/ui/section/SectionContainer";
 import UserAvatar from "@/component/ui/user/UserAvatar";
 import { useUserStore } from "@/context/useUserStore";
 import { LuLoader } from "react-icons/lu";
@@ -10,6 +8,7 @@ import type { User } from "@/types/user/user.interface";
 import { useState } from "react";
 import { IoAdd } from "react-icons/io5";
 import { useUserApi } from "@/hooks/useUserApi.hook";
+import PageContainer from "@/component/ui/PageContainer";
 
 export default function UserProfilePage() {
   const { user } = useUserStore();
@@ -41,11 +40,8 @@ export default function UserProfilePage() {
   };
 
   return (
-    <SectionContainer>
-      <OutletHeader
-        title="Perfil"
-        description="Gestiona tu perfil de usuario"
-      />
+    <PageContainer>
+      <PageHeader title="Perfil" description="Gestiona tu perfil de usuario" />
       <OutletForm
         onSubmit={(e) => {
           e.preventDefault();
@@ -107,6 +103,21 @@ export default function UserProfilePage() {
       )}
       {isUpdatingUser && <p className="text-red-500">Actualizando...</p>}
       {isUpdatingAvatar && <p className="text-red-500">Actualizando...</p>}
-    </SectionContainer>
+    </PageContainer>
+  );
+}
+
+function PageHeader({
+  title,
+  description,
+}: {
+  title: string;
+  description: string;
+}) {
+  return (
+    <div className="mb-12 flex flex-col gap-6 font-century-gothic">
+      <h1 className="text-5xl font-bold">{title}</h1>
+      <p className="text-xl text-gray-500">{description}</p>
+    </div>
   );
 }

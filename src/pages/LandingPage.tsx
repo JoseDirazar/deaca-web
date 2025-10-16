@@ -7,27 +7,25 @@ import TendenciesSection from "@/component/landing/TendenciesSection";
 import UsersTestimoniesSection from "@/component/landing/UsersTestimoniesSection";
 import PageContainer from "@/component/ui/PageContainer";
 import { useCategoryApi } from "@/hooks/useCategoryApi.hook";
-import { useNavigate } from "react-router";
+import { Suspense } from "react";
 
 export default function LandingPage() {
   const { getCategories } = useCategoryApi();
-  const {
-    data: categories,
-    isPending: categoriesPending,
-    isError: isCategoriesError,
-    error: categoriesError,
-  } = getCategories;
-  const navigate = useNavigate();
-  console.log(categories);
+  const { data: categories, isPending: categoriesPending } = getCategories;
+
+  if (categoriesPending) return <div>Loading...</div>;
+
   return (
     <PageContainer className="gap-12">
-      <SearchSection categories={categories || []} />
-      <CategorySection categories={categories || []} />
-      <TendenciesSection />
-      <RegisterSection />
-      <SponsorsSection />
-      <UsersTestimoniesSection />
-      <ReachOutSection />
+      <Suspense fallback={<div>Loading FROM SUSPENSE...</div>}>
+        <SearchSection categories={categories || []} />
+        <CategorySection categories={categories || []} />
+        <TendenciesSection />
+        <RegisterSection />
+        <SponsorsSection />
+        <UsersTestimoniesSection />
+        <ReachOutSection />
+      </Suspense>
     </PageContainer>
   );
 }

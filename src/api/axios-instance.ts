@@ -29,10 +29,14 @@ api.interceptors.request.use(
 
 // Variable para evitar múltiples llamadas simultáneas al refresh
 let isRefreshing = false;
-let failedQueue: any[] = [];
+// Ignore the any type for failedQueue variable
+// because it will be used as an array of promises
+// and TypeScript is not able to infer the type correctly
+// @ts-expect-error any[]
+let failedQueue: promise[] | null = [];
 
-const processQueue = (error: any, token: string | null = null) => {
-    failedQueue.forEach(prom => {
+const processQueue = (error: Error, token: string | null = null) => {
+    failedQueue?.forEach(prom => {
         if (error) {
             prom.reject(error);
         } else {
@@ -52,7 +56,8 @@ api.interceptors.response.use(
             if (isRefreshing) {
                 // Si ya se está refrescando, encola esta petición
                 return new Promise((resolve, reject) => {
-                    failedQueue.push({ resolve, reject });
+                    if (!failedQueue) failedQueue = [];
+                    failedQueue?.push({ resolve, reject });
                 })
                     .then(token => {
                         originalRequest.headers.Authorization = `Bearer ${token}`;
@@ -72,12 +77,12 @@ api.interceptors.response.use(
                 useAuthStore.getState().setAccessToken(newAccessToken);
 
                 // Procesa la cola de peticiones pendientes
-                processQueue(null, newAccessToken);
+                processQueue(new Error("Refresh failed"), newAccessToken);
 
                 originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
                 return api(originalRequest);
             } catch (refreshError) {
-                processQueue(refreshError, null);
+                processQueue(refreshError as Error, null);
                 useAuthStore.getState().setAccessToken(null);
                 useUserStore.getState().setUser(null);
 

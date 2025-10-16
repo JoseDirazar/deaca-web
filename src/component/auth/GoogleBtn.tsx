@@ -7,25 +7,22 @@ export default function GoogleBtn() {
   const {
     mutateAsync: signInWithGoogleAsync,
     isPending: isSigningInWithGoogle,
-    isError: isSigningInWithGoogleError,
-    error: signInWithGoogleError,
   } = signInWithGoogle;
 
   useEffect(() => {
-    let accessToken = "";
-    // @ts-ignore
+    // @ts-expect-error google.accounts.id.initialize
     google.accounts.id.initialize({
       client_id: googleClientId,
-      callback: (response: any) => {
+      callback: (response: { credential: string }) => {
         // el JWT de Google
         const credential = response.credential;
-        // mandarlo al backend vía tu hook
-        accessToken = response;
+        // TODO?: mandarlo al backend vía tu hook
+
         signInWithGoogleAsync(credential);
       },
     });
 
-    // @ts-ignore
+    // @ts-expect-error google.accounts.id.renderButton
     google.accounts.id.renderButton(document.getElementById("googleBtn"), {
       theme: "filled_green",
       size: "expanded",

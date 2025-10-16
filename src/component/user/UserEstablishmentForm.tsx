@@ -30,12 +30,7 @@ export default function UserEstablishmentForm({
     deleteEstablishmentImage,
   } = useEstablishmentApi();
   const { getCategories } = useCategoryApi();
-  const {
-    data: categories,
-    isPending: isLoadingCategories,
-    isError: isErrorCategories,
-    error: errorCategories,
-  } = getCategories;
+  const { data: categories, isPending: isLoadingCategories } = getCategories;
 
   const isLoading =
     createEstablishment.isPending ||

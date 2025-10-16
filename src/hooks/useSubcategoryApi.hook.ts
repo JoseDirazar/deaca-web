@@ -6,12 +6,12 @@ export const useSubcategoryApi = () => {
     const qc = useQueryClient()
 
     const getSubcategories = useQuery({
-        queryFn: () => categoryService.getSubcategories().then((res: any) => res?.data || null),
+        queryFn: () => categoryService.getSubcategories().then((res) => res?.data || null),
         queryKey: ["subcategories"],
     })
 
     const createSubcategory = useMutation({
-        mutationFn: ({ categoryId, name }: { categoryId: string, name: string }) => categoryService.createSubcategory(name, categoryId).then((res: any) => res?.data.data || null),
+        mutationFn: ({ categoryId, name }: { categoryId: string, name: string }) => categoryService.createSubcategory(name, categoryId).then((res) => res?.data.data || null),
         onSuccess: () => {
             qc.invalidateQueries({ queryKey: ["subcategories"] })
             qc.invalidateQueries({ queryKey: ["categories"] })
@@ -23,7 +23,7 @@ export const useSubcategoryApi = () => {
     })
 
     const updateSubcategory = useMutation({
-        mutationFn: ({ id, payload }: { id: string, payload: string }) => categoryService.updateSubcategory(id, payload).then((res: any) => res?.data.data || null),
+        mutationFn: ({ id, payload }: { id: string, payload: string }) => categoryService.updateSubcategory(id, payload).then((res) => res?.data.data || null),
         onSuccess: () => {
             qc.invalidateQueries({ queryKey: ["subcategories"] })
             qc.invalidateQueries({ queryKey: ["categories"] })

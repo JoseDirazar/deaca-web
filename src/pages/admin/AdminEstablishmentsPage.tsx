@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import {
   type ColumnDef,
   flexRender,
@@ -26,14 +26,32 @@ export default function EstablishmentsTable() {
     setAddress,
     setSorting,
   } = useEstablishmentsFilters();
-  const { getEstablishments } = useEstablishmentApi();
-  const { data, isPending, isError, error } = getEstablishments(
-    queryString,
-    state.page,
-    state.limit,
-    state.sortBy ?? "createdAt",
-    state.sortOrder ?? "DESC",
+  const { useGetEstablishments } = useEstablishmentApi();
+  const { data, isPending } = useGetEstablishments(queryString);
+
+  const toggleSort = useCallback(
+    (key: SortBy) => {
+      if (state.sortBy !== key) {
+        setSorting(key, "ASC");
+      } else {
+        setSorting(key, state.sortOrder === "ASC" ? "DESC" : "ASC");
+      }
+    },
+    [state.sortBy, state.sortOrder, setSorting],
   );
+
+  const renderSortIndicator = useCallback(
+    (key: SortBy) => {
+      if (state.sortBy !== key) return null;
+      return (
+        <span className="ml-1 text-xs">
+          {state.sortOrder === "ASC" ? "▲" : "▼"}
+        </span>
+      );
+    },
+    [state.sortBy, state.sortOrder],
+  );
+
   const columns = useMemo<ColumnDef<Establishment>[]>(
     () => [
       {
@@ -111,7 +129,7 @@ export default function EstablishmentsTable() {
         },
       },
     ],
-    [state.sortBy, state.sortOrder],
+    [renderSortIndicator, toggleSort],
   );
 
   const table = useReactTable({
@@ -127,23 +145,6 @@ export default function EstablishmentsTable() {
       },
     },
   });
-
-  function toggleSort(key: SortBy) {
-    if (state.sortBy !== key) {
-      setSorting(key, "ASC");
-    } else {
-      setSorting(key, state.sortOrder === "ASC" ? "DESC" : "ASC");
-    }
-  }
-
-  function renderSortIndicator(key: SortBy) {
-    if (state.sortBy !== key) return null;
-    return (
-      <span className="ml-1 text-xs">
-        {state.sortOrder === "ASC" ? "▲" : "▼"}
-      </span>
-    );
-  }
 
   const currentPage = data?.meta?.currentPage ?? state.page ?? 1;
   const totalPages = data?.meta?.totalPages ?? 1;

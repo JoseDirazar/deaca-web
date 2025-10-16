@@ -8,7 +8,7 @@ import { useNavigate } from "react-router";
 export default function UserEstablishmentPage() {
   const navigate = useNavigate();
   const { data: myEstablishments, isPending: isLoadingMine } =
-    useEstablishmentApi().getMyEstablishments();
+    useEstablishmentApi().useGetMyEstablishments();
 
   return (
     <SectionContainer className="container w-full">

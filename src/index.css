@@ -12,6 +12,7 @@
 @theme {
   --breakpoint-xs: 30rem;
   --color-primary: #a3b18a;
+  --color-primary-hover: #c3d4a4;
   --color-secondary: #dad7cd;
   --color-third: #6c634c;
   --color-fourth: #bd612a;
@@ -78,4 +79,32 @@
     format("truetype");
   font-weight: 700;
   font-style: normal;
+}
+
+@keyframes slide-in-from-left {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-out-to-left {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+.animate-slide-in-from-left {
+  animation: slide-in-from-left 0.3s ease-in-out;
+}
+
+.animate-slide-out-to-left {
+  animation: slide-out-to-left 0.3s ease-in-out forwards;
 }

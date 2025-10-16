@@ -1,48 +1,57 @@
 import { FaHome } from "react-icons/fa";
-import DLink from "./DLink";
 import type { NavbarRoutes } from "@/types/common/navbar-routes.interface";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { cn } from "@/lib/cn";
+import { TbCategory } from "react-icons/tb";
 
 export default function Sidebar({
   routes,
   title,
+  containerClassName,
 }: {
   routes: NavbarRoutes;
   title: string;
+  containerClassName?: string;
 }) {
   const navigate = useNavigate();
   return (
-    <div className="flex flex-col border-r bg-white">
-      <div className="flex items-center border-b p-6">
-        <h2 className="text text-center font-century-gothic-bold text-3xl font-semibold text-primary select-none">
+    <div
+      className={cn(
+        "flex h-full flex-col items-center justify-center border-r border-gray-400 bg-white",
+        containerClassName,
+      )}
+    >
+      <div className="flex items-center p-2 md:p-6">
+        <TbCategory className="inline-block h-11 w-11 text-primary md:hidden" />
+        <h2 className="hidden text-center font-century-gothic text-3xl font-semibold text-primary select-none md:block">
           {title}
         </h2>
       </div>
-      <nav className="flex-1 space-y-1 p-4">
+      <nav className="flex-1 space-y-1 p-2 md:p-6">
         {routes.map((route) => (
           <button
             key={route.href}
             onClick={() => navigate(route.href)}
             className={cn(
-              "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all hover:scale-110",
+              "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all hover:scale-110 md:w-full",
               location.pathname === route.href
                 ? "bg-primary text-white"
                 : "text-gray-600 hover:bg-gray-100",
             )}
           >
             <route.icon className="h-5 w-5" />
-            {route.label}
+            <p className="hidden md:block">{route.label}</p>
           </button>
         ))}
       </nav>
-      <div className="w-full p-4">
-        <DLink
+      <div className="w-full p-2 md:p-6">
+        <Link
           to="/"
-          className="flex w-full items-center justify-center rounded-md bg-primary px-4 py-2 text-lg text-white transition-transform hover:scale-110"
-          icon={<FaHome size={20} className="inline-block" />}
-          label="Inicio"
-        />
+          className="flex items-center justify-center rounded-md bg-primary px-4 py-2 text-lg text-white transition-transform hover:scale-110 md:w-full"
+        >
+          <FaHome size={20} className="inline-block" />
+          <p className="hidden md:block">Inicio</p>
+        </Link>
       </div>
     </div>
   );

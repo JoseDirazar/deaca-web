@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import {
   type ColumnDef,
   flexRender,
@@ -9,7 +9,7 @@ import {
   type Row,
   type Cell,
 } from "@tanstack/react-table";
-import { useUsersFilters } from "@/hooks/useUsersFilters.hook";
+import { useUsersFilters, type SortBy } from "@/hooks/useUsersFilters.hook";
 import type { User } from "@/types/user/user.interface";
 import { format, formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
@@ -21,17 +21,33 @@ export default function AdminUsersPage() {
   const { state, queryString, setPage, setLimit, setSearch, setSorting } =
     useUsersFilters();
   const { useGetUsers } = useUserApi();
-  const {
-    data: paginatedUsers,
-    isPending: isLoadingUsers,
-    isError: isGetUsersError,
-    error: getUsersError,
-  } = useGetUsers(
+  const { data: paginatedUsers, isPending: isLoadingUsers } = useGetUsers(
     queryString,
     state.page,
     state.limit,
     state.sortBy ?? "createdAt",
     state.sortOrder ?? "DESC",
+  );
+
+  const toggleSort = useCallback(
+    (key: string) => {
+      if (state.sortBy !== key) {
+        setSorting(key as SortBy, "ASC");
+      } else {
+        setSorting(key as SortBy, state.sortOrder === "ASC" ? "DESC" : "ASC");
+      }
+    },
+    [state.sortBy, state.sortOrder, setSorting],
+  );
+
+  const renderSortIndicator = useCallback(
+    (key: string) => {
+      if (state.sortBy !== key) return null;
+      return (
+        <span className="ml-1">{state.sortOrder === "ASC" ? "▲" : "▼"}</span>
+      );
+    },
+    [state.sortBy, state.sortOrder],
   );
 
   const columns = useMemo<ColumnDef<User>[]>(
@@ -143,7 +159,7 @@ export default function AdminUsersPage() {
             : "",
       },
     ],
-    [state.sortBy, state.sortOrder],
+    [toggleSort, renderSortIndicator],
   );
 
   const table = useReactTable({
@@ -155,21 +171,6 @@ export default function AdminUsersPage() {
       pagination: { pageIndex: (state.page ?? 1) - 1, pageSize: state.limit },
     },
   });
-
-  function toggleSort(key: any) {
-    if (state.sortBy !== key) {
-      setSorting(key, "ASC");
-    } else {
-      setSorting(key, state.sortOrder === "ASC" ? "DESC" : "ASC");
-    }
-  }
-
-  function renderSortIndicator(key: any) {
-    if (state.sortBy !== key) return null;
-    return (
-      <span className="ml-1">{state.sortOrder === "ASC" ? "▲" : "▼"}</span>
-    );
-  }
 
   return (
     <div className="space-y-4 bg-gray-50 p-4">

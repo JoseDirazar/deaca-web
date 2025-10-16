@@ -3,8 +3,6 @@ import SectionContainer from "../../ui/section/SectionContainer";
 import SectionHeader from "../../ui/section/SectionHeader";
 import SearchEstablishments from "../../establishment/SearchEstablishments";
 import TextSpawmer from "./TextSpawmer";
-import { useEstablishmentsFilters } from "@/hooks/useEstablishmentsFilters.hook";
-import { useEstablishmentApi } from "@/hooks/useEstablishmentApi";
 
 export default function SearchSection({
   categories,

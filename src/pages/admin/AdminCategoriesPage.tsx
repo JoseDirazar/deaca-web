@@ -37,7 +37,7 @@ export default function AdminCategoriesPage() {
   const [editingSubcategoryName, setEditingSubcategoryName] = useState("");
 
   // Get categories from React Query
-  const categories = getCategories?.data || [];
+  const categories = useMemo(() => getCategories?.data || [], [getCategories]);
   const isLoading =
     getCategories.isLoading ||
     createCategory.isPending ||
@@ -71,7 +71,7 @@ export default function AdminCategoriesPage() {
         },
       },
     );
-    const result = await uploadCategoryIcon.mutateAsync({
+    await uploadCategoryIcon.mutateAsync({
       id: categoryCreated.id,
       formData: form,
     });
@@ -119,7 +119,7 @@ export default function AdminCategoriesPage() {
     if (!selectedCategoryId) return;
     if (!newSubcategoryName.trim() || !iconFile)
       return toast.warning("Por favor, completa todos los campos.");
-    const categoryCreated = await createSubcategory.mutateAsync(
+    createSubcategory.mutate(
       { categoryId: selectedCategoryId, name: newSubcategoryName.trim() },
       {
         onSuccess: () => {

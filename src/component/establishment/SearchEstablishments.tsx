@@ -2,7 +2,6 @@ import type { Category } from "@/types/category/category.interface";
 import { useNavigate } from "react-router";
 import Button from "../ui/Button";
 import { FaSearch } from "react-icons/fa";
-import Input from "../ui/Input";
 import { useMemo, useState } from "react";
 
 export default function SearchEstablishments({
@@ -15,23 +14,20 @@ export default function SearchEstablishments({
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedSubcategory, setSelectedSubcategory] = useState("");
 
-  // Filtrar subcategorías según la categoría seleccionada
   const availableSubcategories = useMemo(() => {
     if (!selectedCategory) return [];
-    const category = categories.find((cat) => cat.id === selectedCategory);
+    const category = categories.find((cat) => cat.name === selectedCategory);
     return category?.subcategories || [];
   }, [selectedCategory, categories]);
 
-  // Limpiar subcategoría si la categoría cambia
   const handleCategoryChange = (categoryId: string) => {
     setSelectedCategory(categoryId);
-    setSelectedSubcategory(""); // Reset subcategory when category changes
+    setSelectedSubcategory("");
   };
 
   const handleSearch = () => {
     const params = new URLSearchParams();
 
-    // Solo agregar parámetros que tengan valor
     if (searchName.trim()) {
       params.set("name", searchName.trim());
     }
@@ -44,11 +40,9 @@ export default function SearchEstablishments({
       params.append("subcategories[]", selectedSubcategory);
     }
 
-    // Siempre incluir valores por defecto de paginación
     params.set("page", "1");
     params.set("limit", "10");
 
-    // Navegar con los parámetros de búsqueda
     navigate(`/emprendimientos?${params.toString()}`);
   };
 
@@ -79,7 +73,7 @@ export default function SearchEstablishments({
         >
           <option value="">Categorías</option>
           {categories.map((category) => (
-            <option key={category.id} value={category.id}>
+            <option key={category.id} value={category.name}>
               {category.name}
             </option>
           ))}

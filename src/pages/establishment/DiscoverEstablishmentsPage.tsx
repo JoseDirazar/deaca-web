@@ -10,14 +10,11 @@ import { useSearchParams } from "react-router";
 export default function DiscoverEstablishmentsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // 🔹 Inicializar filtros desde URL params
   const {
     queryString,
     state,
     setName,
     toggleCategory,
-    setCategories,
-    setSubcategories,
     isCategorySelected,
     clearCategories,
     clearAllFilters,
@@ -30,28 +27,21 @@ export default function DiscoverEstablishmentsPage() {
     limit: Number(searchParams.get("limit")) || 10,
   });
 
-  // 🔹 Obtener establecimientos con filtros activos
   const {
     data,
     isPending: isLoading,
     isError,
     error,
-  } = useEstablishmentApi().getEstablishments(
-    queryString,
-    state.page,
-    state.limit,
-  );
+  } = useEstablishmentApi().useGetEstablishments(queryString);
 
   const markers = data?.data?.map((e) => ({
     lat: Number(e.latitude),
     lng: Number(e.longitude),
   }));
 
-  // 🔹 Obtener categorías
   const { data: categories, isPending: isLoadingCategories } =
     useCategoryApi().getCategories;
 
-  // 🔹 Sincronizar cambios de filtros con la URL
   useEffect(() => {
     const params = new URLSearchParams();
 

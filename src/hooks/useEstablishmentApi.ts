@@ -7,7 +7,7 @@ import { AxiosError } from "axios";
 export const useEstablishmentApi = () => {
     const queryClient = useQueryClient();
 
-    const getEstablishment = (id: string, options?: { enabled?: boolean }) => {
+    const useGetEstablishment = (id: string, options?: { enabled?: boolean }) => {
         return useQuery({
             queryKey: ["establishment", id],
             queryFn: () => establishmentService.getById(id).then(res => res?.data?.data || null),
@@ -16,7 +16,7 @@ export const useEstablishmentApi = () => {
     }
 
     //TODO: checkear si vienen las imagenes de galeria no necesarias para la lista
-    const getEstablishments = (queryParams: string, page: number, limit: number) => {
+    const useGetEstablishments = (queryParams: string) => {
         return useQuery({
             // QueryKey ahora incluye el queryParams completo para invalidar cache correctamente
             queryKey: ["establishments", queryParams],
@@ -28,7 +28,7 @@ export const useEstablishmentApi = () => {
         });
     };
 
-    const getMyEstablishments = () => {
+    const useGetMyEstablishments = () => {
         return useQuery({
             queryKey: ["my-establishments"],
             queryFn: () => establishmentService.getMine().then(res => res.data.data),
@@ -107,9 +107,9 @@ export const useEstablishmentApi = () => {
     });
 
     return {
-        getEstablishment,
-        getEstablishments,
-        getMyEstablishments,
+        useGetEstablishment,
+        useGetEstablishments,
+        useGetMyEstablishments,
         updateEstablishment,
         updateEstablishmentAvatar,
         updateEstablishmentImages,

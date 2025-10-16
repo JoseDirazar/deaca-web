@@ -6,7 +6,9 @@ export default function UserDashboardLayout() {
   return (
     <PageContainer className="flex-row">
       <UserDashboardSidebar />
-      <Outlet />
+      <div className="flex-1 p-12">
+        <Outlet />
+      </div>
     </PageContainer>
   );
 }
