@@ -52,7 +52,7 @@ export default function SearchEstablishments({
   };
 
   return (
-    <div className="z-20 flex flex-col items-center justify-center gap-3 overflow-hidden rounded bg-white/50 md:flex-row md:rounded-full">
+    <div className="z-20 flex flex-col items-center justify-center gap-3 overflow-hidden rounded md:flex-row md:rounded-full md:bg-white/50">
       <div className="flex w-full flex-col items-center gap-3 md:mr-2 md:flex-row md:gap-2">
         <input
           placeholder="Buscar"
@@ -61,14 +61,14 @@ export default function SearchEstablishments({
           value={searchName}
           onChange={(e) => setSearchName(e.target.value)}
           onKeyPress={handleKeyPress}
-          className="w-full rounded border-none p-4 focus:border-none focus:outline-none active:border-none"
+          className="w-full rounded border-none bg-white/50 p-4 focus:border-none focus:outline-none active:border-none md:bg-transparent"
         />
 
         <select
           id="search-category"
           value={selectedCategory}
           onChange={(e) => handleCategoryChange(e.target.value)}
-          className="w-full rounded border-none p-4 focus:border-none focus:outline-none active:border-none"
+          className="w-full rounded border-none bg-white/50 p-4 focus:border-none focus:outline-none active:border-none md:bg-transparent"
         >
           <option value="">Categorías</option>
           {categories.map((category) => (
@@ -83,7 +83,7 @@ export default function SearchEstablishments({
           value={selectedSubcategory}
           onChange={(e) => setSelectedSubcategory(e.target.value)}
           disabled={!selectedCategory || availableSubcategories.length === 0}
-          className="w-full rounded border-none p-4 focus:border-none focus:outline-none active:border-none disabled:opacity-50"
+          className="w-full rounded border-none bg-white/50 p-4 focus:border-none focus:outline-none active:border-none disabled:text-gray-500 md:bg-transparent"
         >
           <option value="">Subcategorías</option>
           {availableSubcategories.map((subcategory) => (
@@ -96,7 +96,7 @@ export default function SearchEstablishments({
 
       <button
         type="button"
-        className="flex h-full w-full items-center justify-center gap-3 rounded bg-fourth px-4 py-4 text-center font-nueva text-2xl text-white md:aspect-square md:w-fit md:rounded-full md:text-base"
+        className="flex h-full w-full items-center justify-center gap-3 rounded bg-fourth px-4 py-4 text-center text-2xl text-white md:aspect-square md:w-fit md:rounded-full md:text-base"
         onClick={handleSearch}
       >
         <FaSearch className="text-3xl" />

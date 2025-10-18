@@ -3,6 +3,7 @@ import SectionBody from "../ui/section/SectionBody";
 import SectionContainer from "../ui/section/SectionContainer";
 import SectionHeader from "../ui/section/SectionHeader";
 import type { Establishment } from "@/types/establishment/etablihment.interface";
+import { generateImageUrl } from "@/lib/generate-image-url";
 
 export default function TendenciesSection() {
   const { useGetEstablishments } = useEstablishmentApi();
@@ -15,7 +16,7 @@ export default function TendenciesSection() {
         description=" "
         descriptionClassName="bg-fourth h-[2px] w-20 rounded-full"
       />
-      <SectionBody className="grid w-full grid-cols-3 gap-4 text-xs md:grid-cols-4 lg:grid-cols-5">
+      <SectionBody className="flex w-full flex-wrap gap-4">
         {establishments?.data?.map((establishment) => (
           <EstablishmentTendencyCard
             key={establishment.id}
@@ -33,9 +34,14 @@ function EstablishmentTendencyCard({
   establishment: Establishment;
 }) {
   return (
-    <div>
-      <h2>{establishment.name}</h2>
-      <p>{establishment.description}</p>
+    <div className="relative z-20 flex aspect-square w-[200px] flex-col items-start justify-end gap-2 px-2 py-1">
+      <h2 className="text-2xl text-white">{establishment.name}</h2>
+
+      <img
+        className="absolute inset-0 -z-10 h-full w-full rounded object-cover"
+        src={generateImageUrl("establishment-logo", establishment.avatar)}
+        alt={establishment.name}
+      />
     </div>
   );
 }

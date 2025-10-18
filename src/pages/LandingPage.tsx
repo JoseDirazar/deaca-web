@@ -9,12 +9,13 @@ import PageContainer from "@/component/ui/PageContainer";
 import { useCategoryApi } from "@/hooks/useCategoryApi.hook";
 import { Suspense } from "react";
 import Loader from "@/component/ui/Loader";
+import { toast } from "sonner";
 
 export default function LandingPage() {
   const { getCategories } = useCategoryApi();
   const { data: categories, isPending: categoriesPending } = getCategories;
 
-  if (categoriesPending) return <div>Loading...</div>;
+  if (categoriesPending) return <Loader />;
 
   return (
     <PageContainer className="gap-12">
@@ -26,6 +27,15 @@ export default function LandingPage() {
         <SponsorsSection />
         <UsersTestimoniesSection />
         <ReachOutSection />
+        <button
+          onClick={() =>
+            toast.warning("Loading...", {
+              duration: 5000,
+            })
+          }
+        >
+          Show toast
+        </button>
       </Suspense>
     </PageContainer>
   );
