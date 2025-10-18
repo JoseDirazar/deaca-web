@@ -9,7 +9,7 @@ export const userDashboardRoutes: NavbarRoutes = [
         href: "/usuario",
     },
     {
-        label: "Establecimientos",
+        label: "Emprendimientos",
         icon: IoBusiness,
         href: "/usuario/emprendimientos",
     },

@@ -1,5 +1,6 @@
+import PageHeader from "@/component/PageHeader";
 import Button from "@/component/ui/Button";
-import SectionContainer from "@/component/ui/section/SectionContainer";
+import PageContainer from "@/component/ui/PageContainer";
 import UserEstablishmentsList from "@/component/user/UserEtablishmentsList";
 import { useEstablishmentApi } from "@/hooks/useEstablishmentApi";
 import { FaPlus } from "react-icons/fa6";
@@ -9,25 +10,24 @@ export default function UserEstablishmentPage() {
   const navigate = useNavigate();
   const { data: myEstablishments, isPending: isLoadingMine } =
     useEstablishmentApi().useGetMyEstablishments();
-
   return (
-    <SectionContainer className="container w-full">
-      <div className="p-3">
-        <div className="mt-3 flex items-center justify-between py-3">
-          <h2 className="text-3xl font-extrabold text-primary">
-            Mis establecimientos
-          </h2>
-          <Button
-            label="Nuevo establecimiento"
-            onClick={() => navigate("/usuario/emprendimientos/nuevo")}
-            icon={<FaPlus />}
-          />
-        </div>
+    <PageContainer className="flex w-full flex-col items-center gap-6">
+      <div className="flex w-full flex-col gap-3 md:flex-row md:justify-between">
+        <PageHeader
+          title="Mis emprendimientos"
+          description="Gestiona tus emprendimientos"
+        />
+        <Button
+          label="Nuevo"
+          onClick={() => navigate("/usuario/emprendimientos/nuevo")}
+          icon={<FaPlus />}
+          className="h-fit w-fit"
+        />
       </div>
       <UserEstablishmentsList
         isLoadingMine={isLoadingMine}
         myEstablishments={myEstablishments}
       />
-    </SectionContainer>
+    </PageContainer>
   );
 }

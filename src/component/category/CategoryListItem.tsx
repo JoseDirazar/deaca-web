@@ -26,9 +26,7 @@ export function CategoryList({
           ) : (
             <TbCategory2 className="h-12 w-12" />
           )}
-          <p className="text-center font-century-gothic text-base font-bold tracking-wide text-fourth">
-            {category.name}
-          </p>
+          <p className="text-center text-xs text-fourth">{category.name}</p>
         </div>
       ))}
     </>

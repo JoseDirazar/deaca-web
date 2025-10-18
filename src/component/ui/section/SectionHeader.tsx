@@ -16,7 +16,7 @@ export default function SectionHeader({
   return (
     <div
       className={cn(
-        "justify-center-3 flex flex-col items-center gap-4 text-center font-century-gothic text-[29px] tracking-wide",
+        "flex flex-col items-center gap-4 text-center font-century-gothic text-[29px] tracking-wide",
         className,
       )}
     >

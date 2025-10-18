@@ -7,15 +7,17 @@ interface ModalProps {
   isOpen?: boolean;
 }
 
-export default function Modal({ children, setIsOpen }: ModalProps) {
+export default function Modal({ children, setIsOpen, isOpen }: ModalProps) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div
+      className={`fixed inset-0 z-50 flex items-center justify-center p-8 ${isOpen ? "" : "hidden"}`}
+    >
       <div
         className="bg-opacity-50 fixed inset-0 z-40 flex items-center justify-center bg-black/50"
         onClick={() => setIsOpen(false)}
       />
       <div
-        className="relative z-50 max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-lg bg-gray-50 p-8 shadow-lg"
+        className="relative z-50 container max-h-[90vh] max-w-4xl overflow-y-auto rounded-lg bg-gray-50 p-8 shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="absolute top-1 right-1">

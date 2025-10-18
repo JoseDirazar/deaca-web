@@ -128,7 +128,7 @@ export default function EstablishmentReviews({
                     <StarRating rating={review.rating} readonly size={18} />
                   </div>
 
-                  {user?.id === review.reviewer.id && (
+                  {user && user?.id === review.reviewer.id && (
                     <div className="flex gap-2">
                       <Button
                         label="Editar"

@@ -17,23 +17,23 @@ export default function Sidebar({
   return (
     <div
       className={cn(
-        "flex h-full flex-col items-center justify-center border-r border-gray-400 bg-white",
+        "flex h-full max-w-1/4 flex-col items-center justify-start border-r border-gray-400 bg-white md:py-4",
         containerClassName,
       )}
     >
-      <div className="flex items-center p-2 md:p-6">
+      <div className="flex items-center p-2">
         <TbCategory className="inline-block h-11 w-11 text-primary md:hidden" />
-        <h2 className="hidden text-center font-century-gothic text-3xl font-semibold text-primary select-none md:block">
+        <h2 className="hidden text-center font-century-gothic text-3xl font-semibold text-wrap text-primary select-none md:block">
           {title}
         </h2>
       </div>
-      <nav className="flex-1 space-y-1 p-2 md:p-6">
+      <nav className="flex w-full flex-1 flex-col items-center p-2">
         {routes.map((route) => (
           <button
             key={route.href}
             onClick={() => navigate(route.href)}
             className={cn(
-              "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all hover:scale-110 md:w-full",
+              "flex w-full items-center justify-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all hover:scale-110 md:justify-start",
               location.pathname === route.href
                 ? "bg-primary text-white"
                 : "text-gray-600 hover:bg-gray-100",
@@ -44,7 +44,7 @@ export default function Sidebar({
           </button>
         ))}
       </nav>
-      <div className="w-full p-2 md:p-6">
+      <div className="w-full p-2">
         <Link
           to="/"
           className="flex items-center justify-center rounded-md bg-primary px-4 py-2 text-lg text-white transition-transform hover:scale-110 md:w-full"

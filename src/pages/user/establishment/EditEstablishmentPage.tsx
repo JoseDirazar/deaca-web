@@ -4,8 +4,8 @@ import { useParams } from "react-router";
 
 export default function EditEstablishmentPage() {
   const { id } = useParams();
-  const { getEstablishment } = useEstablishmentApi();
-  const { data: establishment } = getEstablishment(id as string, {
+  const { useGetEstablishment } = useEstablishmentApi();
+  const { data: establishment } = useGetEstablishment(id as string, {
     enabled: !!id,
   });
   return (

@@ -6,7 +6,7 @@ import Input from "@/component/ui/Input";
 import Button from "@/component/ui/Button";
 import AuthOutletHeader from "@/component/ui/form/OutletHeader";
 import AuthOutletForm from "@/component/ui/form/OutletForm";
-import AuthOutletFooter from "@/component/ui/auth/AuthOutletFooter";
+import AuthOutletFooter from "@/component/auth/AuthOutletFooter";
 import GoogleBtn from "@/component/auth/GoogleBtn";
 import type { PreviousWindowLocation } from "@/types/common/previous-window-location.interface";
 

@@ -8,6 +8,7 @@ import UsersTestimoniesSection from "@/component/landing/UsersTestimoniesSection
 import PageContainer from "@/component/ui/PageContainer";
 import { useCategoryApi } from "@/hooks/useCategoryApi.hook";
 import { Suspense } from "react";
+import Loader from "@/component/ui/Loader";
 
 export default function LandingPage() {
   const { getCategories } = useCategoryApi();
@@ -17,7 +18,7 @@ export default function LandingPage() {
 
   return (
     <PageContainer className="gap-12">
-      <Suspense fallback={<div>Loading FROM SUSPENSE...</div>}>
+      <Suspense fallback={<Loader />}>
         <SearchSection categories={categories || []} />
         <CategorySection categories={categories || []} />
         <TendenciesSection />

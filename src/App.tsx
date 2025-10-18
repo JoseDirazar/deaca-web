@@ -74,7 +74,14 @@ function App() {
           />
         </Route>
       </Route>
-      <Route path="/admin/*" element={<AdminLayout />}>
+      <Route
+        path="/admin/*"
+        element={
+          <RequireAuth roles={[Roles.ADMIN]}>
+            <AdminLayout />
+          </RequireAuth>
+        }
+      >
         <Route index element={<AdminDashboardPage />} />
         <Route path="usuarios" element={<AdminUsersPage />} />
         <Route path="emprendimientos" element={<AdminEstablishmentsPage />} />

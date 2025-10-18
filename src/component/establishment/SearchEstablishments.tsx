@@ -1,6 +1,5 @@
 import type { Category } from "@/types/category/category.interface";
 import { useNavigate } from "react-router";
-import Button from "../ui/Button";
 import { FaSearch } from "react-icons/fa";
 import { useMemo, useState } from "react";
 
@@ -53,8 +52,8 @@ export default function SearchEstablishments({
   };
 
   return (
-    <div className="z-20 flex items-center justify-center overflow-hidden rounded-full bg-white">
-      <div className="ml-2 flex w-full items-center gap-2 pl-4">
+    <div className="z-20 flex flex-col items-center justify-center gap-3 overflow-hidden rounded bg-white/50 md:flex-row md:rounded-full">
+      <div className="flex w-full flex-col items-center gap-3 md:mr-2 md:flex-row md:gap-2">
         <input
           placeholder="Buscar"
           type="text"
@@ -62,14 +61,14 @@ export default function SearchEstablishments({
           value={searchName}
           onChange={(e) => setSearchName(e.target.value)}
           onKeyPress={handleKeyPress}
-          className="w-fit border-none focus:border-none focus:outline-none active:border-none"
+          className="w-full rounded border-none p-4 focus:border-none focus:outline-none active:border-none"
         />
 
         <select
           id="search-category"
           value={selectedCategory}
           onChange={(e) => handleCategoryChange(e.target.value)}
-          className="w-fit border-none bg-transparent focus:border-none focus:outline-none active:border-none"
+          className="w-full rounded border-none p-4 focus:border-none focus:outline-none active:border-none"
         >
           <option value="">Categorías</option>
           {categories.map((category) => (
@@ -84,22 +83,25 @@ export default function SearchEstablishments({
           value={selectedSubcategory}
           onChange={(e) => setSelectedSubcategory(e.target.value)}
           disabled={!selectedCategory || availableSubcategories.length === 0}
-          className="w-fit border-none bg-transparent focus:border-none focus:outline-none active:border-none disabled:opacity-50"
+          className="w-full rounded border-none p-4 focus:border-none focus:outline-none active:border-none disabled:opacity-50"
         >
           <option value="">Subcategorías</option>
           {availableSubcategories.map((subcategory) => (
-            <option key={subcategory.id} value={subcategory.id}>
+            <option key={subcategory.id} value={subcategory.name}>
               {subcategory.name}
             </option>
           ))}
         </select>
       </div>
 
-      <Button
-        icon={<FaSearch className="text-2xl" />}
-        className="aspect-square h-full rounded-full p-4"
+      <button
+        type="button"
+        className="flex h-full w-full items-center justify-center gap-3 rounded bg-fourth px-4 py-4 text-center font-nueva text-2xl text-white md:aspect-square md:w-fit md:rounded-full md:text-base"
         onClick={handleSearch}
-      />
+      >
+        <FaSearch className="text-3xl" />
+        <p className="md:hidden">Buscar</p>
+      </button>
     </div>
   );
 }

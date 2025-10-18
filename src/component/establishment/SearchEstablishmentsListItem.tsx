@@ -9,7 +9,7 @@ export default function UserEstablishmentsListItem({
 }) {
   const navigate = useNavigate();
   return (
-    <div className="relative container flex h-fit max-w-xl rounded-md bg-gray-50 shadow-md">
+    <div className="relative flex h-fit rounded-md bg-gray-50 shadow-md">
       <img
         src={generateImageUrl("establishment-logo", establishment.avatar)}
         className="h-40 w-40 rounded-l-md object-cover"
@@ -25,9 +25,9 @@ export default function UserEstablishmentsListItem({
             {establishment.name}
           </button>
           <p className="text-sm text-wrap text-gray-500">
-            {establishment.description.split(" ").length > 14
-              ? `${establishment.description.split(" ").slice(0, 14).join(" ")}...`
-              : establishment.description}
+            {establishment?.description?.split(" ").length > 14
+              ? `${establishment?.description?.split(" ").slice(0, 14).join(" ")}...`
+              : establishment?.description}
           </p>
         </div>
         <div className="text-sm text-gray-500">{establishment.address}</div>

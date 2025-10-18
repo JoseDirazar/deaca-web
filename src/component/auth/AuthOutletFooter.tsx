@@ -1,4 +1,4 @@
-import DLink from "../DLink";
+import DLink from "../ui/DLink";
 
 export default function AuthOutletFooter({
   signInLink = false,

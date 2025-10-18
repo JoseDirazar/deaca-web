@@ -1,7 +1,8 @@
 import type { Establishment } from "@/types/establishment/etablihment.interface";
 
-import UserEstablishmentsListItem from "../ui/establishment/UserEstablishmentsListItem";
+import UserEstablishmentsListItem from "../establishment/UserEstablishmentsListItem";
 import { useNavigate } from "react-router";
+import CardSkeleton from "../ui/CardSkeleton";
 
 interface UserEstablishmentsListProps {
   isLoadingMine: boolean;
@@ -14,9 +15,9 @@ export default function UserEstablishmentsList({
 }: UserEstablishmentsListProps) {
   const navigate = useNavigate();
   if (!myEstablishments) return <div>Aún no tienes establecimientos</div>;
-  if (isLoadingMine) return <div>Cargando...</div>;
+  if (isLoadingMine) return <CardSkeleton />;
   return (
-    <div className="m-3 mx-auto grid h-full w-full grid-cols-1 gap-6 p-3 md:grid-cols-2">
+    <div className="flex h-full w-full flex-col gap-6">
       {myEstablishments?.map((e) => (
         <UserEstablishmentsListItem
           key={e.id}

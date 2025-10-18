@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import AuthOutletHeader from "@/component/ui/form/OutletHeader";
 import AuthOutletForm from "@/component/ui/form/OutletForm";
 import Input from "@/component/ui/Input";
-import AuthOutletFooter from "@/component/ui/auth/AuthOutletFooter";
+import AuthOutletFooter from "@/component/auth/AuthOutletFooter";
 import Button from "@/component/ui/Button";
 import { useAuthApi } from "@/hooks/useAuthApi.hook";
 

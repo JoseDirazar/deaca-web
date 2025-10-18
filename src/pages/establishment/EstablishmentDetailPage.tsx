@@ -17,13 +17,13 @@ export default function EstablishmentDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useUserStore();
-  const { getEstablishment } = useEstablishmentApi();
+  const { useGetEstablishment } = useEstablishmentApi();
 
   const {
     data: establishment,
     isPending,
     isError,
-  } = getEstablishment(id as string);
+  } = useGetEstablishment(id as string);
 
   const [imageSelected, setImageSelected] = useState<Image | null>(null);
 
@@ -52,7 +52,7 @@ export default function EstablishmentDetailPage() {
 
   return (
     <PageContainer className="relative p-6">
-      {establishment.user.id === user?.id && (
+      {user && establishment?.user?.id === user?.id && (
         <Button
           onClick={() =>
             navigate(`/usuario/emprendimientos/${establishment.id}`)
@@ -83,7 +83,7 @@ export default function EstablishmentDetailPage() {
         <img
           src={generateImageUrl("establishment-logo", establishment.avatar)}
           alt={`${establishment.name} avatar`}
-          className="absolute -bottom-5 left-5 h-36 w-36 rounded-full bg-white object-cover p-2"
+          className="absolute bottom-14 left-5 h-36 w-36 rounded-full bg-white object-cover p-2"
         />
         {establishment?.latitude && establishment?.longitude && (
           <GoogleMaps

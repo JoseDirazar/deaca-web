@@ -9,6 +9,7 @@ import { useState } from "react";
 import { IoAdd } from "react-icons/io5";
 import { useUserApi } from "@/hooks/useUserApi.hook";
 import PageContainer from "@/component/ui/PageContainer";
+import PageHeader from "@/component/PageHeader";
 
 export default function UserProfilePage() {
   const { user } = useUserStore();
@@ -104,20 +105,5 @@ export default function UserProfilePage() {
       {isUpdatingUser && <p className="text-red-500">Actualizando...</p>}
       {isUpdatingAvatar && <p className="text-red-500">Actualizando...</p>}
     </PageContainer>
-  );
-}
-
-function PageHeader({
-  title,
-  description,
-}: {
-  title: string;
-  description: string;
-}) {
-  return (
-    <div className="mb-12 flex flex-col gap-6 font-century-gothic">
-      <h1 className="text-5xl font-bold">{title}</h1>
-      <p className="text-xl text-gray-500">{description}</p>
-    </div>
   );
 }

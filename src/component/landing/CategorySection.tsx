@@ -17,7 +17,7 @@ export default function CategorySection({
         description=" "
         descriptionClassName="bg-fourth h-[2px] w-20 rounded-full"
       />
-      <SectionBody className="grid w-full grid-cols-3 gap-18 text-sm md:grid-cols-4 lg:grid-cols-5">
+      <SectionBody className="grid w-full grid-cols-3 gap-4 text-xs md:grid-cols-4 lg:grid-cols-5">
         <CategoryList categories={categories} />
       </SectionBody>
     </SectionContainer>

@@ -1,4 +1,4 @@
-import AuthOutletContainer from "@/component/ui/auth/AuthOutletContainer";
+import AuthOutletContainer from "@/component/auth/AuthOutletContainer";
 import PageContainer from "@/component/ui/PageContainer";
 import { publicBackground } from "@/lib/constants/public-backgrounds";
 

@@ -59,10 +59,12 @@ export default function MobileSidebar({
           </div>
           <div className="flex flex-1 flex-col items-center justify-between gap-8 text-center text-2xl font-extrabold">
             {navLinks.map((link, index) => (
-              <div className="flex w-fit flex-grow flex-col items-center">
+              <div
+                key={link.to}
+                className="flex w-fit flex-grow flex-col items-center"
+              >
                 <Link
                   className={`${link.active.includes(pathname) ? "text-fourth" : "text-white"} p-2 transition-colors hover:bg-fourth hover:text-white`}
-                  key={link.to}
                   to={link.to}
                 >
                   {link.label}

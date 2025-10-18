@@ -1,7 +1,7 @@
 import { generateImageUrl } from "@/lib/generate-image-url";
 import type { Establishment } from "@/types/establishment/etablihment.interface";
 import { FaEdit } from "react-icons/fa";
-import Button from "../Button";
+import Button from "../ui/Button";
 
 export default function UserEstablishmentsListItem({
   establishment,
