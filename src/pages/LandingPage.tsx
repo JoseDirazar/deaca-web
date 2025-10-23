@@ -6,37 +6,42 @@ import SponsorsSection from "@/component/landing/SponsorsSection";
 import TendenciesSection from "@/component/landing/TendenciesSection";
 import UsersTestimoniesSection from "@/component/landing/UsersTestimoniesSection";
 import PageContainer from "@/component/ui/PageContainer";
-import { useCategoryApi } from "@/hooks/useCategoryApi.hook";
-import { Suspense } from "react";
-import Loader from "@/component/ui/Loader";
-import { toast } from "sonner";
+
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { categoryService } from "@/api/category-service";
+import { appReviewService } from "@/api/app-review-service";
+import AppReviewForm from "@/component/review/AppReviewForm";
+import Modal from "@/component/ui/Modal";
+import Button from "@/component/ui/Button";
+import { useState } from "react";
 
 export default function LandingPage() {
-  const { getCategories } = useCategoryApi();
-  const { data: categories, isPending: categoriesPending } = getCategories;
+  const { data: categories } = useSuspenseQuery({
+    queryKey: ["categories"],
+    queryFn: () =>
+      categoryService.getCategories().then((res) => res.data.data || []),
+  });
 
-  if (categoriesPending) return <Loader />;
-
+  const { data: appReviews } = useSuspenseQuery({
+    queryKey: ["app-reviews"],
+    queryFn: () =>
+      appReviewService.findAll().then((res) => res.data.data || []),
+  });
+  const [isOpen, setIsOpen] = useState(false);
+  console.log(appReviews);
   return (
     <PageContainer className="gap-12">
-      <Suspense fallback={<Loader />}>
-        <SearchSection categories={categories || []} />
-        <CategorySection categories={categories || []} />
-        <TendenciesSection />
-        <RegisterSection />
-        <SponsorsSection />
-        <UsersTestimoniesSection />
-        <ReachOutSection />
-        <button
-          onClick={() =>
-            toast.warning("Loading...", {
-              duration: 5000,
-            })
-          }
-        >
-          Show toast
-        </button>
-      </Suspense>
+      <SearchSection categories={categories || []} />
+      <CategorySection categories={categories || []} />
+      <TendenciesSection />
+      <RegisterSection />
+      <SponsorsSection />
+      <UsersTestimoniesSection appReviews={appReviews || []} />
+      <ReachOutSection />
+      <Modal setIsOpen={setIsOpen} isOpen={isOpen}>
+        <AppReviewForm />
+      </Modal>
+      <Button label="Agregar testimonio" onClick={() => setIsOpen(true)} />
     </PageContainer>
   );
 }

@@ -27,16 +27,14 @@ export default function Sidebar({
           {title}
         </h2>
       </div>
-      <nav className="flex w-full flex-1 flex-col items-center p-2">
+      <nav className="flex w-full flex-1 flex-col items-center gap-2 p-2">
         {routes.map((route) => (
           <button
             key={route.href}
             onClick={() => navigate(route.href)}
             className={cn(
-              "flex w-full items-center justify-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all hover:scale-110 md:justify-start",
-              location.pathname === route.href
-                ? "bg-primary text-white"
-                : "text-gray-600 hover:bg-gray-100",
+              "flex w-full items-center justify-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all hover:bg-primary hover:text-white md:justify-start",
+              location.pathname === route.href && "bg-primary text-white",
             )}
           >
             <route.icon className="h-5 w-5" />

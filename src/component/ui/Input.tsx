@@ -24,6 +24,7 @@ export default function Input({
   id,
   required,
   title,
+  ...rest
 }: InputProps) {
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = id.split("-").includes("password");
@@ -37,17 +38,21 @@ export default function Input({
         )}
         value={value}
         onChange={onChange}
-        placeholder=" " // importante para usar peer-placeholder-shown
+        placeholder=" "
         name={name}
         disabled={disabled}
         id={id}
         required={required}
+        {...rest}
       />
 
       <label
         onClick={() => document.getElementById(id)?.focus()}
         htmlFor={id}
-        className="absolute -top-[10px] left-3 bg-gray-50 px-1 text-sm text-primary transition-all duration-200 select-none peer-placeholder-shown:top-[12px] peer-placeholder-shown:text-base peer-placeholder-shown:text-primary peer-focus:-top-[10px] peer-focus:text-sm peer-focus:text-primary"
+        className={cn(
+          "absolute -top-[10px] left-3 bg-gray-50 px-1 text-sm text-primary transition-all duration-200 select-none peer-placeholder-shown:top-[12px] peer-placeholder-shown:text-base peer-placeholder-shown:text-primary peer-focus:-top-[10px] peer-focus:text-sm peer-focus:text-primary",
+          className,
+        )}
       >
         {title}
       </label>

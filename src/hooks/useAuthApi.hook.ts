@@ -70,7 +70,7 @@ export const useAuthApi = () => {
       setUser(null);
       setAccessToken(null);
       queryClient.clear();
-      toast.success(message);
+      toast.success(message ?? "Hasta pronto");
     },
     onError: (error: unknown) => {
       toast.error(error instanceof AxiosError ? error?.response?.data?.message : "Algo salio mal");

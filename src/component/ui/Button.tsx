@@ -1,7 +1,8 @@
 import { cn } from "@/lib/cn";
+import type { MouseEventHandler } from "react";
 
 interface ButtonProps {
-  onClick?: () => void;
+  onClick?: MouseEventHandler<HTMLButtonElement>;
   label?: string;
   type?: "button" | "submit" | "reset";
   className?: string;
@@ -20,7 +21,7 @@ export default function Button({
     <button
       type={type}
       className={cn(
-        "flex items-center justify-center gap-1 rounded bg-fourth px-3 py-3 text-center font-century-gothic text-lg font-bold text-white",
+        "flex items-center justify-center gap-1 rounded bg-fourth px-3 py-3 text-center font-century-gothic text-lg font-bold text-white disabled:opacity-50",
         className,
       )}
       disabled={disabled}

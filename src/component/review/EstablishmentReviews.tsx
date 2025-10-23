@@ -7,6 +7,8 @@ import ReviewForm from "../establishment/ReviewForm";
 import UserAvatar from "../ui/user/UserAvatar";
 import StarRating from "../ui/StarRating";
 import Button from "../ui/Button";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { reviewService } from "@/api/review-service";
 
 export default function EstablishmentReviews({
   establishment,
@@ -17,14 +19,15 @@ export default function EstablishmentReviews({
 }) {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingReview, setEditingReview] = useState<Review | null>(null);
-  const {
-    useGetEstablishmentReviews,
-    createReview,
-    updateReview,
-    deleteReview,
-  } = useReviewsApi();
-  const { data: reviews } = useGetEstablishmentReviews(establishment.id);
+  const { createReview, updateReview, deleteReview } = useReviewsApi();
 
+  const { data: reviews } = useSuspenseQuery({
+    queryKey: ["reviews", establishment.id],
+    queryFn: () =>
+      reviewService
+        .getReviewsByEstablishmentId(establishment.id)
+        .then((res) => res.data.data),
+  });
   const handleDelete = async (review: Review) => {
     try {
       await deleteReview.mutateAsync({ reviewId: review.id });

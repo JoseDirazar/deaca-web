@@ -2,7 +2,6 @@ import EstablishmentGallery from "@/component/establishment/EstablishmentGallery
 import GoogleMaps from "@/component/GoogleMaps";
 import Button from "@/component/ui/Button";
 import { useUserStore } from "@/context/useUserStore";
-import { useEstablishmentApi } from "@/hooks/useEstablishmentApi";
 import { generateImageUrl } from "@/lib/generate-image-url";
 import type { Image } from "@/types/common/image.interface";
 import { useState } from "react";
@@ -12,18 +11,19 @@ import { useNavigate, useParams } from "react-router";
 
 import PageContainer from "@/component/ui/PageContainer";
 import EstablishmentReviews from "@/component/review/EstablishmentReviews";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { establishmentService } from "@/api/establishment-service";
 
 export default function EstablishmentDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useUserStore();
-  const { useGetEstablishment } = useEstablishmentApi();
 
-  const {
-    data: establishment,
-    isPending,
-    isError,
-  } = useGetEstablishment(id as string);
+  const { data: establishment } = useSuspenseQuery({
+    queryKey: ["establishment", id],
+    queryFn: () =>
+      establishmentService.getById(id as string).then((res) => res.data.data),
+  });
 
   const [imageSelected, setImageSelected] = useState<Image | null>(null);
 
@@ -46,9 +46,6 @@ export default function EstablishmentDetailPage() {
 
     setImageSelected(establishment.images[newIndex]);
   };
-
-  if (isPending) return <div>Cargando...</div>;
-  if (isError) return <div>Ocurrio un error al cargar el establecimiento</div>;
 
   return (
     <PageContainer className="relative p-6">
@@ -74,7 +71,7 @@ export default function EstablishmentDetailPage() {
             >
               <img
                 src={generateImageUrl("establishment", image.fileName)}
-                alt={`Gallery image ${index + 1}`}
+                alt={`Imagen ${index + 1}`}
                 className="h-full w-full object-cover"
               />
             </button>
@@ -117,7 +114,7 @@ export default function EstablishmentDetailPage() {
         </div>
       </div>
       <div className="mt-6 flex flex-1">
-        <p className="max-w-2/3 text-justify font-century-gothic text-lg text-wrap">
+        <p className="max-w-2/3 text-justify font-century-gothic text-lg text-wrap selection:bg-fourth selection:text-white">
           {establishment.description}
         </p>
         <div className="flex-grow font-century-gothic">

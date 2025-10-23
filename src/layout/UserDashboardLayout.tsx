@@ -20,9 +20,9 @@ export default function UserDashboardLayout() {
       <Sidebar
         routes={renderRoutes}
         title={`Panel de Usuario`}
-        containerClassName="min-h-[calc(100vh-5rem)] h-full"
+        containerClassName="h-auto"
       />
-      <div className="w-full flex-1 p-4">
+      <div className="w-full flex-1 overflow-auto p-4">
         <Outlet />
       </div>
     </PageContainer>

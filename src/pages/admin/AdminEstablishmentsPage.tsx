@@ -13,8 +13,9 @@ import type { Establishment } from "@/types/establishment/etablihment.interface"
 import {
   useEstablishmentsFilters,
   type SortBy,
-} from "@/hooks/useEstablishmentsFilters.hook";
+} from "@/hooks/filters/useEstablishmentsFilters.hook";
 import { useEstablishmentApi } from "@/hooks/useEstablishmentApi";
+import PageHeader from "@/component/PageHeader";
 
 export default function EstablishmentsTable() {
   const {
@@ -151,13 +152,11 @@ export default function EstablishmentsTable() {
   const totalItems = data?.meta?.totalItems ?? data?.data?.length ?? 0;
 
   return (
-    <div className="space-y-4 p-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-800">Establecimientos</h1>
-        <div className="text-sm text-gray-500">
-          {totalItems} establecimiento{totalItems !== 1 ? "s" : ""}
-        </div>
-      </div>
+    <div className="flex flex-col gap-6">
+      <PageHeader
+        title="Emprendimientos"
+        description={`${totalItems} emprendimiento${totalItems !== 1 ? "s" : ""}`}
+      />
 
       {/* Filtros y controles */}
       <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">

@@ -11,7 +11,7 @@ export const useCategoryApi = () => {
     })
 
     const createCategory = useMutation({
-        mutationFn: (payload: string) => categoryService.createCategory(payload).then((res) => res?.data.data || null),
+        mutationFn: (payload: string) => categoryService.createCategory(payload).then((res) => res?.data.data),
         onSuccess: () => {
             qc.invalidateQueries({ queryKey: ["categories"] })
             toast.success("Categoría creada correctamente")
@@ -22,7 +22,7 @@ export const useCategoryApi = () => {
     })
 
     const updateCategory = useMutation({
-        mutationFn: ({ id, payload }: { id: string, payload: string }) => categoryService.updateCategory(id, payload).then((res) => res?.data.data || null),
+        mutationFn: ({ id, payload }: { id: string, payload: string }) => categoryService.updateCategory(id, payload).then((res) => res?.data.data),
         onSuccess: () => {
             qc.invalidateQueries({ queryKey: ["categories"] })
             toast.success("Categoría actualizada correctamente")
@@ -33,7 +33,7 @@ export const useCategoryApi = () => {
     })
 
     const deleteCategory = useMutation({
-        mutationFn: (id: string) => categoryService.deleteCategory(id).then((res) => res?.data || null),
+        mutationFn: (id: string) => categoryService.deleteCategory(id).then((res) => res?.data),
         onSuccess: () => {
             qc.invalidateQueries({ queryKey: ["categories"] })
             toast.success("Categoría eliminada correctamente")
@@ -44,7 +44,7 @@ export const useCategoryApi = () => {
     })
 
     const uploadCategoryIcon = useMutation({
-        mutationFn: ({ id, formData }: { id: string, formData: FormData }) => categoryService.uploadCategoryIcon(id, formData).then((res) => res?.data || null),
+        mutationFn: ({ id, formData }: { id: string, formData: FormData }) => categoryService.uploadCategoryIcon(id, formData).then((res) => res?.data),
         onSuccess: () => {
             qc.invalidateQueries({ queryKey: ["categories"] })
         },

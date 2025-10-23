@@ -2,14 +2,17 @@ import PageHeader from "@/component/PageHeader";
 import Button from "@/component/ui/Button";
 import PageContainer from "@/component/ui/PageContainer";
 import UserEstablishmentsList from "@/component/user/UserEtablishmentsList";
-import { useEstablishmentApi } from "@/hooks/useEstablishmentApi";
 import { FaPlus } from "react-icons/fa6";
 import { useNavigate } from "react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { establishmentService } from "@/api/establishment-service";
 
 export default function UserEstablishmentPage() {
   const navigate = useNavigate();
-  const { data: myEstablishments, isPending: isLoadingMine } =
-    useEstablishmentApi().useGetMyEstablishments();
+  const { data: myEstablishments } = useSuspenseQuery({
+    queryKey: ["establishment", "me"],
+    queryFn: () => establishmentService.getMine().then((res) => res.data.data),
+  });
   return (
     <PageContainer className="flex w-full flex-col items-center gap-6">
       <div className="flex w-full flex-col gap-3 md:flex-row md:justify-between">
@@ -24,10 +27,7 @@ export default function UserEstablishmentPage() {
           className="h-fit w-fit"
         />
       </div>
-      <UserEstablishmentsList
-        isLoadingMine={isLoadingMine}
-        myEstablishments={myEstablishments}
-      />
+      <UserEstablishmentsList myEstablishments={myEstablishments} />
     </PageContainer>
   );
 }

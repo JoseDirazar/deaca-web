@@ -4,6 +4,7 @@ import type { Establishment } from "../establishment/etablihment.interface";
 import type { Category } from "../category/category.interface";
 import type { Subcategory } from "../category/subcategory.interface";
 import type { Review } from "../reviews/review.interface";
+import type { AppReview } from "../reviews/app-review.interface";
 
 export interface ApiPayload<T> {
     data: T;
@@ -63,4 +64,10 @@ export type GetReviewsByEstablishmentIdResponse = ApiResponse<Review[]>;
 export type CreateReviewResponse = ApiResponse<Review>;
 export type UpdateReviewResponse = ApiResponse<Review>;
 export type DeleteReviewResponse = ApiResponse<Review>;
+// -------- APP REVIEW ---------------- APP REVIEW ---------------- APP REVIEW --------
+export type CreateAppReviewResponse = ApiResponse<AppReview>;
+export type UpdateAppReviewResponse = ApiResponse<AppReview>;
+export type DeleteAppReviewResponse = ApiResponse<AppReview>;
+
+
 

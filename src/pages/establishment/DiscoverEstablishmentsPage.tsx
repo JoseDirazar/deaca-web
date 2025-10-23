@@ -1,15 +1,16 @@
 import PageContainer from "@/component/ui/PageContainer";
-import { useEstablishmentApi } from "@/hooks/useEstablishmentApi";
 import SearchEstablishmentsList from "@/component/establishment/SearchEstablishmentsList";
-import { useEstablishmentsFilters } from "@/hooks/useEstablishmentsFilters.hook";
+import { useEstablishmentsFilters } from "@/hooks/filters/useEstablishmentsFilters.hook";
 import GoogleMaps from "@/component/GoogleMaps";
-import { useCategoryApi } from "@/hooks/useCategoryApi.hook";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import Filters from "@/component/establishment/Filters";
 import { FaFilter } from "react-icons/fa6";
 import Modal from "@/component/ui/Modal";
 import Button from "@/component/ui/Button";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { establishmentService } from "@/api/establishment-service";
+import { categoryService } from "@/api/category-service";
 
 export default function DiscoverEstablishmentsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -32,20 +33,23 @@ export default function DiscoverEstablishmentsPage() {
     limit: Number(searchParams.get("limit")) || 10,
   });
 
-  const {
-    data,
-    isPending: isLoading,
-    isError,
-    error,
-  } = useEstablishmentApi().useGetEstablishments(queryString);
+  const { data } = useSuspenseQuery({
+    queryKey: ["establishments", queryString],
+    queryFn: () =>
+      establishmentService
+        .getEstablishments(queryString)
+        .then((res) => res.data),
+  });
 
   const markers = data?.data?.map((e) => ({
     lat: Number(e.latitude),
     lng: Number(e.longitude),
   }));
 
-  const { data: categories, isPending: isLoadingCategories } =
-    useCategoryApi().getCategories;
+  const { data: categories } = useSuspenseQuery({
+    queryKey: ["categories"],
+    queryFn: () => categoryService.getCategories().then((res) => res.data.data),
+  });
 
   useEffect(() => {
     const params = new URLSearchParams();
@@ -99,7 +103,7 @@ export default function DiscoverEstablishmentsPage() {
           isCategorySelected={isCategorySelected}
           toggleCategory={toggleCategory}
           categories={categories}
-          isLoadingCategories={isLoadingCategories}
+          isLoadingCategories={false}
         />
       </Modal>
       <div className="hidden w-auto md:block">
@@ -112,7 +116,7 @@ export default function DiscoverEstablishmentsPage() {
           isCategorySelected={isCategorySelected}
           toggleCategory={toggleCategory}
           categories={categories}
-          isLoadingCategories={isLoadingCategories}
+          isLoadingCategories={false}
         />
       </div>
 
@@ -128,9 +132,9 @@ export default function DiscoverEstablishmentsPage() {
         {/* Lista de Establecimientos */}
         <SearchEstablishmentsList
           establishments={data?.data}
-          isLoading={isLoading}
-          isError={isError}
-          error={error}
+          isLoading={false}
+          isError={false}
+          error={null}
         />
       </div>
 

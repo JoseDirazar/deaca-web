@@ -1,4 +1,4 @@
-import type { EstablishmentsFiltersState } from "@/hooks/useEstablishmentsFilters.hook";
+import type { EstablishmentsFiltersState } from "@/hooks/filters/useEstablishmentsFilters.hook";
 import type { Category } from "@/types/category/category.interface";
 import Loader from "../ui/Loader";
 

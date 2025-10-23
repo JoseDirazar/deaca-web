@@ -23,12 +23,26 @@ import AboutUsPage from "./pages/AboutUsPage";
 import Open24HoursAndWeekendsPage from "./pages/Open24HoursAndWeekendsPage";
 import WhatToDoPage from "./pages/WhatToDoPage";
 import { Roles } from "@/types/common/roles.interface";
+import { Suspense } from "react";
+import Loader from "./component/ui/Loader";
+import { discoverEstablishmentsLoader } from "./routes-loaders/discover-establishments.loader";
+import { establishmentDetailLoader } from "./routes-loaders/establishment-detail.loader";
+import { myEstablishmentsLoader } from "./routes-loaders/my-establishments.loader";
+import { landingPageLoader } from "./routes-loaders/landing-page.loader";
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<RootLayout />}>
-        <Route index element={<LandingPage />} />
+        <Route
+          index
+          loader={landingPageLoader}
+          element={
+            <Suspense fallback={<Loader />}>
+              <LandingPage />
+            </Suspense>
+          }
+        />
         <Route path="sobre-nosotros" element={<AboutUsPage />} />
         <Route
           path="24-horas-y-domingos"
@@ -36,14 +50,27 @@ function App() {
         />
         <Route path="que-hacer" element={<WhatToDoPage />} />
 
-        <Route
-          path="emprendimientos/:id"
-          element={<EstablishmentDetailPage />}
-        />
-        <Route
-          path="emprendimientos"
-          element={<DiscoverEstablishmentsPage />}
-        />
+        <Route path="emprendimientos">
+          <Route
+            index
+            loader={discoverEstablishmentsLoader}
+            element={
+              <Suspense fallback={<Loader />}>
+                <DiscoverEstablishmentsPage />
+              </Suspense>
+            }
+          />
+
+          <Route
+            path=":id"
+            loader={establishmentDetailLoader}
+            element={
+              <Suspense fallback={<Loader />}>
+                <EstablishmentDetailPage />
+              </Suspense>
+            }
+          />
+        </Route>
         <Route path="auth/*" element={<AuthLayout />}>
           <Route path="ingresar" element={<SigninPage />} />
           <Route path="registrarse" element={<SignupPage />} />
@@ -62,10 +89,13 @@ function App() {
           <Route index element={<UserProfilePage />} />
           <Route
             path="emprendimientos"
+            loader={myEstablishmentsLoader}
             element={
-              <RequireAuth roles={[Roles.BUSINESS_OWNER, Roles.ADMIN]}>
-                <UserEstablishmentPage />
-              </RequireAuth>
+              <Suspense fallback={<Loader />}>
+                <RequireAuth roles={[Roles.BUSINESS_OWNER, Roles.ADMIN]}>
+                  <UserEstablishmentPage />
+                </RequireAuth>
+              </Suspense>
             }
           />
           <Route

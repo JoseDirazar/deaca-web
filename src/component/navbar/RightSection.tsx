@@ -27,20 +27,26 @@ export default function RightSection() {
             <UserAvatar avatar={user?.avatar} className="h-16 w-16" />
           </button>
           {showDropdownMenu && (
-            <div className="absolute top-15 z-50 flex w-44 origin-top flex-col divide-y-2 divide-primary rounded bg-gray-50 p-2 drop-shadow-xl">
-              <button className="py-2" onClick={() => navigate("/usuario")}>
-                Perfil
-              </button>
-              {user.role !== "user" && (
-                <button
-                  className="py-2"
-                  onClick={() => navigate("/usuario/emprendimientos")}
-                >
-                  Mis emprendimientos
+            <>
+              <div
+                className="fixed inset-0 z-40"
+                onClick={() => setShowDropdownMenu(false)}
+              />
+              <div className="absolute top-15 z-50 flex w-44 origin-top flex-col divide-y-2 divide-primary rounded bg-gray-50 p-2 drop-shadow-xl">
+                <button className="py-2" onClick={() => navigate("/usuario")}>
+                  Perfil
                 </button>
-              )}
-              <SignOutButton />
-            </div>
+                {user.role !== "user" && (
+                  <button
+                    className="py-2"
+                    onClick={() => navigate("/usuario/emprendimientos")}
+                  >
+                    Mis emprendimientos
+                  </button>
+                )}
+                <SignOutButton />
+              </div>
+            </>
           )}
         </div>
       ) : (

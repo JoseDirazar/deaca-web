@@ -16,7 +16,7 @@ export default function TendenciesSection() {
         description=" "
         descriptionClassName="bg-fourth h-[2px] w-20 rounded-full"
       />
-      <SectionBody className="flex w-full flex-wrap gap-4">
+      <SectionBody className="flex w-full flex-wrap items-center justify-center gap-4 md:gap-10">
         {establishments?.data?.map((establishment) => (
           <EstablishmentTendencyCard
             key={establishment.id}

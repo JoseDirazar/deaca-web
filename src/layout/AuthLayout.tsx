@@ -15,7 +15,7 @@ export default function AuthLayout() {
               ]
             }
             alt="arroyo"
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover blur-[2px]"
           />
         </div>
       </div>
