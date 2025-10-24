@@ -62,7 +62,9 @@ export default function Footer() {
               </a>
             </div>
             <div className="flex flex-col items-start justify-start gap-3">
-              <p className="font-serif text-xl font-extrabold">Legal</p>
+              <p className="w-full text-center font-serif text-xl font-extrabold">
+                Legal
+              </p>
               <a
                 className="flex items-center justify-self-center-safe font-bold"
                 href=""

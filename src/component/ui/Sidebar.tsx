@@ -18,7 +18,7 @@ export default function Sidebar({
   return (
     <div
       className={cn(
-        "flex h-fit max-w-1/4 flex-col items-center justify-start border-r border-gray-400 bg-white",
+        "flex h-fit max-w-1/4 flex-col items-center justify-start border-r border-gray-200",
         containerClassName,
       )}
     >
