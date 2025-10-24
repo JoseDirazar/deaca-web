@@ -36,9 +36,8 @@ export default function ForgotPasswordPage() {
         <>
           <AuthOutletForm onSubmit={handleSubmit}>
             <Input
-              id="email"
+              id="forgot-email"
               type="email"
-              className="w-full py-5"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required

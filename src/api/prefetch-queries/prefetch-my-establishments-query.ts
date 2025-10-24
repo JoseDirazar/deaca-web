@@ -3,7 +3,7 @@ import { establishmentService } from "../establishment-service";
 
 export const prefetchMyEstablishmentsQuery = async () => {
     await queryClient.prefetchQuery({
-        queryKey: ["establishment", "me"],
+        queryKey: ["establishments", "me"],
         queryFn: () => establishmentService.getMine().then(res => res.data.data),
     });
 }

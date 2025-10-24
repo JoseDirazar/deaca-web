@@ -10,11 +10,11 @@ interface ReviewFormProps {
   isLoading?: boolean;
 }
 
-export default function ReviewForm({ 
-  onSubmit, 
-  onCancel, 
+export default function ReviewForm({
+  onSubmit,
+  onCancel,
   initialReview,
-  isLoading = false 
+  isLoading = false,
 }: ReviewFormProps) {
   const [rating, setRating] = useState(initialReview?.rating || 0);
   const [comment, setComment] = useState(initialReview?.comment || "");
@@ -36,7 +36,7 @@ export default function ReviewForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="mb-2 block font-century-gothic-bold text-lg text-fourth">
+        <label className="font-century-gothic-bold mb-2 block text-lg text-fourth">
           Calificación
         </label>
         <StarRating rating={rating} onRatingChange={setRating} size={32} />
@@ -48,9 +48,9 @@ export default function ReviewForm({
       </div>
 
       <div>
-        <label 
-          htmlFor="comment" 
-          className="mb-2 block font-century-gothic-bold text-lg text-fourth"
+        <label
+          htmlFor="comment"
+          className="font-century-gothic-bold mb-2 block text-lg text-fourth"
         >
           Comentario
         </label>
@@ -58,7 +58,7 @@ export default function ReviewForm({
           id="comment"
           value={comment}
           onChange={(e) => setComment(e.target.value)}
-          className="w-full rounded-md border border-primary bg-transparent p-3 text-fourth focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary min-h-[120px]"
+          className="min-h-[120px] w-full rounded-md border border-primary bg-transparent p-3 text-fourth focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
           placeholder="Comparte tu experiencia..."
           required
         />
@@ -69,13 +69,12 @@ export default function ReviewForm({
           type="button"
           onClick={onCancel}
           label="Cancelar"
-          className="bg-gray-400 hover:bg-gray-500"
+          className="bg-gray-50 text-fourth ring-1 ring-fourth hover:bg-fourth hover:text-white"
         />
         <Button
           type="submit"
           label={initialReview ? "Actualizar" : "Publicar"}
           disabled={rating === 0 || isLoading}
-          className={rating === 0 || isLoading ? "opacity-50 cursor-not-allowed" : ""}
         />
       </div>
     </form>

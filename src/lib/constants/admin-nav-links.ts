@@ -8,7 +8,7 @@ export const adminRoutes: NavbarRoutes = [
     {
         label: "Dashboard",
         icon: MdDashboard,
-        href: "/admin/dashboard",
+        href: "/admin",
     },
     {
         label: "Categorias",

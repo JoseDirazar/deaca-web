@@ -43,12 +43,15 @@ export type UploadEstablishmentAvatarResponse = ApiResponse<Establishment>;
 export type UploadEstablishmentImagesResponse = ApiResponse<Establishment>;
 export type RefreshCompletenessResponse = ApiResponse<boolean>;
 export type DeleteEstablishmentImageResponse = ApiResponse<boolean>;
+export type ChangeEstablishmentStatusResponse = ApiResponse<void>;
 // -------- USER ---------------- USER ---------------- USER --------
 export type GetUsersResponse = ApiPaginatedResponse<User[]>;
 export type GetMyProfileResponse = ApiResponse<User>;
 export type EditProfileResponse = ApiResponse<User>;
 export type UploadAvatarResponse = ApiResponse<User>;
 export type ApproveEstablishmentOwnerResponse = ApiResponse<User>;
+export type ChangeUserAccountStatusResponse = ApiResponse<void>;
+export type PromoteUserToAdminResponse = ApiResponse<void>;
 // -------- CATEGORY ---------------- CATEGORY ---------------- CATEGORY --------
 export type GetCategoriesResponse = ApiResponse<Category[]>;
 export type GetSubcategoriesResponse = ApiResponse<Subcategory[]>;

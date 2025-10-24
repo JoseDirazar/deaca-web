@@ -20,7 +20,7 @@ export default function EstablishmentDetailPage() {
   const { user } = useUserStore();
 
   const { data: establishment } = useSuspenseQuery({
-    queryKey: ["establishment", id],
+    queryKey: ["establishments", id],
     queryFn: () =>
       establishmentService.getById(id as string).then((res) => res.data.data),
   });
@@ -56,35 +56,61 @@ export default function EstablishmentDetailPage() {
           }
           icon={<FaEdit />}
           label="Editar"
-          className="absolute top-2 right-2 z-30"
+          className="absolute top-2 right-2 z-30 text-xs"
         />
       )}
-      <div className="relative flex flex-1 gap-6">
-        <div className="grid h-112 max-w-2/3 grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-          {establishment?.images?.slice(0, 5).map((image, index) => (
-            <button
-              onClick={() => setImageSelected(image)}
-              key={image.id + image.fileName}
-              className={`relative overflow-hidden rounded-lg ${
-                index === 0 ? "col-span-2 row-span-2" : ""
-              }`}
-            >
-              <img
-                src={generateImageUrl("establishment", image.fileName)}
-                alt={`Imagen ${index + 1}`}
-                className="h-full w-full object-cover"
+      <div className="flex flex-col gap-8 md:flex-1 md:flex-row">
+        <div className="flex flex-col gap-8 md:max-w-2/3">
+          <div className="relative grid h-112 grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+            {establishment?.images?.slice(0, 6).map((image, index) => (
+              <button
+                onClick={() => setImageSelected(image)}
+                key={image.id + image.fileName}
+                className={`relative overflow-hidden rounded-lg ${
+                  index === 0
+                    ? "col-span-2 row-span-2 md:col-span-3 md:row-span-2"
+                    : index === 1
+                      ? "col-span-1 row-span-2 md:col-span-1 md:row-span-2"
+                      : index === 4
+                        ? "hidden md:col-span-1 md:row-span-1 md:block"
+                        : index === 5
+                          ? "hidden md:col-span-1 md:row-span-1 md:block"
+                          : ""
+                }`}
+              >
+                <img
+                  src={generateImageUrl("establishment", image.fileName)}
+                  alt={`Imagen ${index + 1}`}
+                  className="h-full w-full object-cover"
+                />
+              </button>
+            ))}
+            <img
+              src={generateImageUrl("establishment-logo", establishment.avatar)}
+              alt={`${establishment.name} avatar`}
+              className="absolute -bottom-7 left-5 h-36 w-36 rounded-full bg-white object-cover p-2"
+            />
+          </div>
+          <div className="flex w-full items-center justify-between">
+            <p className="font-century-gothic text-3xl font-bold tracking-wide md:text-5xl">
+              {establishment.name}
+            </p>
+            <div className="flex items-center gap-4 text-2xl md:text-4xl">
+              <FaInstagram
+                onClick={() => window.open(establishment.instagram, "_blank")}
               />
-            </button>
-          ))}
+              <FaFacebook
+                onClick={() => window.open(establishment.facebook, "_blank")}
+              />
+              <FaWebAwesome
+                onClick={() => window.open(establishment.website, "_blank")}
+              />
+            </div>
+          </div>
         </div>
-        <img
-          src={generateImageUrl("establishment-logo", establishment.avatar)}
-          alt={`${establishment.name} avatar`}
-          className="absolute bottom-14 left-5 h-36 w-36 rounded-full bg-white object-cover p-2"
-        />
         {establishment?.latitude && establishment?.longitude && (
           <GoogleMaps
-            className="flex-grow"
+            className="h-44 md:h-auto md:flex-grow"
             markers={[
               {
                 lat: Number(establishment.latitude),
@@ -94,30 +120,12 @@ export default function EstablishmentDetailPage() {
           />
         )}
       </div>
-      <div className="mt-6 flex w-full max-w-2/3 items-center justify-between">
-        <p className="font-century-gothic-bold text-5xl">
-          {establishment.name}
-        </p>
-        <div className="flex items-center gap-4">
-          <FaInstagram
-            className="text-4xl"
-            onClick={() => window.open(establishment.instagram, "_blank")}
-          />
-          <FaFacebook
-            className="text-4xl"
-            onClick={() => window.open(establishment.facebook, "_blank")}
-          />
-          <FaWebAwesome
-            className="text-4xl"
-            onClick={() => window.open(establishment.website, "_blank")}
-          />
-        </div>
-      </div>
-      <div className="mt-6 flex flex-1">
-        <p className="max-w-2/3 text-justify font-century-gothic text-lg text-wrap selection:bg-fourth selection:text-white">
+
+      <div className="mt-6 flex flex-col gap-8 md:flex-1 md:flex-row">
+        <p className="text-justify font-century-gothic text-lg text-wrap md:max-w-2/3">
           {establishment.description}
         </p>
-        <div className="flex-grow font-century-gothic">
+        <div className="font-century-gothic md:flex-grow">
           <EstablishmentReviews establishment={establishment} user={user} />
         </div>
       </div>

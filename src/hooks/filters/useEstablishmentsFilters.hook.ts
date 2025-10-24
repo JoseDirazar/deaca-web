@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 
 export type SortOrder = "ASC" | "DESC";
-export type SortBy = "name" | "createdAt" | "address";
+export type SortBy = "name" | "createdAt" | "address" | "status";
 
 export interface EstablishmentsFiltersState {
   page: number;

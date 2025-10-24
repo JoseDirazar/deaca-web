@@ -1,5 +1,7 @@
+import Swiper from "@/context/swiper";
 import { generateImageUrl } from "@/lib/generate-image-url";
 import type { AppReview } from "@/types/reviews/app-review.interface";
+import { SwiperSlide } from "swiper/react";
 
 export default function UsersTestimoniesSection({
   appReviews,
@@ -15,29 +17,30 @@ export default function UsersTestimoniesSection({
     );
 
   return (
-    <div className="flew-wrap flex gap-4 bg-primary p-4">
-      {appReviews?.map((appReview) => (
-        <TestimonyCard appReview={appReview} />
-      ))}
+    <div className="flex w-full gap-4 bg-primary p-4">
+      <Swiper>
+        {appReviews?.map((appReview) => (
+          <SwiperSlide key={appReview.id}>
+            <TestimonyCard appReview={appReview} />
+          </SwiperSlide>
+        ))}
+      </Swiper>
     </div>
   );
 }
 
 function TestimonyCard({ appReview }: { appReview: AppReview }) {
   return (
-    <div
-      key={appReview.id}
-      className="flex w-full flex-col items-center justify-center gap-4 rounded bg-primary p-4"
-    >
-      <article className="relative mb-4 rounded bg-white p-4 text-center text-xl font-bold text-gray-500 md:text-2xl">
+    <div className="flex w-fit flex-col items-center justify-center gap-4 rounded bg-primary p-4">
+      <article className="relative mb-4 rounded bg-white p-4 text-center font-bold text-gray-500 md:text-2xl">
         {appReview.comment.length > 120
           ? appReview.comment.slice(0, 120) + "..."
           : appReview.comment}
         <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 border-x-8 border-t-8 border-b-0 border-solid border-x-transparent border-t-white"></span>
       </article>
-      <div className="flex flex-col items-center gap-1">
+      <div className="flex w-auto flex-col items-center gap-1">
         <img
-          className="h-24 w-24 rounded-full object-cover"
+          className="h-10 w-10 rounded-full object-cover"
           src={generateImageUrl("user", appReview.user.avatar)}
           alt=""
         />

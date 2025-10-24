@@ -3,10 +3,11 @@ import type { Roles } from "../common/roles.interface";
 import type { Review } from "../reviews/review.interface";
 import type { Session } from "../common/session.interface";
 import type { Establishment } from "../establishment/etablihment.interface";
+import type { AccountStatus } from "../common/api-request.interface";
 
 export interface User extends BaseEntity {
     email: string;
-    emailVerified?: boolean;
+    status: AccountStatus;
     password?: string;
     avatar: string;
     emailCode: string;

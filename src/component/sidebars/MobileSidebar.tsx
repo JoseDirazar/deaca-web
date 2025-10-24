@@ -58,28 +58,21 @@ export default function MobileSidebar({
             </button>
           </div>
           <div className="flex flex-1 flex-col items-center justify-between gap-8 text-center text-2xl font-extrabold">
-            {navLinks.map((link, index) => (
-              <div
+            {navLinks.map((link) => (
+              <Link
                 key={link.to}
-                className="flex w-fit flex-grow flex-col items-center"
+                className={`flex w-full flex-grow flex-col items-center py-4 hover:bg-white hover:text-fourth ${link.active.includes(pathname) ? "text-fourth" : "text-white"} rounded-md p-2 transition-colors`}
+                to={link.to}
               >
-                <Link
-                  className={`${link.active.includes(pathname) ? "text-fourth" : "text-white"} p-2 transition-colors hover:bg-fourth hover:text-white`}
-                  to={link.to}
-                >
-                  {link.label}
-                </Link>
-                {index < navLinks.length - 1 && (
-                  <div className="h-px w-full bg-white" />
-                )}
-              </div>
+                {link.label}
+              </Link>
             ))}
           </div>
         </div>
         <div className="flex w-full items-center justify-center">
           <Link
             to="/"
-            className="flex w-full items-center justify-center gap-2 rounded-md bg-white p-2 px-4 py-3 text-fourth transition-colors hover:bg-fourth hover:text-white"
+            className="flex w-full items-center justify-center gap-2 rounded-md bg-white p-2 px-4 py-3 text-primary drop-shadow-xl transition-colors hover:bg-fourth hover:text-white"
           >
             <FaHome className="h-8 w-8" />
             <p className="text-center text-xl font-bold">Inicio</p>

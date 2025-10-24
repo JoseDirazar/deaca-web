@@ -1,6 +1,7 @@
 import api from "./axios-instance";
-import type { CreateEstablishmentResponse, DeleteEstablishmentImageResponse, DeleteMyEstablishmentResponse, GetEstablishmentByIdResponse, GetEstablishmentsResponse, GetMyEstablishmentsResponse, UpdateMyEstablishmentResponse, UploadEstablishmentAvatarResponse, UploadEstablishmentImagesResponse, VerifyEstablishmentResponse } from "@/types/common/api-response.interface";
+import type { ChangeEstablishmentStatusResponse, CreateEstablishmentResponse, DeleteEstablishmentImageResponse, DeleteMyEstablishmentResponse, GetEstablishmentByIdResponse, GetEstablishmentsResponse, GetMyEstablishmentsResponse, UpdateMyEstablishmentResponse, UploadEstablishmentAvatarResponse, UploadEstablishmentImagesResponse, VerifyEstablishmentResponse } from "@/types/common/api-response.interface";
 import type { CreateEstablishmentDto, EditEstablishmentDto } from "@/types/common/api-request.interface";
+import type { EstablishmentStatus } from "@/types/establishment/establishment-status.enum";
 
 export const establishmentService = {
   getEstablishments: (query: string): GetEstablishmentsResponse => api.get("/establishment" + query),
@@ -13,4 +14,5 @@ export const establishmentService = {
   uploadAvatar: (id: string, formData: FormData): UploadEstablishmentAvatarResponse => api.postForm(`/establishment/${id}/avatar`, formData),
   verify: (id: string, verified: boolean): VerifyEstablishmentResponse => api.patch(`/establishment/${id}/verify`, { verified }),
   deleteImage: (id: string, imageId: string): DeleteEstablishmentImageResponse => api.delete(`/establishment/${id}/image/${imageId}`),
+  changeStatus: (id: string, status: EstablishmentStatus): ChangeEstablishmentStatusResponse => api.patch(`/establishment/${id}/status`, { status }),
 };

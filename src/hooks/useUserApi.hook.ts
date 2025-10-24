@@ -1,6 +1,6 @@
 import { userService } from "@/api/user-service";
 import { useUserStore } from "@/context/useUserStore";
-import type { EditProfileDto } from "@/types/common/api-request.interface";
+import type { AccountStatus, EditProfileDto } from "@/types/common/api-request.interface";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -46,10 +46,48 @@ export const useUserApi = () => {
         },
     });
 
+    const changeUserAccountStatus = useMutation({
+        mutationFn: (data: { email: string; status: AccountStatus }) => userService.changeUserAccountStatus(data).then(res => res?.data),
+        onSuccess: ({ message }) => {
+            toast.success(message ?? "Usuario actualizado");
+            queryClient.invalidateQueries({ queryKey: ["users"] });
+        },
+        onError: (error) => {
+            toast.error("Error changing user account status");
+            console.error(error)
+        },
+    });
+
+    const sendContactEmail = useMutation({
+        mutationFn: (data: { name: string; email: string; message: string }) => userService.sendContactEmail(data).then(res => res?.data),
+        onSuccess: ({ message }) => {
+            toast.success(message ?? "Email sent successfully");
+        },
+        onError: (error) => {
+            toast.error("Error sending email");
+            console.error(error)
+        },
+    });
+
+    const promoteUserToAdmin = useMutation({
+        mutationFn: (data: { email: string }) => userService.promoteUserToAdmin(data).then(res => res?.data),
+        onSuccess: ({ message }) => {
+            toast.success(message ?? "Usuario actualizado");
+            queryClient.invalidateQueries({ queryKey: ["users"] });
+        },
+        onError: (error) => {
+            toast.error("Error changing user account status");
+            console.error(error)
+        },
+    });
+
     return {
         getUser,
         useGetUsers,
         updateUser,
         updateAvatar,
+        changeUserAccountStatus,
+        sendContactEmail,
+        promoteUserToAdmin
     }
 }

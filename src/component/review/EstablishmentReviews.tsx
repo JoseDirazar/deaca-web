@@ -9,6 +9,8 @@ import StarRating from "../ui/StarRating";
 import Button from "../ui/Button";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { reviewService } from "@/api/review-service";
+import { FaEdit } from "react-icons/fa";
+import { FaTrash } from "react-icons/fa6";
 
 export default function EstablishmentReviews({
   establishment,
@@ -70,12 +72,12 @@ export default function EstablishmentReviews({
 
   return (
     <>
-      <div className="mb-4 flex items-center justify-between">
+      <div className="mb-4 flex flex-col-reverse items-center gap-3 md:flex-row md:justify-between">
         <div className="flex items-center gap-3">
           <StarRating
             rating={Math.round(establishment.rating || 0)}
             readonly
-            size={22}
+            size={44}
           />
           <span className="text-lg">
             {Number(establishment.rating || 0).toFixed(1)}
@@ -97,6 +99,7 @@ export default function EstablishmentReviews({
                 ? "Editar mi reseña"
                 : "Escribir reseña"
             }
+            className="bg-white text-xs text-fourth ring-1 ring-fourth hover:bg-fourth hover:text-white"
           />
         )}
       </div>
@@ -134,14 +137,14 @@ export default function EstablishmentReviews({
                   {user && user?.id === review.reviewer.id && (
                     <div className="flex gap-2">
                       <Button
-                        label="Editar"
+                        icon={<FaEdit />}
                         onClick={() => onEdit(review)}
-                        className="bg-secondary hover:bg-secondary/90"
+                        className="bg-secondary text-xs hover:bg-white"
                       />
                       <Button
-                        label="Eliminar"
+                        icon={<FaTrash />}
                         onClick={() => handleDelete(review)}
-                        className="bg-red-500 hover:bg-red-600"
+                        className="bg-red-500 text-xs hover:bg-red-600 hover:text-white"
                       />
                     </div>
                   )}

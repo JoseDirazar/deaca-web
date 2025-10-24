@@ -1,15 +1,21 @@
 import { IoSend } from "react-icons/io5";
 import Input from "../ui/Input";
 import { useState } from "react";
+import { useUserApi } from "@/hooks/useUserApi.hook";
+import { toast } from "sonner";
 
 export default function ReachOutSection() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
 
+  const { sendContactEmail } = useUserApi();
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(name, email, message);
+    if (!name || !email || !message)
+      return toast("Todos los campos son obligatorios");
+    sendContactEmail.mutateAsync({ name, email, message });
   };
 
   return (
@@ -20,13 +26,13 @@ export default function ReachOutSection() {
           Si tenés preguntas o necesitás más información, estamos aquí para
           responderte. También tus sugerencias son muy importantes para nosotros
         </p>
-        <div className="flex h-full flex-col gap-4 rounded bg-primary text-center text-2xl text-white">
+        <div className="flex h-full flex-col items-center justify-center gap-4 rounded bg-primary text-center text-2xl text-white">
           <img
             src="/fondos/ola-plaza.jpeg"
             className="aspect-video w-full object-cover"
             alt="plaza"
           />
-          <p className="p-4">El valor de lo cercano</p>
+          <p className="pb-6 font-bold">El valor de lo cercano</p>
         </div>
       </div>
       <form
@@ -48,19 +54,20 @@ export default function ReachOutSection() {
           className="bg-fifth"
           onChange={(e) => setEmail(e.target.value)}
         />
-        {/*TODO: border primary */}
         <textarea
-          className="rounded border border-primary p-3 placeholder:font-bold placeholder:text-primary focus:border-primary focus:ring-1 focus:ring-primary"
+          className="rounded border border-primary p-3 placeholder:font-bold placeholder:text-primary focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
           placeholder="Mensaje"
           rows={4}
           onChange={(e) => setMessage(e.target.value)}
         />
         <button
-          className="flex items-center justify-center gap-2 rounded bg-primary p-2 text-white"
+          className="flex items-center justify-center gap-2 rounded bg-primary p-2 text-white disabled:opacity-50"
           type="submit"
+          onClick={() => sendContactEmail.mutateAsync({ name, email, message })}
+          disabled={sendContactEmail.isPending}
         >
           <IoSend size={16} />
-          Enviar
+          {sendContactEmail.isPending ? "Enviando..." : "Enviar"}
         </button>
       </form>
     </div>

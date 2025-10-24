@@ -50,7 +50,7 @@ export default function Input({
         onClick={() => document.getElementById(id)?.focus()}
         htmlFor={id}
         className={cn(
-          "absolute -top-[10px] left-3 bg-gray-50 px-1 text-sm text-primary transition-all duration-200 select-none peer-placeholder-shown:top-[12px] peer-placeholder-shown:text-base peer-placeholder-shown:text-primary peer-focus:-top-[10px] peer-focus:text-sm peer-focus:text-primary",
+          "absolute -top-[10px] left-3 h-fit w-fit bg-gray-50 px-1 text-sm text-primary transition-all duration-200 select-none peer-placeholder-shown:top-[12px] peer-placeholder-shown:text-base peer-placeholder-shown:text-primary peer-focus:-top-[10px] peer-focus:text-sm peer-focus:text-primary",
           className,
         )}
       >

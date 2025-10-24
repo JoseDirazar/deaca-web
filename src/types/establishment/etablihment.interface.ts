@@ -4,6 +4,7 @@ import type { User } from "../user/user.interface";
 import type { Subcategory } from "../category/subcategory.interface";
 import type { Review } from "../reviews/review.interface";
 import type { Image } from "../common/image.interface";
+import type { EstablishmentStatus } from "./establishment-status.enum";
 
 export interface Establishment extends BaseEntity {
   name: string;
@@ -17,7 +18,7 @@ export interface Establishment extends BaseEntity {
   facebook: string;
   latitude: string;
   longitude: string;
-  verified?: boolean;
+  status: EstablishmentStatus;
   isComplete?: boolean;
   rating: number;
   reviewsReceived?: Review[] | null;

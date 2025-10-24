@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   type ColumnDef,
   flexRender,
@@ -16,8 +16,14 @@ import {
 } from "@/hooks/filters/useEstablishmentsFilters.hook";
 import { useEstablishmentApi } from "@/hooks/useEstablishmentApi";
 import PageHeader from "@/component/PageHeader";
+import Modal from "@/component/ui/Modal";
+import { EstablishmentStatus } from "@/types/establishment/establishment-status.enum";
+import Button from "@/component/ui/Button";
+import { useNavigate } from "react-router";
+import { parseEstablishmentStatus } from "../../lib/parse-information-to-ui";
 
 export default function EstablishmentsTable() {
+  const navigate = useNavigate();
   const {
     state,
     queryString,
@@ -27,8 +33,16 @@ export default function EstablishmentsTable() {
     setAddress,
     setSorting,
   } = useEstablishmentsFilters();
-  const { useGetEstablishments } = useEstablishmentApi();
+  const { useGetEstablishments, changeEstablishmentStatus } =
+    useEstablishmentApi();
   const { data, isPending } = useGetEstablishments(queryString);
+
+  const [currentEstablishment, setCurrentEstablishment] = useState<{
+    id: string;
+    status: EstablishmentStatus;
+    name: string;
+  } | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const toggleSort = useCallback(
     (key: SortBy) => {
@@ -53,8 +67,41 @@ export default function EstablishmentsTable() {
     [state.sortBy, state.sortOrder],
   );
 
+  const handleModal = (establishment: Establishment) => {
+    setCurrentEstablishment({
+      id: establishment.id,
+      status: establishment.status,
+      name: establishment.name,
+    });
+    setIsModalOpen(true);
+  };
+
   const columns = useMemo<ColumnDef<Establishment>[]>(
     () => [
+      {
+        header: () => (
+          <button
+            className="flex items-center font-semibold hover:text-blue-600"
+            onClick={() => toggleSort("status")}
+          >
+            Estado
+            {renderSortIndicator("status")}
+          </button>
+        ),
+        accessorKey: "status",
+        cell: (info) => {
+          const establishment = info.row.original;
+          return (
+            <>
+              <button onClick={() => handleModal(establishment)}>
+                {parseEstablishmentStatus(
+                  info.getValue() as EstablishmentStatus,
+                )}
+              </button>
+            </>
+          );
+        },
+      },
       {
         header: () => (
           <button
@@ -66,21 +113,22 @@ export default function EstablishmentsTable() {
           </button>
         ),
         accessorKey: "name",
-        cell: (info) => info.getValue() as string,
+        cell: (info) => {
+          const establishment = info.row.original;
+
+          return (
+            <>
+              <button
+                onClick={() => navigate(`/emprendimientos/${establishment.id}`)}
+                className="px-2 py-1 text-xs font-medium hover:cursor-pointer hover:text-primary"
+              >
+                {info.getValue() as string}
+              </button>
+            </>
+          );
+        },
       },
-      {
-        header: () => (
-          <button
-            className="flex items-center font-semibold hover:text-blue-600"
-            onClick={() => toggleSort("address")}
-          >
-            Dirección
-            {renderSortIndicator("address")}
-          </button>
-        ),
-        accessorKey: "address",
-        cell: (info) => info.getValue() as string,
-      },
+
       {
         header: "Email",
         accessorKey: "email",
@@ -93,18 +141,7 @@ export default function EstablishmentsTable() {
           </a>
         ),
       },
-      {
-        header: "Teléfono",
-        accessorKey: "phone",
-        cell: (info) => (
-          <a
-            href={`tel:${info.getValue()}`}
-            className="text-blue-600 hover:underline"
-          >
-            {info.getValue() as string}
-          </a>
-        ),
-      },
+
       {
         header: () => (
           <button
@@ -130,7 +167,7 @@ export default function EstablishmentsTable() {
         },
       },
     ],
-    [renderSortIndicator, toggleSort],
+    [renderSortIndicator, toggleSort, navigate],
   );
 
   const table = useReactTable({
@@ -348,6 +385,52 @@ export default function EstablishmentsTable() {
           </button>
         </div>
       </div>
+
+      <Modal isOpen={isModalOpen} setIsOpen={setIsModalOpen}>
+        <div className="flex flex-col gap-8">
+          <div className="text-2xl font-semibold">
+            Cambiar estado de {currentEstablishment?.name}
+          </div>
+          <select
+            value={currentEstablishment?.status}
+            className="rounded px-3 py-2 shadow-md"
+            onChange={(e) =>
+              setCurrentEstablishment((prev) => ({
+                id: prev?.id as string,
+                name: prev?.name as string,
+                status: e.target.value as EstablishmentStatus,
+              }))
+            }
+          >
+            <option value={EstablishmentStatus.ACTIVE}>Activo</option>
+            <option value={EstablishmentStatus.INACTIVE}>Inactivo</option>
+            <option value={EstablishmentStatus.PENDING}>Pendiente</option>
+          </select>
+          <div className="flex w-full items-center justify-end gap-4">
+            <Button
+              className="border border-fourth bg-gray-50 text-fourth"
+              onClick={() => setIsModalOpen(false)}
+              label="Cancelar"
+            />
+            <Button
+              className=""
+              onClick={() => {
+                if (currentEstablishment?.id && currentEstablishment?.status) {
+                  changeEstablishmentStatus.mutate({
+                    id: currentEstablishment?.id,
+                    status: currentEstablishment?.status,
+                  });
+                  setIsModalOpen(false);
+                }
+              }}
+              label="Cambiar"
+              disabled={
+                !currentEstablishment?.id || !currentEstablishment?.status
+              }
+            />
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

@@ -13,12 +13,28 @@ import Input from "@/component/ui/Input";
 import { useUserApi } from "@/hooks/useUserApi.hook";
 import PageHeader from "@/component/PageHeader";
 import { useAdminUsersTable } from "@/hooks/filters/useAdminUsersTable";
+import Modal from "@/component/ui/Modal";
+import { useState } from "react";
+import { AccountStatus } from "@/types/common/api-request.interface";
+import Button from "@/component/ui/Button";
+import { generateImageUrl } from "@/lib/generate-image-url";
+import { format, formatDistanceToNow } from "date-fns";
+import { es } from "date-fns/locale";
 
 export default function AdminUsersPage() {
   const { state, queryString, setPage, setLimit, setSearch, setSorting } =
     useUsersFilters();
-  const { useGetUsers } = useUserApi();
-
+  const { useGetUsers, changeUserAccountStatus, promoteUserToAdmin } =
+    useUserApi();
+  const [currentUserStatus, setCurrentUserStatus] = useState({
+    email: "",
+    status: AccountStatus.ACTIVE,
+  });
+  const [isConfirmingPromoteStatus, setIsConfirmingPromoteStatus] =
+    useState(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [openModal, setOpenModal] = useState(false);
+  const [openModal2, setOpenModal2] = useState(false);
   const { data: paginatedUsers, isPending: isLoadingUsers } = useGetUsers(
     queryString,
     state.page,
@@ -33,6 +49,10 @@ export default function AdminUsersPage() {
       sortOrder: state.sortOrder ?? "DESC",
     },
     setSorting,
+    setOpenModal,
+    setCurrentUserStatus,
+    setCurrentUser,
+    setOpenModal2,
   });
 
   const table = useReactTable({
@@ -63,10 +83,9 @@ export default function AdminUsersPage() {
           title="Buscar por nombre o email..."
           value={state.search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-72 rounded border px-3 py-2"
         />
         <select
-          className="rounded border px-2 py-2"
+          className="h-full rounded border px-2 py-2"
           value={state.limit}
           onChange={(e) => setLimit(Number(e.target.value))}
         >
@@ -182,6 +201,137 @@ export default function AdminUsersPage() {
           </button>
         </div>
       </div>
+
+      <Modal isOpen={openModal} setIsOpen={setOpenModal}>
+        <div className="flex flex-col gap-8">
+          <div className="text-2xl font-semibold">
+            Cambiar estado de {currentUserStatus.email}
+          </div>
+          <select
+            value={currentUserStatus.status}
+            className="rounded px-3 py-2 shadow-md"
+            onChange={(e) =>
+              setCurrentUserStatus({
+                ...currentUserStatus,
+                status: e.target.value as AccountStatus,
+              })
+            }
+          >
+            <option value={AccountStatus.ACTIVE}>Activo</option>
+            <option value={AccountStatus.INACTIVE}>Inactivo</option>
+            <option value={AccountStatus.PENDING}>Pendiente</option>
+          </select>
+          <div className="flex w-full items-center justify-end gap-4">
+            <Button
+              className="border border-fourth bg-gray-50 text-fourth"
+              onClick={() => setOpenModal(false)}
+              label="Cancelar"
+            />
+            <Button
+              className=""
+              onClick={() => {
+                changeUserAccountStatus.mutate({
+                  email: currentUserStatus.email,
+                  status: currentUserStatus.status,
+                });
+                setOpenModal(false);
+              }}
+              label="Cambiar"
+              disabled={!currentUserStatus.email || !currentUserStatus.status}
+            />
+          </div>
+        </div>
+      </Modal>
+      <Modal isOpen={openModal2} setIsOpen={setOpenModal2}>
+        <div className="flex flex-col gap-4">
+          <div className="text-2xl font-semibold">
+            Información de {currentUser?.email}
+          </div>
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-2">
+              <img
+                className="h-10 w-10 rounded-full"
+                src={generateImageUrl("user", currentUser?.avatar as string)}
+                alt="Avatar"
+              />
+              <div className="flex flex-col">
+                <div className="font-semibold">
+                  {currentUser?.firstName} {currentUser?.lastName}
+                </div>
+                <div className="text-sm text-gray-500">
+                  {currentUser?.email}
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col gap-2">
+              <div className="font-semibold">Rol</div>
+              <div>{currentUser?.role}</div>
+            </div>
+            <div className="flex flex-col gap-2">
+              <div className="font-semibold">Creado</div>
+              <div>
+                {currentUser?.createdAt
+                  ? format(
+                      new Date(currentUser?.createdAt),
+                      "dd/MM/yyyy, HH:mm:ss",
+                      { locale: es },
+                    )
+                  : ""}
+              </div>
+            </div>
+            <div className="flex flex-col gap-2">
+              <div className="font-semibold">Último acceso</div>
+              <div>
+                {currentUser?.lastLogin
+                  ? formatDistanceToNow(new Date(currentUser?.lastLogin), {
+                      addSuffix: true,
+                      locale: es,
+                    })
+                  : ""}
+              </div>
+            </div>
+            <div className="flex flex-col gap-2">
+              <div className="font-semibold">Estado</div>
+              <div>{currentUser?.status}</div>
+            </div>
+          </div>
+          <div className="flex w-full items-center justify-end gap-4">
+            {isConfirmingPromoteStatus ? (
+              <>
+                <p className="text-bold text-center text-red-500">
+                  ¿Estas seguro de promover a {currentUser?.email} a
+                  administrador? esta acción no se puede deshacer!
+                </p>
+                <Button
+                  className="border border-fourth bg-gray-50 text-fourth"
+                  onClick={() => setOpenModal2(false)}
+                  label="Cancelar"
+                />
+                <Button
+                  className=""
+                  onClick={() => {
+                    promoteUserToAdmin.mutate({
+                      email: currentUser?.email as string,
+                    });
+                    setOpenModal2(false);
+                  }}
+                  label="Confirmar"
+                  disabled={!currentUser?.email || promoteUserToAdmin.isPending}
+                />
+              </>
+            ) : (
+              <Button
+                className=""
+                onClick={() => {
+                  setIsConfirmingPromoteStatus(true);
+                }}
+                label="Promover a administrador"
+                disabled={!currentUser?.email || promoteUserToAdmin.isPending}
+              />
+            )}
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

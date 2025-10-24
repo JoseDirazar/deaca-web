@@ -59,12 +59,17 @@ export interface ResetPasswordDto {
     newPassword: string;
 }
 
+export enum AccountStatus {
+    ACTIVE = 'ACTIVE',
+    INACTIVE = 'INACTIVE',
+    PENDING = 'PENDING',
+}
 
 export interface EditProfileDto {
     firstName?: string;
     lastName?: string;
     avatar?: string;
-    emailVerified?: boolean;
+    status?: AccountStatus;
     emailCode?: string;
     emailCodeCreatedAt?: Date;
     password?: string;

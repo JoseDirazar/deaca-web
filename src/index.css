@@ -1,9 +1,17 @@
 @import "tailwindcss";
 
+@import "swiper/swiper.css";
+@import "swiper/css/free-mode";
+@import "swiper/css/pagination";
+
 /* RESET */
 :root {
   margin: 0;
   padding: 0;
+}
+
+body {
+  @apply selection:bg-primary-hover selection:text-white;
 }
 
 /* ====================================================
@@ -257,4 +265,16 @@
   50% {
     border-color: transparent;
   }
+}
+
+.swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper-slide {
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

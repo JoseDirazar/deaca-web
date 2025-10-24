@@ -1,3 +1,3 @@
 export default function AdminDashboardPage() {
-  return <div>AdminDashboardPage</div>;
+  return <div className="text-gray-600">AdminDashboardPage</div>;
 }

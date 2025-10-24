@@ -10,7 +10,7 @@ import { establishmentService } from "@/api/establishment-service";
 export default function UserEstablishmentPage() {
   const navigate = useNavigate();
   const { data: myEstablishments } = useSuspenseQuery({
-    queryKey: ["establishment", "me"],
+    queryKey: ["establishments", "me"],
     queryFn: () => establishmentService.getMine().then((res) => res.data.data),
   });
   return (
