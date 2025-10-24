@@ -8,7 +8,6 @@ import type { User } from "@/types/user/user.interface";
 import { useState } from "react";
 import { IoAdd } from "react-icons/io5";
 import { useUserApi } from "@/hooks/useUserApi.hook";
-import PageContainer from "@/component/ui/PageContainer";
 import PageHeader from "@/component/PageHeader";
 
 export default function UserProfilePage() {
@@ -41,7 +40,7 @@ export default function UserProfilePage() {
   };
 
   return (
-    <PageContainer>
+    <>
       <PageHeader title="Perfil" description="Gestiona tu perfil de usuario" />
       <OutletForm
         onSubmit={(e) => {
@@ -104,6 +103,6 @@ export default function UserProfilePage() {
       )}
       {isUpdatingUser && <p className="text-red-500">Actualizando...</p>}
       {isUpdatingAvatar && <p className="text-red-500">Actualizando...</p>}
-    </PageContainer>
+    </>
   );
 }

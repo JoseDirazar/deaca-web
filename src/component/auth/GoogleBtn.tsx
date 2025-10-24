@@ -27,7 +27,7 @@ export default function GoogleBtn() {
       theme: "filled_green",
       size: "expanded",
     });
-  }, []);
+  }, [signInWithGoogleAsync]);
 
   return (
     <button

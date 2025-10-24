@@ -145,24 +145,24 @@ export default function UserEstablishmentForm({
     };
 
     createEstablishment.mutate(payload, {
-      onSuccess: async (created) => {
+      onSuccess: async ({ data }) => {
         // Upload avatar if provided
-        if (created && avatarFile) {
+        if (data && avatarFile) {
           const formData = new FormData();
           formData.append("file", avatarFile);
           await updateEstablishmentAvatar.mutateAsync({
-            id: created.id,
+            id: data.id,
             formData,
           });
         }
         // Upload gallery images if provided
-        if (created && galleryFiles && galleryFiles.length > 0) {
+        if (data && galleryFiles && galleryFiles.length > 0) {
           const formData = new FormData();
           for (const f of Array.from(galleryFiles)) {
             formData.append("files", f);
           }
           await updateEstablishmentImages.mutateAsync({
-            id: created.id,
+            id: data.id,
             formData,
           });
         }

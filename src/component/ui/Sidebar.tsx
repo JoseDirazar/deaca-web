@@ -12,12 +12,13 @@ export default function Sidebar({
   routes: NavbarRoutes;
   title: string;
   containerClassName?: string;
+  setIsOpen?: (isOpen: boolean) => void;
 }) {
   const navigate = useNavigate();
   return (
     <div
       className={cn(
-        "flex h-full max-w-1/4 flex-col items-center justify-start border-r border-gray-400 bg-white md:py-4",
+        "flex h-fit max-w-1/4 flex-col items-center justify-start border-r border-gray-400 bg-white",
         containerClassName,
       )}
     >

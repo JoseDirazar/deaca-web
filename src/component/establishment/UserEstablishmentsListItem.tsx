@@ -2,6 +2,7 @@ import { generateImageUrl } from "@/lib/generate-image-url";
 import type { Establishment } from "@/types/establishment/etablihment.interface";
 import { FaEdit } from "react-icons/fa";
 import Button from "../ui/Button";
+import { parseEstablishmentStatus } from "@/lib/parse-information-to-ui";
 
 export default function UserEstablishmentsListItem({
   establishment,
@@ -40,11 +41,7 @@ export default function UserEstablishmentsListItem({
         >
           {establishment.isComplete ? "Completo" : "Incompleto"}
         </span>
-        <span
-          className={`rounded px-2 py-1 text-xs ${establishment.verified ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-600"}`}
-        >
-          {establishment.verified ? "Verificado" : "Sin verificar"}
-        </span>
+        {parseEstablishmentStatus(establishment.status)}
       </div>
       {navigate && (
         <Button
