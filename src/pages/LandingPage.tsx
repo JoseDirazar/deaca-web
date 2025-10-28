@@ -13,9 +13,11 @@ import { appReviewService } from "@/api/app-review-service";
 
 export default function LandingPage() {
   const { data: categories } = useSuspenseQuery({
-    queryKey: ["categories"],
+    queryKey: ["categories", ["24Hs", "Domingos", "Vida Nocturna"]],
     queryFn: () =>
-      categoryService.getCategories().then((res) => res.data.data || []),
+      categoryService
+        .getCategories({ exclude: ["24Hs", "Domingos", "Vida Nocturna"] })
+        .then((res) => res.data.data || []),
   });
 
   const { data: appReviews } = useSuspenseQuery({

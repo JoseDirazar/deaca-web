@@ -11,6 +11,10 @@ export default function RightSection() {
   const [showDropdownMenu, setShowDropdownMenu] = useState(false);
   const navigate = useNavigate();
   const { user } = useUserStore();
+  const handleClick = (to: string) => {
+    setShowDropdownMenu(false);
+    navigate(to);
+  };
   return (
     <div>
       {user ? (
@@ -33,13 +37,16 @@ export default function RightSection() {
                 onClick={() => setShowDropdownMenu(false)}
               />
               <div className="absolute top-15 z-50 flex w-44 origin-top flex-col divide-y-2 divide-primary rounded bg-gray-50 p-2 drop-shadow-xl">
-                <button className="py-2" onClick={() => navigate("/usuario")}>
+                <button
+                  className="py-2"
+                  onClick={() => handleClick("/usuario")}
+                >
                   Perfil
                 </button>
                 {user.role !== "user" && (
                   <button
                     className="py-2"
-                    onClick={() => navigate("/usuario/emprendimientos")}
+                    onClick={() => handleClick("/usuario/emprendimientos")}
                   >
                     Mis emprendimientos
                   </button>

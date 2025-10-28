@@ -11,12 +11,7 @@ export default function CategorySection({
 }) {
   return (
     <SectionContainer className="flex flex-col items-center justify-center gap-8">
-      <SectionHeader
-        className=""
-        title="Categorías"
-        description=" "
-        descriptionClassName="bg-fourth h-[2px] w-20 rounded-full"
-      />
+      <SectionHeader title="Categorías" separator />
       <SectionBody className="grid w-full grid-cols-3 gap-4 text-xs md:grid-cols-4 lg:grid-cols-5">
         <CategoryList categories={categories} />
       </SectionBody>

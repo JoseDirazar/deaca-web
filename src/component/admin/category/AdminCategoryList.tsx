@@ -36,7 +36,6 @@ export default function AdminCategoryList({
   isUpdatingIcon,
   iconFile,
 }: AdminCategoryList) {
-  console.log(iconFile);
   return (
     <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 shadow-sm">
       <h2 className="mb-3 text-lg font-semibold text-gray-800">Listado</h2>

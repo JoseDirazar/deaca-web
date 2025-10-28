@@ -10,12 +10,7 @@ export default function TendenciesSection() {
   const { data: establishments } = useGetEstablishments("?limit=3&page=1");
   return (
     <SectionContainer className="flex flex-col items-center justify-center gap-8">
-      <SectionHeader
-        className=""
-        title="Tendencias"
-        description=" "
-        descriptionClassName="bg-fourth h-[2px] w-20 rounded-full"
-      />
+      <SectionHeader title="Tendencias" separator />
       <SectionBody className="flex w-full flex-wrap items-center justify-center gap-4 md:gap-10">
         {establishments?.data?.map((establishment) => (
           <EstablishmentTendencyCard

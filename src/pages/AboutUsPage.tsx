@@ -63,13 +63,13 @@ export default function AboutUsPage() {
         {aboutUsData.map((item, index) => (
           <div
             key={index}
-            className={`flex items-center justify-center py-16 md:py-24 ${index % 2 !== 0 ? "bg-white" : "bg-primary py-24"}`}
+            className={`flex items-center justify-center py-16 md:py-24 ${index % 2 !== 0 ? "bg-white" : "bg-primary"}`}
           >
             <div
-              className={`container flex flex-col gap-16 p-2 ${index % 2 === 0 ? "md:flex-row-reverse" : "md:flex-row"} items-center md:gap-24`}
+              className={`flex flex-col gap-4 p-2 px-4 ${index % 2 === 0 ? "md:flex-row-reverse" : "md:flex-row"} items-center md:gap-12`}
             >
               <div
-                className={`flex flex-col gap-8 text-wrap ${index % 2 !== 0 ? "text-gray-500" : "text-gray-100"} justify-center text-center`}
+                className={`flex flex-col gap-8 text-wrap ${index % 2 !== 0 ? "text-gray-500" : "text-gray-100"} items-center justify-center text-center`}
               >
                 <h2 className="text-4xl font-bold tracking-wide">
                   {item.title}
@@ -79,7 +79,7 @@ export default function AboutUsPage() {
               <img
                 src={item.img}
                 alt={item.title}
-                className="rounded-xl object-cover md:w-1/2"
+                className="rounded-xl object-cover md:max-w-1/2"
               />
             </div>
           </div>

@@ -3,7 +3,7 @@ import { prefetchCategoriesQuery } from "@/api/prefetch-queries/prefetch-categor
 
 export const landingPageLoader = async () => {
     await Promise.all([
-        prefetchCategoriesQuery(),
+        prefetchCategoriesQuery(['24Hs', 'Domingos', 'Vida Nocturna']),
         prefetchAppReviewsQuery(),
     ]);
 }

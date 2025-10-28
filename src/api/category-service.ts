@@ -3,8 +3,16 @@ import type { CreateCategoryResponse, CreateSubcategoryResponse, DeleteCategoryR
 
 export const categoryService = {
   // Categories
-  getCategories: (): GetCategoriesResponse =>
-    api.get("/category"),
+  getCategories: ({ exclude, select }: { exclude?: string[], select?: string[] }): GetCategoriesResponse => {
+    const params = new URLSearchParams();
+    if (exclude) {
+      exclude.forEach((value) => params.append("exclude", value));
+    }
+    if (select) {
+      select.forEach((value) => params.append("select", value));
+    }
+    return api.get(`/category?${params.toString()}`);
+  },
 
   getSubcategories: (): GetSubcategoriesResponse => api.get("/category/subcategories"),
 

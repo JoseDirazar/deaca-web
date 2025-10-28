@@ -48,7 +48,8 @@ export default function DiscoverEstablishmentsPage() {
 
   const { data: categories } = useSuspenseQuery({
     queryKey: ["categories"],
-    queryFn: () => categoryService.getCategories().then((res) => res.data.data),
+    queryFn: () =>
+      categoryService.getCategories({}).then((res) => res.data.data),
   });
 
   useEffect(() => {

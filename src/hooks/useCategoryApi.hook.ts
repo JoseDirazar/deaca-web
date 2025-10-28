@@ -5,13 +5,15 @@ import { toast } from "sonner";
 export const useCategoryApi = () => {
     const qc = useQueryClient();
 
-    const getCategories = useQuery({
-        queryFn: () => categoryService.getCategories().then((res) => res?.data.data || null),
-        queryKey: ["categories"],
-    })
+    const useGetCategories = ({ exclude, select }: { exclude?: string[], select?: string[] }) => {
+        return useQuery({
+            queryFn: () => categoryService.getCategories({ exclude, select }).then((res) => res?.data),
+            queryKey: ["categories", { exclude, select }],
+        })
+    }
 
     const createCategory = useMutation({
-        mutationFn: (payload: string) => categoryService.createCategory(payload).then((res) => res?.data.data),
+        mutationFn: (payload: string) => categoryService.createCategory(payload).then((res) => res?.data),
         onSuccess: () => {
             qc.invalidateQueries({ queryKey: ["categories"] })
             toast.success("Categoría creada correctamente")
@@ -22,7 +24,7 @@ export const useCategoryApi = () => {
     })
 
     const updateCategory = useMutation({
-        mutationFn: ({ id, payload }: { id: string, payload: string }) => categoryService.updateCategory(id, payload).then((res) => res?.data.data),
+        mutationFn: ({ id, payload }: { id: string, payload: string }) => categoryService.updateCategory(id, payload).then((res) => res?.data),
         onSuccess: () => {
             qc.invalidateQueries({ queryKey: ["categories"] })
             toast.success("Categoría actualizada correctamente")
@@ -54,7 +56,7 @@ export const useCategoryApi = () => {
     })
 
     return {
-        getCategories,
+        useGetCategories,
         createCategory,
         updateCategory,
         deleteCategory,

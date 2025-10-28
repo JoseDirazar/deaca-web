@@ -29,8 +29,8 @@ export default function UserEstablishmentForm({
     updateEstablishmentImages,
     deleteEstablishmentImage,
   } = useEstablishmentApi();
-  const { getCategories } = useCategoryApi();
-  const { data: categories, isPending: isLoadingCategories } = getCategories;
+  const { useGetCategories } = useCategoryApi();
+  const { data, isPending: isLoadingCategories } = useGetCategories({});
 
   const isLoading =
     createEstablishment.isPending ||
@@ -66,14 +66,14 @@ export default function UserEstablishmentForm({
   const [existingImages, setExistingImages] = useState<Image[]>([]);
 
   useEffect(() => {
-    const subs = categories
+    const subs = data?.data
       ?.filter((c) => selectedCategoryIds.includes(c.id))
       .flatMap((c) => c.subcategories || []);
     setAvailableSubcategories(subs || []);
     setSelectedSubcategoryIds((prev) =>
       prev.filter((id) => subs?.some((s) => s.id === id)),
     );
-  }, [selectedCategoryIds, categories]);
+  }, [selectedCategoryIds, data?.data]);
 
   useEffect(() => {
     if (establishment) {
@@ -329,7 +329,7 @@ export default function UserEstablishmentForm({
                 onChange={(e) => setCurrentCategoryId(e.target.value)}
               >
                 <option value="">Seleccionar categoría...</option>
-                {categories
+                {data?.data
                   ?.filter((c) => !selectedCategoryIds.includes(c.id))
                   .map((c) => (
                     <option key={c.id} value={c.id}>
@@ -360,7 +360,7 @@ export default function UserEstablishmentForm({
             {selectedCategoryIds.length > 0 && (
               <div className="mt-2 flex flex-wrap gap-2">
                 {selectedCategoryIds.map((catId) => {
-                  const category = categories?.find((c) => c.id === catId);
+                  const category = data?.data?.find((c) => c.id === catId);
                   return (
                     <div
                       key={catId}

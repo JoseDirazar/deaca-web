@@ -1,12 +1,14 @@
 import type { Establishment } from "@/types/establishment/etablihment.interface";
 import SearchEstablishmentsListItem from "./SearchEstablishmentsListItem";
 import CardSkeleton from "../ui/CardSkeleton";
+import { cn } from "@/lib/cn";
 
 interface SearchEstablishmentsListProps {
   isLoading: boolean;
   establishments: Establishment[] | undefined;
   isError: boolean;
   error: unknown;
+  className?: string;
 }
 // TODO: reutilizar el componente con user dashboard establishments
 export default function SearchEstablishmentsList({
@@ -14,6 +16,7 @@ export default function SearchEstablishmentsList({
   establishments,
   isError,
   error,
+  className,
 }: SearchEstablishmentsListProps) {
   if (!establishments)
     return (
@@ -23,11 +26,11 @@ export default function SearchEstablishmentsList({
     );
   if (isLoading)
     return (
-      <>
+      <div className={cn("flex flex-col gap-3", className)}>
         <CardSkeleton />
         <CardSkeleton />
         <CardSkeleton />
-      </>
+      </div>
     );
   if (isError) {
     console.error(error);
@@ -38,7 +41,7 @@ export default function SearchEstablishmentsList({
     );
   }
   return (
-    <div className="flex flex-col gap-3">
+    <div className={cn("flex flex-col gap-3", className)}>
       {establishments?.map((e) => (
         <SearchEstablishmentsListItem key={e.id} establishment={e} />
       ))}

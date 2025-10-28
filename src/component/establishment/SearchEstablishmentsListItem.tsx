@@ -2,7 +2,7 @@ import { generateImageUrl } from "@/lib/generate-image-url";
 import type { Establishment } from "@/types/establishment/etablihment.interface";
 import { useNavigate } from "react-router";
 
-export default function UserEstablishmentsListItem({
+export default function SearchEstablishmentsListItem({
   establishment,
 }: {
   establishment: Establishment;
@@ -13,7 +13,7 @@ export default function UserEstablishmentsListItem({
       <img
         src={generateImageUrl("establishment-logo", establishment.avatar)}
         className="h-40 w-40 rounded-l-md object-cover"
-        alt={`Avatar de ${establishment.name}`}
+        alt={`${establishment.name} logo`}
       />
 
       <div className="flex flex-col justify-between gap-2 p-3">

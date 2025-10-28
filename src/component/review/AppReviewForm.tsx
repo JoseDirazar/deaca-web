@@ -7,7 +7,6 @@ export default function AppReviewForm() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(e.currentTarget.comment.value);
     createReviewMutation.mutate({
       comment: e.currentTarget.comment.value,
     });

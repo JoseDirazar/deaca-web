@@ -1,10 +1,10 @@
 import { queryClient } from "@/context/query-client-instance";
 import { categoryService } from "../category-service";
 
-export const prefetchCategoriesQuery = async () => {
+export const prefetchCategoriesQuery = async (exclude?: string[]) => {
     await queryClient.prefetchQuery({
-        queryKey: ["categories"],
+        queryKey: ["categories", { exclude }],
         queryFn: () =>
-            categoryService.getCategories().then((res) => res?.data?.data),
+            categoryService.getCategories({ exclude }).then((res) => res?.data?.data),
     });
 }

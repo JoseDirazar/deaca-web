@@ -19,7 +19,8 @@ import { FaPlus } from "react-icons/fa6";
 export default function AdminCategoriesPage() {
   const { data } = useSuspenseQuery({
     queryKey: ["categories"],
-    queryFn: () => categoryService.getCategories().then((res) => res.data.data),
+    queryFn: () =>
+      categoryService.getCategories({}).then((res) => res.data.data),
   });
   const [isOpen, setIsOpen] = useState(false);
   const { createCategory, updateCategory, deleteCategory, uploadCategoryIcon } =
@@ -62,7 +63,7 @@ export default function AdminCategoriesPage() {
       return toast.warning("Selecciona un icono para la nueva categoria.");
     const form = new FormData();
     form.append("file", iconFile);
-    const categoryCreated = await createCategory.mutateAsync(
+    const { data: categoryCreated } = await createCategory.mutateAsync(
       newCategoryName.trim(),
       {
         onSuccess: () => {
@@ -168,7 +169,6 @@ export default function AdminCategoriesPage() {
 
   function handleIconUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
-    console.log(file);
     if (!file || !editingCategoryId) return;
     const formData = new FormData();
     formData.append("file", file);
