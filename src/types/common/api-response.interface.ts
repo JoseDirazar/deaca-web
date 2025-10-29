@@ -7,26 +7,28 @@ import type { Review } from "../reviews/review.interface";
 import type { AppReview } from "../reviews/app-review.interface";
 
 export interface ApiPayload<T> {
-    data: T;
-    message?: string;
+  data: T;
+  message?: string;
 }
 export interface ApiPaginatedPayload<T> extends ApiPayload<T> {
-    meta: {
-        itemCount: number;
-        itemsPerPage: number;
-        currentPage: number;
-        totalItems: number;
-        totalPages: number;
-    }
+  meta: {
+    itemCount: number;
+    itemsPerPage: number;
+    currentPage: number;
+    totalItems: number;
+    totalPages: number;
+  };
 }
 export type ApiResponse<T> = Promise<AxiosResponse<ApiPayload<T>>>;
-export type ApiPaginatedResponse<T> = Promise<AxiosResponse<ApiPaginatedPayload<T>>>;
+export type ApiPaginatedResponse<T> = Promise<
+  AxiosResponse<ApiPaginatedPayload<T>>
+>;
 
 // -------- AUTH ---------------- AUTH ---------------- AUTH --------
-export type SignUpResponse = ApiResponse<void>
-export type SignInResponse = ApiResponse<{ accessToken: string }>
+export type SignUpResponse = ApiResponse<void>;
+export type SignInResponse = ApiResponse<{ accessToken: string }>;
 export type SignOutResponse = ApiResponse<void>;
-export type GoogleAuthResponse = ApiResponse<{ accessToken: string }>
+export type GoogleAuthResponse = ApiResponse<{ accessToken: string }>;
 export type RefreshTokenResponse = ApiResponse<{ accessToken: string }>;
 export type ConfirmEmailResponse = ApiResponse<User>;
 export type RequestPasswordResetResponse = ApiResponse<void>;
@@ -71,6 +73,4 @@ export type DeleteReviewResponse = ApiResponse<Review>;
 export type CreateAppReviewResponse = ApiResponse<AppReview>;
 export type UpdateAppReviewResponse = ApiResponse<AppReview>;
 export type DeleteAppReviewResponse = ApiResponse<AppReview>;
-
-
-
+export type GetAppReviewsResponse = ApiPaginatedResponse<AppReview[]>;

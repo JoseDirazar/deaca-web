@@ -26,4 +26,5 @@ export interface Establishment extends BaseEntity {
   subcategories: Subcategory[];
   images?: Image[] | null;
   user: User;
+  slug: string;
 }

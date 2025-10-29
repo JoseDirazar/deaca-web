@@ -43,7 +43,7 @@ export default function ImageUpload({
   };
 
   return (
-    <div>
+    <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-center">
       <input
         type="file"
         accept={accept}
@@ -58,7 +58,7 @@ export default function ImageUpload({
               key={idx}
               src={preview}
               alt={`Preview ${idx + 1}`}
-              className="h-20 w-20 rounded border border-gray-200 object-cover"
+              className="w-28 rounded border border-gray-200 object-cover"
             />
           ))}
         </div>

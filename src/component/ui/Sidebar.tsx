@@ -34,7 +34,7 @@ export default function Sidebar({
             key={route.href}
             onClick={() => navigate(route.href)}
             className={cn(
-              "flex w-full items-center justify-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all hover:bg-primary hover:text-white md:justify-start",
+              "flex w-full items-center justify-center gap-3 rounded-lg px-3 py-2 font-century-gothic text-sm font-bold text-primary transition-all hover:bg-primary hover:text-white md:justify-start",
               location.pathname === route.href && "bg-primary text-white",
             )}
           >
@@ -46,7 +46,7 @@ export default function Sidebar({
       <div className="w-full p-2">
         <Link
           to="/"
-          className="flex items-center justify-center rounded-md bg-primary px-4 py-2 text-lg text-white transition-transform hover:scale-110 md:w-full"
+          className="flex items-center justify-center rounded-md bg-primary px-4 py-2 font-century-gothic text-lg font-bold text-white transition-transform hover:bg-primary hover:text-white md:w-full"
         >
           <FaHome size={20} className="inline-block" />
           <p className="hidden md:block">Inicio</p>

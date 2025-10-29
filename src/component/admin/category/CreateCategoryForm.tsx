@@ -21,32 +21,30 @@ export default function CreateCategoryForm({
   isPending,
 }: CreateCategoryFormProps) {
   return (
-    <form
-      onSubmit={handleCreateCategory}
-      className="flex flex-col gap-3 rounded-lg border border-gray-200 bg-gray-50 p-4 shadow-sm"
-    >
+    <form onSubmit={handleCreateCategory} className="flex flex-col gap-8">
       <p className="text-sm font-medium text-gray-700">Icono</p>
       <ImageUpload
         onChange={(files) => setIconFile(files?.[0] ?? null)}
         accept="image/*"
       />
 
-      <p className="text-sm font-medium text-gray-700">Nombre</p>
       <Input
         id="category-name"
         type="text"
-        title="Nueva categoría"
+        title="Nombre"
         value={newCategoryName}
         onChange={(e) => setNewCategoryName(e.target.value)}
         required
       />
 
-      <Button
-        type="submit"
-        label="Crear"
-        icon={<FaPlus />}
-        disabled={isPending}
-      />
+      <div className="mt-10 flex w-full justify-end">
+        <Button
+          type="submit"
+          label="Crear"
+          icon={<FaPlus />}
+          disabled={isPending}
+        />
+      </div>
     </form>
   );
 }

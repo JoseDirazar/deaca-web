@@ -57,7 +57,7 @@ export default function AdminCategoriesPage() {
   // Handlers: Categories
   async function handleCreateCategory(e: React.FormEvent) {
     e.preventDefault();
-    if (!newCategoryName.trim())
+    if (!newCategoryName.trim() || newCategoryName.length < 3)
       return toast.warning("Ingresa un nombre para la nueva categoria.");
     if (!iconFile)
       return toast.warning("Selecciona un icono para la nueva categoria.");

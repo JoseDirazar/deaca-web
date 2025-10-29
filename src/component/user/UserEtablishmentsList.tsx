@@ -21,8 +21,8 @@ export default function UserEstablishmentsList({
           navigate={(edit?: "edit" | null) =>
             navigate(
               edit
-                ? `/usuario/emprendimientos/${e.id}`
-                : `/emprendimientos/${e.id}`,
+                ? `/usuario/emprendimientos/${e.slug}`
+                : `/emprendimientos/${e.slug}`,
               { state: { from: location.pathname } },
             )
           }

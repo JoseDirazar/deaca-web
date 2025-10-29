@@ -4,7 +4,7 @@ import { Link, useLocation } from "react-router";
 export default function MidSection() {
   const pathname = useLocation().pathname;
   return (
-    <div className="ml-4 hidden gap-6 p-4 text-center text-xl text-primary md:flex">
+    <div className="hidden w-full gap-6 text-center text-xl text-primary md:flex">
       {navLinks.map((link) => (
         <Link
           className={

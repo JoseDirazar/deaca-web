@@ -11,19 +11,15 @@ import { useNavigate, useParams } from "react-router";
 
 import PageContainer from "@/component/ui/PageContainer";
 import EstablishmentReviews from "@/component/review/EstablishmentReviews";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { establishmentService } from "@/api/establishment-service";
+import { useEstablishmentApi } from "@/hooks/useEstablishmentApi";
 
 export default function EstablishmentDetailPage() {
-  const { id } = useParams();
+  const { slug } = useParams();
   const navigate = useNavigate();
   const { user } = useUserStore();
 
-  const { data: establishment } = useSuspenseQuery({
-    queryKey: ["establishments", id],
-    queryFn: () =>
-      establishmentService.getById(id as string).then((res) => res.data.data),
-  });
+  const { data: establishment } =
+    useEstablishmentApi().useGetEstablishmentBySlug(slug as string);
 
   const [imageSelected, setImageSelected] = useState<Image | null>(null);
 
@@ -46,6 +42,13 @@ export default function EstablishmentDetailPage() {
 
     setImageSelected(establishment.images[newIndex]);
   };
+
+  if (!establishment)
+    return (
+      <PageContainer className="text-4xl text-gray-400">
+        No se encontro la informacion
+      </PageContainer>
+    );
 
   return (
     <PageContainer className="relative p-6">
@@ -86,24 +89,27 @@ export default function EstablishmentDetailPage() {
               </button>
             ))}
             <img
-              src={generateImageUrl("establishment-logo", establishment.avatar)}
-              alt={`${establishment.name} avatar`}
+              src={generateImageUrl(
+                "establishment-logo",
+                establishment?.avatar,
+              )}
+              alt={`${establishment?.name} avatar`}
               className="absolute -bottom-7 left-5 h-36 w-36 rounded-full bg-white object-cover p-2"
             />
           </div>
           <div className="flex w-full items-center justify-between">
             <p className="font-century-gothic text-3xl font-bold tracking-wide md:text-5xl">
-              {establishment.name}
+              {establishment?.name}
             </p>
             <div className="flex items-center gap-4 text-2xl md:text-4xl">
               <FaInstagram
-                onClick={() => window.open(establishment.instagram, "_blank")}
+                onClick={() => window.open(establishment?.instagram, "_blank")}
               />
               <FaFacebook
-                onClick={() => window.open(establishment.facebook, "_blank")}
+                onClick={() => window.open(establishment?.facebook, "_blank")}
               />
               <FaWebAwesome
-                onClick={() => window.open(establishment.website, "_blank")}
+                onClick={() => window.open(establishment?.website, "_blank")}
               />
             </div>
           </div>
@@ -123,7 +129,7 @@ export default function EstablishmentDetailPage() {
 
       <div className="mt-6 flex flex-col gap-8 md:flex-1 md:flex-row">
         <p className="text-justify font-century-gothic text-lg text-wrap md:max-w-2/3">
-          {establishment.description}
+          {establishment?.description}
         </p>
         <div className="font-century-gothic md:flex-grow">
           <EstablishmentReviews establishment={establishment} user={user} />
@@ -133,7 +139,7 @@ export default function EstablishmentDetailPage() {
         imageSelected={imageSelected}
         setImageSelected={setImageSelected}
         handleSelectedImage={handleSelectedImage}
-        images={establishment.images || []}
+        images={establishment?.images || []}
       />
     </PageContainer>
   );

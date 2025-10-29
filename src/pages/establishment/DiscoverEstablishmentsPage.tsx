@@ -8,14 +8,15 @@ import Filters from "@/component/establishment/Filters";
 import { FaFilter } from "react-icons/fa6";
 import Modal from "@/component/ui/Modal";
 import Button from "@/component/ui/Button";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { establishmentService } from "@/api/establishment-service";
-import { categoryService } from "@/api/category-service";
+
+import { useEstablishmentApi } from "@/hooks/useEstablishmentApi";
+import { useCategoryApi } from "@/hooks/useCategoryApi.hook";
 
 export default function DiscoverEstablishmentsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [showFilters, setShowFilters] = useState(false);
-
+  const { useGetEstablishments } = useEstablishmentApi();
+  const { useGetCategories } = useCategoryApi();
   const {
     queryString,
     state,
@@ -33,24 +34,13 @@ export default function DiscoverEstablishmentsPage() {
     limit: Number(searchParams.get("limit")) || 10,
   });
 
-  const { data } = useSuspenseQuery({
-    queryKey: ["establishments", queryString],
-    queryFn: () =>
-      establishmentService
-        .getEstablishments(queryString)
-        .then((res) => res.data),
-  });
-
-  const markers = data?.data?.map((e) => ({
+  const { data: establishments } = useGetEstablishments(queryString);
+  const markers = establishments?.data?.map((e) => ({
     lat: Number(e.latitude),
     lng: Number(e.longitude),
   }));
 
-  const { data: categories } = useSuspenseQuery({
-    queryKey: ["categories"],
-    queryFn: () =>
-      categoryService.getCategories({}).then((res) => res.data.data),
-  });
+  const { data: categories } = useGetCategories({});
 
   useEffect(() => {
     const params = new URLSearchParams();
@@ -91,9 +81,10 @@ export default function DiscoverEstablishmentsPage() {
     setSearchParams,
   ]);
 
+  console.log(categories);
+
   return (
     <PageContainer className="flex flex-col gap-4 p-4 md:flex-row">
-      {/* Sidebar de Categorías y Filtros */}
       <Modal isOpen={showFilters} setIsOpen={setShowFilters}>
         <Filters
           state={state}
@@ -103,10 +94,11 @@ export default function DiscoverEstablishmentsPage() {
           hasActiveFilters={hasActiveFilters}
           isCategorySelected={isCategorySelected}
           toggleCategory={toggleCategory}
-          categories={categories}
+          categories={categories?.data}
           isLoadingCategories={false}
         />
       </Modal>
+
       <div className="hidden w-auto md:block">
         <Filters
           state={state}
@@ -116,7 +108,7 @@ export default function DiscoverEstablishmentsPage() {
           hasActiveFilters={hasActiveFilters}
           isCategorySelected={isCategorySelected}
           toggleCategory={toggleCategory}
-          categories={categories}
+          categories={categories?.data}
           isLoadingCategories={false}
         />
       </div>
@@ -130,16 +122,13 @@ export default function DiscoverEstablishmentsPage() {
           label="Filtrar"
         />
 
-        {/* Lista de Establecimientos */}
         <SearchEstablishmentsList
-          establishments={data?.data}
+          establishments={establishments?.data}
           isLoading={false}
           isError={false}
           error={null}
         />
       </div>
-
-      {/* Mapa con marcadores */}
     </PageContainer>
   );
 }

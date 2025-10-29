@@ -33,7 +33,7 @@ export default function Input({
       <input
         type={showPassword ? "text" : type}
         className={cn(
-          "peer h-12 w-full rounded-md border border-primary bg-transparent p-3 text-lg font-medium tracking-widest text-fourth placeholder-transparent focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none disabled:opacity-50",
+          "peer h-12 w-full rounded-md border border-primary bg-transparent p-3 text-lg tracking-widest text-fourth placeholder-transparent focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none disabled:opacity-50",
           className,
         )}
         value={value}

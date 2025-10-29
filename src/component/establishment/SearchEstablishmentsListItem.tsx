@@ -20,7 +20,7 @@ export default function SearchEstablishmentsListItem({
         <div className="flex w-full flex-col gap-2">
           <button
             className="w-fit text-lg font-extrabold hover:underline"
-            onClick={() => navigate(`/emprendimientos/${establishment.id}`)}
+            onClick={() => navigate(`/emprendimientos/${establishment.slug}`)}
           >
             {establishment.name}
           </button>

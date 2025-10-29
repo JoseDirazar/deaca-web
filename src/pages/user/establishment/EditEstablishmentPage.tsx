@@ -3,14 +3,14 @@ import { useEstablishmentApi } from "@/hooks/useEstablishmentApi";
 import { useParams } from "react-router";
 
 export default function EditEstablishmentPage() {
-  const { id } = useParams();
-  const { useGetEstablishment } = useEstablishmentApi();
-  const { data } = useGetEstablishment(id as string, {
-    enabled: !!id,
+  const { slug } = useParams();
+  const { useGetEstablishmentBySlug } = useEstablishmentApi();
+  const { data } = useGetEstablishmentBySlug(slug as string, {
+    enabled: !!slug,
   });
   return (
     <div className="p-6">
-      <UserEstablishmentForm establishment={data?.data} />
+      <UserEstablishmentForm establishment={data} />
     </div>
   );
 }

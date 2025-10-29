@@ -6,7 +6,7 @@ export type SortBy = "name" | "createdAt" | "address" | "status";
 export interface EstablishmentsFiltersState {
   page: number;
   limit: number;
-  name: string;
+  search: string;
   address: string;
   categories: string[];
   subcategories: string[];
@@ -17,7 +17,7 @@ export interface EstablishmentsFiltersState {
 const DEFAULT_STATE: EstablishmentsFiltersState = {
   page: 1,
   limit: 10,
-  name: "",
+  search: "",
   address: "",
   categories: [],
   subcategories: [],
@@ -26,7 +26,7 @@ const DEFAULT_STATE: EstablishmentsFiltersState = {
 };
 
 export const useEstablishmentsFilters = (
-  initial?: Partial<EstablishmentsFiltersState>
+  initial?: Partial<EstablishmentsFiltersState>,
 ) => {
   const [state, setState] = useState<EstablishmentsFiltersState>({
     ...DEFAULT_STATE,
@@ -37,22 +37,22 @@ export const useEstablishmentsFilters = (
 
   const setPage = useCallback(
     (page: number) => setState((s) => ({ ...s, page })),
-    []
+    [],
   );
 
   const setLimit = useCallback(
     (limit: number) => setState((s) => ({ ...s, limit, page: 1 })),
-    []
+    [],
   );
 
-  const setName = useCallback(
-    (name: string) => setState((s) => ({ ...s, name, page: 1 })),
-    []
+  const setSearch = useCallback(
+    (search: string) => setState((s) => ({ ...s, search, page: 1 })),
+    [],
   );
 
   const setAddress = useCallback(
     (address: string) => setState((s) => ({ ...s, address, page: 1 })),
-    []
+    [],
   );
 
   // Toggle de categoría (agregar si no existe, remover si existe)
@@ -105,7 +105,7 @@ export const useEstablishmentsFilters = (
   const setSorting = useCallback(
     (sortBy?: SortBy, sortOrder?: SortOrder) =>
       setState((s) => ({ ...s, sortBy, sortOrder })),
-    []
+    [],
   );
 
   // Limpiar todos los filtros
@@ -122,8 +122,8 @@ export const useEstablishmentsFilters = (
     params.set("limit", String(state.limit));
 
     // Incluir solo filtros con valores
-    if (state.name.trim()) {
-      params.set("name", state.name.trim());
+    if (state.search.trim()) {
+      params.set("search", state.search.trim());
     }
 
     if (state.address.trim()) {
@@ -157,7 +157,7 @@ export const useEstablishmentsFilters = (
   }, [
     state.page,
     state.limit,
-    state.name,
+    state.search,
     state.address,
     state.categories,
     state.subcategories,
@@ -168,23 +168,23 @@ export const useEstablishmentsFilters = (
   // Indicador de si hay filtros activos (excluyendo paginación y orden)
   const hasActiveFilters = useMemo(() => {
     return (
-      state.name.trim() !== "" ||
+      state.search.trim() !== "" ||
       state.address.trim() !== "" ||
       state.categories.length > 0 ||
       state.subcategories.length > 0
     );
-  }, [state.name, state.address, state.categories, state.subcategories]);
+  }, [state.search, state.address, state.categories, state.subcategories]);
 
   // Verificar si una categoría está seleccionada
   const isCategorySelected = useCallback(
     (category: string) => state.categories.includes(category),
-    [state.categories]
+    [state.categories],
   );
 
   // Verificar si una subcategoría está seleccionada
   const isSubcategorySelected = useCallback(
     (subcategory: string) => state.subcategories.includes(subcategory),
-    [state.subcategories]
+    [state.subcategories],
   );
 
   return {
@@ -193,7 +193,7 @@ export const useEstablishmentsFilters = (
     hasActiveFilters,
     setPage,
     setLimit,
-    setName,
+    setSearch,
     setAddress,
     setCategories,
     toggleCategory,

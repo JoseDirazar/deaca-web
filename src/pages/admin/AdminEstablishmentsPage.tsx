@@ -29,20 +29,23 @@ export default function EstablishmentsTable() {
     queryString,
     setPage,
     setLimit,
-    setName,
+    setSearch,
     setAddress,
     setSorting,
   } = useEstablishmentsFilters();
+
   const { useGetEstablishments, changeEstablishmentStatus } =
     useEstablishmentApi();
-  const { data, isPending } = useGetEstablishments(queryString);
 
+  const { data, isPending } = useGetEstablishments(queryString);
+  console.log(data?.data);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentEstablishment, setCurrentEstablishment] = useState<{
     id: string;
     status: EstablishmentStatus;
     name: string;
   } | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const toggleSort = useCallback(
     (key: SortBy) => {
@@ -201,8 +204,8 @@ export default function EstablishmentsTable() {
           <input
             type="text"
             placeholder="Buscar por nombre..."
-            value={state.name || ""}
-            onChange={(e) => setName(e.target.value)}
+            value={state.search || ""}
+            onChange={(e) => setSearch(e.target.value)}
             className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
           />
           <input
@@ -294,7 +297,7 @@ export default function EstablishmentsTable() {
                       <span className="text-lg font-medium">
                         No se encontraron establecimientos
                       </span>
-                      {state.name && (
+                      {state.search && (
                         <span className="text-sm">
                           Intenta con un término de búsqueda diferente
                         </span>

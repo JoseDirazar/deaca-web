@@ -9,7 +9,10 @@ export default function LeftSection({
 }) {
   return (
     <div>
-      <Link to="/" className="-mt-1 hidden items-center justify-center md:flex">
+      <Link
+        to="/"
+        className="-mt-1 mr-4 hidden items-center justify-center md:flex"
+      >
         <img
           src="/logos/logo-horizontal-a-color.png"
           alt="logo"

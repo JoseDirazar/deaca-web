@@ -35,13 +35,8 @@ export default function AdminUsersPage() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [openModal, setOpenModal] = useState(false);
   const [openModal2, setOpenModal2] = useState(false);
-  const { data: paginatedUsers, isPending: isLoadingUsers } = useGetUsers(
-    queryString,
-    state.page,
-    state.limit,
-    state.sortBy ?? "createdAt",
-    state.sortOrder ?? "DESC",
-  );
+  const { data: paginatedUsers, isPending: isLoadingUsers } =
+    useGetUsers(queryString);
 
   const { columns } = useAdminUsersTable({
     state: {

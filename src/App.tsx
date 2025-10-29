@@ -25,10 +25,7 @@ import WhatToDoPage from "./pages/WhatToDoPage";
 import { Roles } from "@/types/common/roles.interface";
 import { Suspense } from "react";
 import Loader from "./component/ui/Loader";
-import { discoverEstablishmentsLoader } from "./routes-loaders/discover-establishments.loader";
-import { establishmentDetailLoader } from "./routes-loaders/establishment-detail.loader";
-import { myEstablishmentsLoader } from "./routes-loaders/my-establishments.loader";
-import { landingPageLoader } from "./routes-loaders/landing-page.loader";
+import UserDashboardPage from "./pages/user/UserDashboardPage";
 
 function App() {
   return (
@@ -36,7 +33,6 @@ function App() {
       <Route path="/" element={<RootLayout />}>
         <Route
           index
-          loader={landingPageLoader}
           element={
             <Suspense fallback={<Loader />}>
               <LandingPage />
@@ -53,7 +49,6 @@ function App() {
         <Route path="emprendimientos">
           <Route
             index
-            loader={discoverEstablishmentsLoader}
             element={
               <Suspense fallback={<Loader />}>
                 <DiscoverEstablishmentsPage />
@@ -62,8 +57,7 @@ function App() {
           />
 
           <Route
-            path=":id"
-            loader={establishmentDetailLoader}
+            path=":slug"
             element={
               <Suspense fallback={<Loader />}>
                 <EstablishmentDetailPage />
@@ -86,10 +80,10 @@ function App() {
         </Route>
 
         <Route path="/usuario/*" element={<UserDashboardLayout />}>
-          <Route index element={<UserProfilePage />} />
+          <Route index element={<UserDashboardPage />} />
+          <Route path="perfil" element={<UserProfilePage />} />
           <Route
             path="emprendimientos"
-            loader={myEstablishmentsLoader}
             element={
               <Suspense fallback={<Loader />}>
                 <RequireAuth roles={[Roles.BUSINESS_OWNER, Roles.ADMIN]}>
@@ -99,7 +93,7 @@ function App() {
             }
           />
           <Route
-            path="emprendimientos/:id"
+            path="emprendimientos/:slug"
             element={<EditEstablishmentPage />}
           />
         </Route>

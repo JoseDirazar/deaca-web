@@ -17,7 +17,7 @@ export default function Modal({ children, setIsOpen, isOpen }: ModalProps) {
         onClick={() => setIsOpen(false)}
       />
       <div
-        className="relative z-50 container max-h-[90vh] max-w-4xl overflow-y-auto rounded-lg bg-gray-50 p-8 shadow-lg"
+        className="relative z-50 container max-h-[90vh] max-w-4xl overflow-y-auto rounded-lg bg-gray-50 p-8 shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="absolute top-1 right-1">

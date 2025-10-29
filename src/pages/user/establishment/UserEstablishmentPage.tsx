@@ -3,15 +3,12 @@ import Button from "@/component/ui/Button";
 import UserEstablishmentsList from "@/component/user/UserEtablishmentsList";
 import { FaPlus } from "react-icons/fa6";
 import { useNavigate } from "react-router";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { establishmentService } from "@/api/establishment-service";
+import { useEstablishmentApi } from "@/hooks/useEstablishmentApi";
 
 export default function UserEstablishmentPage() {
   const navigate = useNavigate();
-  const { data: myEstablishments } = useSuspenseQuery({
-    queryKey: ["establishments", "me"],
-    queryFn: () => establishmentService.getMine().then((res) => res.data.data),
-  });
+  const { data: myEstablishments } =
+    useEstablishmentApi().useGetMyEstablishments();
   return (
     <>
       <PageHeader
@@ -24,7 +21,7 @@ export default function UserEstablishmentPage() {
         icon={<FaPlus />}
         className="h-fit w-fit"
       />
-      <UserEstablishmentsList myEstablishments={myEstablishments} />
+      <UserEstablishmentsList myEstablishments={myEstablishments?.data || []} />
     </>
   );
 }

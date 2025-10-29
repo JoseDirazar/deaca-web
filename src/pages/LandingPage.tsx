@@ -7,34 +7,28 @@ import TendenciesSection from "@/component/landing/TendenciesSection";
 import UsersTestimoniesSection from "@/component/landing/UsersTestimoniesSection";
 import PageContainer from "@/component/ui/PageContainer";
 
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { categoryService } from "@/api/category-service";
-import { appReviewService } from "@/api/app-review-service";
+import { useCategoryApi } from "@/hooks/useCategoryApi.hook";
+import { useAppReviewsApi } from "@/hooks/useAppReviewsApi.hook";
+import GoogleOneTapButton from "@/component/ui/GoogleOneTapButton";
 
 export default function LandingPage() {
-  const { data: categories } = useSuspenseQuery({
-    queryKey: ["categories", ["24Hs", "Domingos", "Vida Nocturna"]],
-    queryFn: () =>
-      categoryService
-        .getCategories({ exclude: ["24Hs", "Domingos", "Vida Nocturna"] })
-        .then((res) => res.data.data || []),
+  const { useGetCategories } = useCategoryApi();
+  const { data: categories } = useGetCategories({
+    exclude: ["24Hs", "Domingos", "Vida Nocturna"],
   });
-
-  const { data: appReviews } = useSuspenseQuery({
-    queryKey: ["app-reviews"],
-    queryFn: () =>
-      appReviewService.findAll().then((res) => res.data.data || []),
-  });
+  const { useGetAppReviews } = useAppReviewsApi();
+  const { data: appReviews } = useGetAppReviews;
 
   return (
     <PageContainer className="gap-12">
-      <SearchSection categories={categories || []} />
-      <CategorySection categories={categories || []} />
+      <SearchSection categories={categories?.data || []} />
+      <CategorySection categories={categories?.data || []} />
       <TendenciesSection />
       <RegisterSection />
       <SponsorsSection />
-      <UsersTestimoniesSection appReviews={appReviews || []} />
+      <UsersTestimoniesSection appReviews={appReviews?.data || []} />
       <ReachOutSection />
+      <GoogleOneTapButton />
     </PageContainer>
   );
 }

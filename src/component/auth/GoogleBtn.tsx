@@ -1,39 +1,28 @@
 import { useAuthApi } from "@/hooks/useAuthApi.hook";
-import { googleClientId } from "@/lib/constants/enviroment-variables";
-import { useEffect } from "react";
+import { GoogleLogin } from "@react-oauth/google";
+import { toast } from "sonner";
 
 export default function GoogleBtn() {
   const { signInWithGoogle } = useAuthApi();
   const {
     mutateAsync: signInWithGoogleAsync,
     isPending: isSigningInWithGoogle,
+    isError,
   } = signInWithGoogle;
 
-  useEffect(() => {
-    // @ts-expect-error google.accounts.id.initialize
-    google.accounts.id.initialize({
-      client_id: googleClientId,
-      callback: (response: { credential: string }) => {
-        // el JWT de Google
-        const credential = response.credential;
-        // TODO?: mandarlo al backend vía tu hook
-
-        signInWithGoogleAsync(credential);
-      },
-    });
-
-    // @ts-expect-error google.accounts.id.renderButton
-    google.accounts.id.renderButton(document.getElementById("googleBtn"), {
-      theme: "filled_green",
-      size: "expanded",
-    });
-  }, [signInWithGoogleAsync]);
+  const handleSuccess = async (credentialResponse: any) => {
+    // credentialResponse.credential contiene el JWT de Google
+    const token = credentialResponse.credential;
+    signInWithGoogleAsync(token);
+  };
 
   return (
-    <button
-      className="my-6 mt-3 w-full rounded disabled:opacity-50"
-      id="googleBtn"
-      disabled={isSigningInWithGoogle}
-    ></button>
+    <GoogleLogin
+      onSuccess={handleSuccess}
+      state_cookie_domain="localhost"
+      onError={() =>
+        isError && toast.error("Error al iniciar sesión con Google")
+      }
+    />
   );
 }
