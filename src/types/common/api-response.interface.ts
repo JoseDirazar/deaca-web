@@ -5,6 +5,7 @@ import type { Category } from "../category/category.interface";
 import type { Subcategory } from "../category/subcategory.interface";
 import type { Review } from "../reviews/review.interface";
 import type { AppReview } from "../reviews/app-review.interface";
+import type { Analytics } from "../analytics.interface";
 
 export interface ApiPayload<T> {
   data: T;
@@ -48,6 +49,7 @@ export type DeleteEstablishmentImageResponse = ApiResponse<boolean>;
 export type ChangeEstablishmentStatusResponse = ApiResponse<void>;
 // -------- USER ---------------- USER ---------------- USER --------
 export type GetUsersResponse = ApiPaginatedResponse<User[]>;
+export type GetAdminUsersChartResponse = ApiResponse<{ createdAt: string }[]>;
 export type GetMyProfileResponse = ApiResponse<User>;
 export type EditProfileResponse = ApiResponse<User>;
 export type UploadAvatarResponse = ApiResponse<User>;
@@ -73,4 +75,10 @@ export type DeleteReviewResponse = ApiResponse<Review>;
 export type CreateAppReviewResponse = ApiResponse<AppReview>;
 export type UpdateAppReviewResponse = ApiResponse<AppReview>;
 export type DeleteAppReviewResponse = ApiResponse<AppReview>;
-export type GetAppReviewsResponse = ApiPaginatedResponse<AppReview[]>;
+export type GetAppReviewsResponse = ApiResponse<AppReview[]>;
+export type GetAppReviewResponse = ApiResponse<AppReview>;
+// -------- ANALYTICS ---------------- ANALYTICS ---------------- ANALYTICS --------
+export type GetVisitsByEstablishmentOwnerIdResponse = ApiResponse<{
+  visits: Analytics[];
+  total: number;
+}>;

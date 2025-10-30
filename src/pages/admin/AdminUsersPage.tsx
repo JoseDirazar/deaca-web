@@ -15,11 +15,11 @@ import PageHeader from "@/component/PageHeader";
 import { useAdminUsersTable } from "@/hooks/filters/useAdminUsersTable";
 import Modal from "@/component/ui/Modal";
 import { useState } from "react";
-import { AccountStatus } from "@/types/common/api-request.interface";
 import Button from "@/component/ui/Button";
 import { generateImageUrl } from "@/lib/generate-image-url";
 import { format, formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
+import { AccountStatus } from "@/types/enums/account-status.enum";
 
 export default function AdminUsersPage() {
   const { state, queryString, setPage, setLimit, setSearch, setSorting } =
@@ -64,7 +64,8 @@ export default function AdminUsersPage() {
     <div className="flex flex-col gap-4">
       <PageHeader
         title="Usuarios"
-        description={
+        description="Gestiona usuarios: presiona en el estado de algun usuario para cambiarlo, presiona sobre el email para ver el detalle del usuario o promoverlo a administrador"
+        subdescription={
           paginatedUsers?.data?.length
             ? `${paginatedUsers?.data?.length} usuario${paginatedUsers?.data?.length !== 1 ? "s" : ""}`
             : "No hay usuarios"

@@ -26,6 +26,8 @@ import { Roles } from "@/types/common/roles.interface";
 import { Suspense } from "react";
 import Loader from "./component/ui/Loader";
 import UserDashboardPage from "./pages/user/UserDashboardPage";
+import AdminCommentsPage from "./pages/admin/AdminCommentsPage";
+import BecomeBusinessOwnerPage from "./pages/BecomeBusinessOwnerPage";
 
 function App() {
   return (
@@ -65,6 +67,10 @@ function App() {
             }
           />
         </Route>
+        <Route
+          path="registrarme-como-emprendedor"
+          element={<BecomeBusinessOwnerPage />}
+        />
         <Route path="auth/*" element={<AuthLayout />}>
           <Route path="ingresar" element={<SigninPage />} />
           <Route path="registrarse" element={<SignupPage />} />
@@ -107,6 +113,7 @@ function App() {
         }
       >
         <Route index element={<AdminDashboardPage />} />
+        <Route path="comentarios" element={<AdminCommentsPage />} />
         <Route path="usuarios" element={<AdminUsersPage />} />
         <Route path="emprendimientos" element={<AdminEstablishmentsPage />} />
         <Route path="categorias" element={<AdminCategoriesPage />} />

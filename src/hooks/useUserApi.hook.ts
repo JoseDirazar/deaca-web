@@ -1,15 +1,16 @@
 import { userService } from "@/api/user-service";
 import { useUserStore } from "@/context/useUserStore";
-import type {
-  AccountStatus,
-  EditProfileDto,
-} from "@/types/common/api-request.interface";
+import type { EditProfileDto } from "@/types/common/api-request.interface";
+import type { AccountStatus } from "@/types/enums/account-status.enum";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router";
 import { toast } from "sonner";
 
 export const useUserApi = () => {
   const queryClient = useQueryClient();
   const { setUser } = useUserStore();
+
+  const navigate = useNavigate();
 
   const getUser = useQuery({
     queryKey: ["user", "me"],
@@ -20,6 +21,13 @@ export const useUserApi = () => {
     return useQuery({
       queryKey: ["users", queryParams],
       queryFn: () => userService.getUsers(queryParams).then((res) => res?.data),
+    });
+  };
+
+  const useGetAdminUsersChart = () => {
+    return useQuery({
+      queryKey: ["admin-users-chart"],
+      queryFn: () => userService.getAdminUsersChart().then((res) => res?.data),
     });
   };
 
@@ -89,13 +97,32 @@ export const useUserApi = () => {
     },
   });
 
+  const becomeBusinessOwner = useMutation({
+    mutationFn: (data: { email: string }) =>
+      userService.becomeBusinessOwner(data).then((res) => res?.data),
+    onSuccess: ({ message, data }) => {
+      setUser(data);
+      toast.success(message ?? "Usuario actualizado");
+      queryClient.invalidateQueries({ queryKey: ["user", "me"] });
+      navigate("/usuario/emprendimientos", {
+        state: { from: "become-business-owner" },
+      });
+    },
+    onError: (error) => {
+      toast.error("Error changing user account status");
+      console.error(error);
+    },
+  });
+
   return {
     getUser,
     useGetUsers,
+    useGetAdminUsersChart,
     updateUser,
     updateAvatar,
     changeUserAccountStatus,
     sendContactEmail,
     promoteUserToAdmin,
+    becomeBusinessOwner,
   };
 };

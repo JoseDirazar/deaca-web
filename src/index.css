@@ -19,12 +19,12 @@ body {
 ==================================================== */
 @theme {
   --breakpoint-xs: 30rem;
-  --color-primary: #a3b18a;
-  --color-primary-hover: #c3d4a4;
-  --color-secondary: #dad7cd;
-  --color-third: #6c634c;
-  --color-fourth: #bd612a;
-  --color-fifth: #eceae5;
+  --color-primary: oklch(73.904% 0.05632 123.862);
+  --color-primary-hover: oklch(84.479% 0.06689 123.713);
+  --color-secondary: oklch(87.875% 0.01383 93.018);
+  --color-third: oklch(50.167% 0.0364 89.186);
+  --color-fourth: oklch(59.26% 0.13591 48.309);
+  --color-fifth: oklch(93.72% 0.00692 88.613);
 
   --font-nueva: "Nueva Std", sans-serif;
   --font-century-gothic: "Century Gothic", sans-serif;

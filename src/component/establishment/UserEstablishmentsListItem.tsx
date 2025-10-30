@@ -33,14 +33,12 @@ export default function UserEstablishmentsListItem({
               : establishment.description}
           </p>
         </div>
-        <div className="text-sm text-gray-500">{establishment.address}</div>
+        <span className="text-xs text-gray-500">
+          Visto {establishment.visits?.length || 0}{" "}
+          {establishment.visits?.length === 1 ? "vez" : "veces"}
+        </span>
       </div>
       <div className="absolute right-1 bottom-1 mt-2 flex items-center justify-center gap-1">
-        <span
-          className={`rounded px-2 py-1 text-xs ${establishment.isComplete ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}
-        >
-          {establishment.isComplete ? "Completo" : "Incompleto"}
-        </span>
         {parseEstablishmentStatus(establishment.status)}
       </div>
       {navigate && (

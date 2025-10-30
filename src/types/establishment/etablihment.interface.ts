@@ -4,7 +4,8 @@ import type { User } from "../user/user.interface";
 import type { Subcategory } from "../category/subcategory.interface";
 import type { Review } from "../reviews/review.interface";
 import type { Image } from "../common/image.interface";
-import type { EstablishmentStatus } from "./establishment-status.enum";
+import type { EstablishmentStatus } from "../enums/establishment-status.enum";
+import type { Analytics } from "../analytics.interface";
 
 export interface Establishment extends BaseEntity {
   name: string;
@@ -19,7 +20,6 @@ export interface Establishment extends BaseEntity {
   latitude: string;
   longitude: string;
   status: EstablishmentStatus;
-  isComplete?: boolean;
   rating: number;
   reviewsReceived?: Review[] | null;
   categories: Category[] | Partial<Category>[];
@@ -27,4 +27,5 @@ export interface Establishment extends BaseEntity {
   images?: Image[] | null;
   user: User;
   slug: string;
+  visits?: Analytics[];
 }

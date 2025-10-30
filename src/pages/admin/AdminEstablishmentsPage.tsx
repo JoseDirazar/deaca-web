@@ -17,7 +17,7 @@ import {
 import { useEstablishmentApi } from "@/hooks/useEstablishmentApi";
 import PageHeader from "@/component/PageHeader";
 import Modal from "@/component/ui/Modal";
-import { EstablishmentStatus } from "@/types/establishment/establishment-status.enum";
+import { EstablishmentStatus } from "@/types/enums/establishment-status.enum";
 import Button from "@/component/ui/Button";
 import { useNavigate } from "react-router";
 import { parseEstablishmentStatus } from "../../lib/parse-information-to-ui";
@@ -96,7 +96,10 @@ export default function EstablishmentsTable() {
           const establishment = info.row.original;
           return (
             <>
-              <button onClick={() => handleModal(establishment)}>
+              <button
+                className="hover:cursor-pointer"
+                onClick={() => handleModal(establishment)}
+              >
                 {parseEstablishmentStatus(
                   info.getValue() as EstablishmentStatus,
                 )}
@@ -195,7 +198,9 @@ export default function EstablishmentsTable() {
     <div className="flex flex-col gap-6">
       <PageHeader
         title="Emprendimientos"
-        description={`${totalItems} emprendimiento${totalItems !== 1 ? "s" : ""}`}
+        description="Gestioná los emprendimientos. Presiona sobre el nombre para ver el emprendimiento/local.
+        Presiona sobre el estado para cambiarlo o sobre el email para enviar un correo."
+        subdescription={`${totalItems} emprendimiento${totalItems !== 1 ? "s" : ""}`}
       />
 
       {/* Filtros y controles */}

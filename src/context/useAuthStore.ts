@@ -1,19 +1,11 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { create } from "zustand";
 
 interface AuthState {
-    accessToken: string | null;
-    setAccessToken: (token: string | null) => void;
+  accessToken: string | null;
+  setAccessToken: (token: string | null) => void;
 }
 
-export const useAuthStore = create<AuthState>()(
-    persist(
-        (set) => ({
-            accessToken: null,
-            setAccessToken: (token) => set({ accessToken: token }),
-        }),
-        {
-            name: 'auth-storage', // nombre en localStorage
-        }
-    )
-);
+export const useAuthStore = create<AuthState>()((set) => ({
+  accessToken: null,
+  setAccessToken: (token) => set({ accessToken: token }),
+}));

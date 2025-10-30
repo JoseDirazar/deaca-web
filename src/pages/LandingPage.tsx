@@ -9,7 +9,6 @@ import PageContainer from "@/component/ui/PageContainer";
 
 import { useCategoryApi } from "@/hooks/useCategoryApi.hook";
 import { useAppReviewsApi } from "@/hooks/useAppReviewsApi.hook";
-import GoogleOneTapButton from "@/component/ui/GoogleOneTapButton";
 
 export default function LandingPage() {
   const { useGetCategories } = useCategoryApi();
@@ -28,7 +27,6 @@ export default function LandingPage() {
       <SponsorsSection />
       <UsersTestimoniesSection appReviews={appReviews?.data || []} />
       <ReachOutSection />
-      <GoogleOneTapButton />
     </PageContainer>
   );
 }

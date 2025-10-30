@@ -16,7 +16,7 @@ import type {
   CreateEstablishmentDto,
   EditEstablishmentDto,
 } from "@/types/common/api-request.interface";
-import type { EstablishmentStatus } from "@/types/establishment/establishment-status.enum";
+import type { EstablishmentStatus } from "@/types/enums/establishment-status.enum";
 
 export const establishmentService = {
   getEstablishments: (query: string): GetEstablishmentsResponse =>

@@ -7,6 +7,7 @@ export default function SectionHeader({
   description,
   descriptionClassName,
   separator,
+  separatorClassName,
 }: {
   className?: string;
   title?: string;
@@ -14,6 +15,7 @@ export default function SectionHeader({
   description?: string;
   descriptionClassName?: string;
   separator?: boolean;
+  separatorClassName: string;
 }) {
   return (
     <div
@@ -29,7 +31,14 @@ export default function SectionHeader({
           {description}
         </p>
       )}
-      {separator && <div className="h-[2px] w-20 rounded-full bg-fourth" />}
+      {separator && (
+        <div
+          className={cn(
+            "h-[2px] w-20 rounded-full bg-fourth",
+            separatorClassName,
+          )}
+        />
+      )}
     </div>
   );
 }

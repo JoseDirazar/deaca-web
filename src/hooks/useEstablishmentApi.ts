@@ -6,7 +6,7 @@ import type {
 } from "@/types/common/api-request.interface";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
-import type { EstablishmentStatus } from "@/types/establishment/establishment-status.enum";
+import type { EstablishmentStatus } from "@/types/enums/establishment-status.enum";
 
 export const useEstablishmentApi = () => {
   const queryClient = useQueryClient();
