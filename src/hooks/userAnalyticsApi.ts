@@ -9,7 +9,15 @@ export const useUserAnalyticsApi = () => {
     });
   };
 
+  const useGetAdminAnalyticsChart = () => {
+    return useQuery({
+      queryKey: ["admin-analytics-chart"],
+      queryFn: () => analyticsService.getAdminAnalyticsChart(),
+    });
+  };
+
   return {
     useGetTotalVisitsForEstablishmentOwner,
+    useGetAdminAnalyticsChart,
   };
 };

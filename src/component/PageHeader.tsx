@@ -19,8 +19,9 @@ export default function PageHeader({
       )}
     >
       <h1 className="text-3xl font-bold md:text-5xl">{title}</h1>
-      <p className="text-xl text-gray-500">{description}</p>
-      <p className="text-lg text-gray-500">{subdescription}</p>
+      <p className="text-2xl text-gray-500">{description}</p>
+      <div className="h-1 w-full rounded-full bg-fourth"></div>
+      <p className="mt-4 text-lg text-gray-500">{subdescription}</p>
     </div>
   );
 }

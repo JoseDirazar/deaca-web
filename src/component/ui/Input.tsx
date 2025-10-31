@@ -5,7 +5,7 @@ import { cn } from "@/lib/cn";
 interface InputProps {
   type: string;
   className?: string;
-  value?: string;
+  value?: string | number;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   name?: string;
   disabled?: boolean;

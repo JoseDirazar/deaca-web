@@ -4,6 +4,7 @@ import type {
   CreateEstablishmentResponse,
   DeleteEstablishmentImageResponse,
   DeleteMyEstablishmentResponse,
+  GetAdminEstablishmentsChartResponse,
   GetEstablishmentByIdResponse,
   GetEstablishmentsResponse,
   GetMyEstablishmentsResponse,
@@ -19,6 +20,8 @@ import type {
 import type { EstablishmentStatus } from "@/types/enums/establishment-status.enum";
 
 export const establishmentService = {
+  getAdminEstablishmentsChart: (): GetAdminEstablishmentsChartResponse =>
+    api.get("/establishment/admin-establishments-chart"),
   getEstablishments: (query: string): GetEstablishmentsResponse =>
     api.get("/establishment" + query),
   getBySlug: (slug: string): GetEstablishmentByIdResponse =>

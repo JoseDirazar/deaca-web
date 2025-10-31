@@ -1,8 +1,6 @@
 import { appReviewService } from "@/api/app-review-service";
-import type {
-  AppReviewDto,
-  AppReviewStatus,
-} from "@/types/common/api-request.interface";
+import type { AppReviewDto } from "@/types/common/api-request.interface";
+import type { AppReviewStatus } from "@/types/enums/app-review-status.enum";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
@@ -19,13 +17,8 @@ export const useAppReviewsApi = () => {
   });
 
   const useUpdateAppReview = useMutation({
-    mutationFn: ({
-      reviewId,
-      payload,
-    }: {
-      reviewId: string;
-      payload: AppReviewDto;
-    }) => appReviewService.updateAppReview(reviewId, payload),
+    mutationFn: (payload: AppReviewDto) =>
+      appReviewService.updateAppReview(payload),
     onSuccess: ({ data: { message } }) => {
       toast(message ?? "Comentario actualizado exitosamente");
       // queryClient.invalidateQueries({ queryKey: ["app-reviews"] });
@@ -39,7 +32,7 @@ export const useAppReviewsApi = () => {
   });
 
   const useDeleteAppReview = useMutation({
-    mutationFn: ({ reviewId }: { reviewId: string }) =>
+    mutationFn: (reviewId: string) =>
       appReviewService.deleteAppReview(reviewId),
     onSuccess: ({ data: { message } }) => {
       toast(message ?? "Comentario eliminado exitosamente");

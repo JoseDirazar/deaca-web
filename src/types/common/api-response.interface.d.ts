@@ -5,7 +5,7 @@ import type { Category } from "../category/category.interface";
 import type { Subcategory } from "../category/subcategory.interface";
 import type { Review } from "../reviews/review.interface";
 import type { AppReview } from "../reviews/app-review.interface";
-import type { Analytics } from "../analytics.interface";
+import type { Event } from "../event/event.interface";
 
 export interface ApiPayload<T> {
   data: T;
@@ -36,6 +36,9 @@ export type RequestPasswordResetResponse = ApiResponse<void>;
 export type ResetPasswordResponse = ApiResponse<void>;
 // -------- ESTABLISHMENT ---------------- ESTABLISHMENT ---------------- ESTABLISHMENT --------
 export type GetEstablishmentsResponse = ApiPaginatedResponse<Establishment[]>;
+export type GetAdminEstablishmentsChartResponse = ApiResponse<
+  { createdAt: string }[]
+>;
 export type GetMyEstablishmentsResponse = ApiResponse<Establishment[]>;
 export type GetEstablishmentByIdResponse = ApiResponse<Establishment>;
 export type CreateEstablishmentResponse = ApiResponse<Establishment>;
@@ -79,6 +82,27 @@ export type GetAppReviewsResponse = ApiResponse<AppReview[]>;
 export type GetAppReviewResponse = ApiResponse<AppReview>;
 // -------- ANALYTICS ---------------- ANALYTICS ---------------- ANALYTICS --------
 export type GetVisitsByEstablishmentOwnerIdResponse = ApiResponse<{
-  visits: Analytics[];
+  visits: { createdAt: string }[];
   total: number;
 }>;
+export type GetAdminAnalyticsChartResponse = ApiResponse<
+  { createdAt: string }[]
+>;
+// -------- EVENT ---------------- EVENT ---------------- EVENT --------
+export type GetEventsResponse = ApiResponse<Event[]>;
+export type GetEventByIdResponse = ApiResponse<Event>;
+export type CreateEventResponse = ApiResponse<Event>;
+export type UpdateEventResponse = ApiResponse<Event>;
+export type DeleteEventResponse = ApiResponse<Event>;
+export type UploadEventImageResponse = ApiResponse<Event>;
+export type UploadEventImagesResponse = ApiResponse<Event>;
+// -------- NATURE SPOT ---------------- NATURE SPOT ---------------- NATURE SPOT --------
+export type GetNatureSpotsResponse = ApiResponse<NatureSpot[]>;
+export type GetNatureSpotByIdResponse = ApiResponse<NatureSpot>;
+export type CreateNatureSpotResponse = ApiResponse<NatureSpot>;
+export type UpdateNatureSpotResponse = ApiResponse<NatureSpot>;
+export type DeleteNatureSpotResponse = ApiResponse<void>;
+export type UploadNatureSpotImageResponse = ApiResponse<NatureSpot>;
+export type UploadNatureSpotImagesResponse = ApiResponse<NatureSpot>;
+export type UpdateNatureSpotImageResponse = ApiResponse<NatureSpot>;
+export type UpdateNatureSpotImagesResponse = ApiResponse<NatureSpot>;

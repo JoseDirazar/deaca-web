@@ -32,6 +32,16 @@ export const useEstablishmentApi = () => {
     });
   };
 
+  const useGetAdminEstablishmentsChart = () => {
+    return useQuery({
+      queryKey: ["admin-establishments-chart"],
+      queryFn: () =>
+        establishmentService
+          .getAdminEstablishmentsChart()
+          .then((res) => res?.data),
+    });
+  };
+
   const useGetMyEstablishments = () => {
     return useQuery({
       queryKey: ["establishments", "me"],
@@ -142,6 +152,7 @@ export const useEstablishmentApi = () => {
     useGetEstablishmentBySlug,
     useGetEstablishments,
     useGetMyEstablishments,
+    useGetAdminEstablishmentsChart,
     updateEstablishment,
     updateEstablishmentAvatar,
     updateEstablishmentImages,

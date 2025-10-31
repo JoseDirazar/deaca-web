@@ -28,6 +28,8 @@ import Loader from "./component/ui/Loader";
 import UserDashboardPage from "./pages/user/UserDashboardPage";
 import AdminCommentsPage from "./pages/admin/AdminCommentsPage";
 import BecomeBusinessOwnerPage from "./pages/BecomeBusinessOwnerPage";
+import AdminTendenciesPage from "./pages/admin/AdminTendenciesPage";
+import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
   return (
@@ -85,7 +87,14 @@ function App() {
           <Route path="recuperar-contraseña" element={<ForgotPasswordPage />} />
         </Route>
 
-        <Route path="/usuario/*" element={<UserDashboardLayout />}>
+        <Route
+          path="/usuario/*"
+          element={
+            <RequireAuth>
+              <UserDashboardLayout />
+            </RequireAuth>
+          }
+        >
           <Route index element={<UserDashboardPage />} />
           <Route path="perfil" element={<UserProfilePage />} />
           <Route
@@ -117,7 +126,10 @@ function App() {
         <Route path="usuarios" element={<AdminUsersPage />} />
         <Route path="emprendimientos" element={<AdminEstablishmentsPage />} />
         <Route path="categorias" element={<AdminCategoriesPage />} />
+        <Route path="tendencias" element={<AdminTendenciesPage />} />
       </Route>
+
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 }

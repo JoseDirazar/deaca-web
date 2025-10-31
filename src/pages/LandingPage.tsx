@@ -9,6 +9,8 @@ import PageContainer from "@/component/ui/PageContainer";
 
 import { useCategoryApi } from "@/hooks/useCategoryApi.hook";
 import { useAppReviewsApi } from "@/hooks/useAppReviewsApi.hook";
+import { analyticsService } from "@/api/analytics-service";
+import { useEffect } from "react";
 
 export default function LandingPage() {
   const { useGetCategories } = useCategoryApi();
@@ -17,6 +19,10 @@ export default function LandingPage() {
   });
   const { useGetAppReviews } = useAppReviewsApi();
   const { data: appReviews } = useGetAppReviews;
+
+  useEffect(() => {
+    analyticsService.registerVisit();
+  }, []);
 
   return (
     <PageContainer className="gap-12">

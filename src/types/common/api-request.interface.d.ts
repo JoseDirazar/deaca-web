@@ -8,6 +8,24 @@ export interface BasePaginationQueryParamsDto {
   limit?: number;
 }
 
+export interface EventDto {
+  name: string;
+  description: string;
+  start: Date;
+  end: Date;
+  time: string;
+  latitude: number;
+  longitude: number;
+  price: number;
+}
+
+export interface NatureSpotDto {
+  name: string;
+  description: string;
+  latitude: number;
+  longitude: number;
+}
+
 export interface CreateEstablishmentDto {
   name?: string;
   address?: string;

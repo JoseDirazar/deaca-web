@@ -64,12 +64,8 @@ export default function AdminUsersPage() {
     <div className="flex flex-col gap-4">
       <PageHeader
         title="Usuarios"
-        description="Gestiona usuarios: presiona en el estado de algun usuario para cambiarlo, presiona sobre el email para ver el detalle del usuario o promoverlo a administrador"
-        subdescription={
-          paginatedUsers?.data?.length
-            ? `${paginatedUsers?.data?.length} usuario${paginatedUsers?.data?.length !== 1 ? "s" : ""}`
-            : "No hay usuarios"
-        }
+        description="Gestiona usuarios."
+        subdescription="presiona en el estado de algun usuario para cambiarlo, presiona sobre el email para ver el detalle del usuario o promoverlo a administrador"
       />
 
       <div className="flex items-center gap-2">

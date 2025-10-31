@@ -9,11 +9,32 @@ export default function TypingAnimation() {
 }
 
 const phrases = [
-  "Desarrollador Full Stack 💻",
-  "Amante del código limpio ✨",
-  "Creando experiencias únicas 🚀",
-  "Innovación constante 🎯",
+  "Pizza de masa madre",
+  "Un regalo especial",
+  "Shampoo sólido",
+  "Una modista",
+  "Podóloga a domicilio",
+  "Quien arregla tu compu",
+  "Paseador para tu perro",
+  "Semillas orgánicas",
+  "Animador infantíl",
+  "Ambientar tu fiesta",
+  "El horario del consultorio",
+  "Quién repara tu heladera",
+  "Encontrá tu masajista cerca",
+  "Gimnasio con aparatos",
+  "Clases de apoyo",
+  "Un cafe tranqui",
+  "Programa para el finde",
+  "Un parque diferente",
+  "Data de Olavarría",
+  "Algo abierto 3 am",
+  "Empanadas lunes a la noche",
+  "Remis después de las 12",
+  "Cerveza artesanal",
+  "Encontrá Taller de pintura",
 ] as const;
+
 function ReactTypingLoop() {
   const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
   const [displayText, setDisplayText] = useState("");
@@ -22,40 +43,37 @@ function ReactTypingLoop() {
 
   useEffect(() => {
     const currentPhrase = phrases[currentPhraseIndex];
-
-    // Velocidades más naturales
     const typingSpeed = isDeleting ? 50 : 100;
     const pauseAfterTyping = 2000;
     const pauseAfterDeleting = 500;
 
     const handleTyping = () => {
+      // Completó la escritura
       if (!isDeleting && displayText === currentPhrase) {
-        // Terminó de escribir, pausar antes de borrar
-        timeoutRef.current = setTimeout(() => {
+        timeoutRef.current = window.setTimeout(() => {
           setIsDeleting(true);
         }, pauseAfterTyping);
         return;
       }
 
+      // Terminó de borrar
       if (isDeleting && displayText === "") {
-        // Terminó de borrar, pausar antes de siguiente frase
-        setIsDeleting(false);
-        timeoutRef.current = setTimeout(() => {
+        timeoutRef.current = window.setTimeout(() => {
+          setIsDeleting(false);
           setCurrentPhraseIndex((prev) => (prev + 1) % phrases.length);
         }, pauseAfterDeleting);
         return;
       }
 
-      // Efecto de typing más natural con variación de velocidad
-      const variance = Math.random() * 30 - 15; // +/- 15ms de variación
+      const variance = Math.random() * 40 - 20; // +/- 20ms de variación
       const currentSpeed = typingSpeed + variance;
 
-      timeoutRef.current = setTimeout(() => {
-        if (isDeleting) {
-          setDisplayText(currentPhrase.substring(0, displayText.length - 1));
-        } else {
-          setDisplayText(currentPhrase.substring(0, displayText.length + 1));
-        }
+      timeoutRef.current = window.setTimeout(() => {
+        const nextText = isDeleting
+          ? currentPhrase.substring(0, displayText.length - 1)
+          : currentPhrase.substring(0, displayText.length + 1);
+
+        setDisplayText(nextText);
       }, currentSpeed);
     };
 

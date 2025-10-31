@@ -56,9 +56,14 @@ export default function UserDashboardPage() {
 
   if (user?.role === "user") {
     return (
-      <div>
-        <h2>Tenes algun emprendimiento o local para registrar?</h2>
+      <div className="flex flex-col items-center justify-center gap-8">
+        <PageHeader
+          title="Bienvenido!"
+          description="Bienvenido al panel de usuario"
+          subdescription="Tenes algun emprendimiento o local para registrar? registrate en un simple paso y carga tu emprendimiento/local"
+        />
         <Button
+          className=""
           label="Registrarme como emprendedor"
           onClick={() => navigate("/registrarme-como-emprendedor")}
         />

@@ -15,7 +15,7 @@ export default function SectionHeader({
   description?: string;
   descriptionClassName?: string;
   separator?: boolean;
-  separatorClassName: string;
+  separatorClassName?: string;
 }) {
   return (
     <div

@@ -184,11 +184,8 @@ export default function AdminCommentsPage() {
     <div className="flex flex-col gap-4">
       <PageHeader
         title="Comentarios"
-        description={
-          filtered.length
-            ? `${filtered.length} comentario${filtered.length !== 1 ? "s" : ""}`
-            : "No hay comentarios"
-        }
+        description="Gestiona los comentarios sobre deacá"
+        subdescription="Presioná sobre el comentario para verlo completo. Aprobá o rechazá comentarios presionando alguna opción en la columna 'ACCIONES'"
       />
 
       <div className="flex items-center gap-2">

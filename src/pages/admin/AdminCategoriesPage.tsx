@@ -185,14 +185,16 @@ export default function AdminCategoriesPage() {
       <div className="flex items-center justify-between">
         <PageHeader
           title="Categorías"
-          description={`${categories.length} categoría${categories.length !== 1 ? "s" : ""}`}
-        />
-        <Button
-          icon={<FaPlus />}
-          onClick={() => setIsOpen(true)}
-          className="w-fit"
+          description="Gestioná las categorías y subcategorias"
+          subdescription="Presioná el boton + para agregar una categoria. Presiona sobre el nombre de una categoría para ver/crear/eliminar el listado de subcategorias correspondientes a la categoría seleccionada"
         />
       </div>
+      <Button
+        label="Nueva categoría"
+        icon={<FaPlus />}
+        onClick={() => setIsOpen(true)}
+        className="w-fit"
+      />
 
       <Modal setIsOpen={() => setIsOpen(false)} isOpen={isOpen}>
         <CreateCategoryForm

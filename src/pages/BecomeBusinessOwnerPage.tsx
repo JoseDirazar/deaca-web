@@ -10,13 +10,14 @@ export default function BecomeBusinessOwnerPage() {
   const { becomeBusinessOwner } = useUserApi();
   if (!user || !user.email || user.role !== "user") return <Navigate to="/" />;
   return (
-    <PageContainer>
+    <PageContainer className="gap-8 p-8">
       <PageHeader
-        title="Tenes algun emprendimiento o local para registrar?"
-        description="Registra tu emprendimiento o local para que los usuarios puedan buscarlo"
+        title="Tenes un emprendimiento o local?"
+        description="Registra tu emprendimiento o local y llega a mas clientes"
+        subdescription="Gestioná tus emprendimientso, estate al tanto de las metricas y los comentarios que recibes de nuestros usuarios"
       />
       <Button
-        label="Quiero registrar un emprendimiento"
+        label="Registrarme como emprendedor"
         onClick={() => becomeBusinessOwner.mutateAsync({ email: user?.email })}
       />
     </PageContainer>

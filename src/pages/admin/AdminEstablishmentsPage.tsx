@@ -198,9 +198,9 @@ export default function EstablishmentsTable() {
     <div className="flex flex-col gap-6">
       <PageHeader
         title="Emprendimientos"
-        description="Gestioná los emprendimientos. Presiona sobre el nombre para ver el emprendimiento/local.
+        description="Gestioná los emprendimientos."
+        subdescription=" Presiona sobre el nombre para ver el emprendimiento/local.
         Presiona sobre el estado para cambiarlo o sobre el email para enviar un correo."
-        subdescription={`${totalItems} emprendimiento${totalItems !== 1 ? "s" : ""}`}
       />
 
       {/* Filtros y controles */}

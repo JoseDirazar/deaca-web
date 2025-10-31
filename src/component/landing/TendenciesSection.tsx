@@ -1,4 +1,4 @@
-import { useEstablishmentApi } from "@/hooks/useEstablishmentApi";
+import { useTendencyApi } from "@/hooks/useTendencyApi.hook";
 import SectionBody from "../ui/section/SectionBody";
 import SectionContainer from "../ui/section/SectionContainer";
 import SectionHeader from "../ui/section/SectionHeader";
@@ -6,13 +6,14 @@ import type { Establishment } from "@/types/establishment/etablihment.interface"
 import { generateImageUrl } from "@/lib/generate-image-url";
 
 export default function TendenciesSection() {
-  const { useGetEstablishments } = useEstablishmentApi();
-  const { data: establishments } = useGetEstablishments("?limit=3&page=1");
+  const { useListTendencies } = useTendencyApi();
+  const { data } = useListTendencies;
+  const establishments = data?.data?.map((t) => t.establishment).slice(0, 3) || [];
   return (
     <SectionContainer className="flex flex-col items-center justify-center gap-8">
       <SectionHeader title="Tendencias" separator />
       <SectionBody className="flex w-full flex-wrap items-center justify-center gap-4 md:gap-10">
-        {establishments?.data?.map((establishment) => (
+        {establishments?.map((establishment) => (
           <EstablishmentTendencyCard
             key={establishment.id}
             establishment={establishment}
