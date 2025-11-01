@@ -35,6 +35,7 @@ import EditEventPage from "./pages/admin/EditEventPage";
 import CreateEventPage from "./pages/admin/CreateEventPage";
 import EditNatureSpotPage from "./pages/admin/EditNatureSpotPage";
 import CreateNatureSpotPage from "./pages/admin/CreateNatureSpotPage";
+import FarmaciasPage from "./pages/FarmaciasPage";
 import { Roles } from "./types/enums/roles.interface.enum";
 
 function App() {
@@ -49,6 +50,7 @@ function App() {
             </Suspense>
           }
         />
+        <Route path="farmacias-de-turno" element={<FarmaciasPage />} />
         <Route path="sobre-nosotros" element={<AboutUsPage />} />
         <Route
           path="24-horas-y-domingos"
