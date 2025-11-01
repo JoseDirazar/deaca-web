@@ -1,6 +1,6 @@
 import type { AccountStatus } from "../enums/account-status.enum";
 import type { BaseEntity } from "./base.interface";
-import type { Roles } from "./roles.interface";
+import type { Roles } from "../enums/roles.interface.enum";
 
 export interface BasePaginationQueryParamsDto {
   search?: string;
@@ -13,9 +13,9 @@ export interface EventDto {
   description: string;
   start: Date;
   end: Date;
-  time: string;
-  latitude: number;
-  longitude: number;
+  time: Date;
+  latitude: string;
+  longitude: string;
   price: number;
 }
 

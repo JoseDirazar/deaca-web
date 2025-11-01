@@ -6,7 +6,7 @@ import { generateImageUrl } from "@/lib/generate-image-url";
 import { es } from "date-fns/locale";
 import { format, formatDistanceToNow } from "date-fns";
 import type { AccountStatus } from "@/types/common/api-request.interface";
-import type { Roles } from "@/types/common/roles.interface";
+import type { Roles } from "@/types/enums/roles.interface.enum";
 import {
   parseAccountStatus,
   parseRoleToUI,

@@ -1,4 +1,4 @@
-import type { Roles } from "@/types/common/roles.interface";
+import type { Roles } from "@/types/enums/roles.interface.enum";
 import type { AccountStatus } from "@/types/enums/account-status.enum";
 import type { AppReviewStatus } from "@/types/enums/app-review-status.enum";
 import type { EstablishmentStatus } from "@/types/enums/establishment-status.enum";

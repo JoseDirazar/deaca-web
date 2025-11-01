@@ -12,6 +12,7 @@ import { useLocation, useNavigate, type NavigateFunction } from "react-router";
 import type { Image } from "@/types/common/image.interface";
 import PageHeader from "../PageHeader";
 import type { Category } from "@/types/category/category.interface";
+import Modal from "../ui/Modal";
 
 interface UserEstablishmentFormProps {
   establishment?: Establishment | null;
@@ -50,6 +51,9 @@ export default function UserEstablishmentForm({
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [galleryFiles, setGalleryFiles] = useState<FileList | null>(null);
   const [existingImages, setExistingImages] = useState<Image[]>([]);
+
+  const [modal, setModal] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<Image | null>(null);
 
   const {
     createEstablishment,
@@ -232,8 +236,8 @@ export default function UserEstablishmentForm({
     return nameOk && hasCategory && hasAvatar;
   }, [form.name, selectedCategoryIds, avatarFile, isEditMode, form.avatar]);
 
-  const handleDeleteImage = (imageId: string) => {
-    if (!establishment) return;
+  const handleDeleteImage = (imageId?: string) => {
+    if (!establishment || !imageId) return;
     setExistingImages((prev) => prev.filter((img) => img.id !== imageId));
     deleteEstablishmentImage.mutate({ id: establishment.id, imageId });
   };
@@ -258,10 +262,11 @@ export default function UserEstablishmentForm({
         form={form}
         isEditMode={isEditMode}
         existingImages={existingImages}
-        handleDeleteImage={handleDeleteImage}
         avatarFile={avatarFile}
         setAvatarFile={setAvatarFile}
         setGalleryFiles={setGalleryFiles}
+        setModal={setModal}
+        setSelectedImage={setSelectedImage}
       />
       <NameAndDescriptionForm form={form} setForm={setForm} />
 
@@ -290,6 +295,25 @@ export default function UserEstablishmentForm({
         from={from}
         navigate={navigate}
       />
+
+      <Modal setIsOpen={setModal} isOpen={modal}>
+        <div className="flex flex-col gap-4">
+          <p className="text-center text-4xl text-gray-500">
+            Estas seguro que quieres eliminar la imagen?
+          </p>
+          <img
+            src={generateImageUrl("establishment", selectedImage?.fileName)}
+            alt=""
+            className="m-auto"
+          />
+          <Button
+            className="w-full"
+            label="Eliminar"
+            onClick={() => handleDeleteImage(selectedImage?.id)}
+            disabled={!selectedImage || deleteEstablishmentImage.isPending}
+          />
+        </div>
+      </Modal>
     </div>
   );
 }
@@ -335,18 +359,20 @@ function UploadEstablishmentFilesForm({
   form,
   isEditMode,
   existingImages,
-  handleDeleteImage,
   avatarFile,
   setAvatarFile,
   setGalleryFiles,
+  setSelectedImage,
+  setModal,
 }: {
   form: Partial<Establishment>;
   isEditMode: boolean;
   existingImages: Image[];
-  handleDeleteImage: (id: string) => void;
   avatarFile: File | null;
   setAvatarFile: (file: File | null) => void;
   setGalleryFiles: React.Dispatch<React.SetStateAction<FileList | null>>;
+  setSelectedImage: React.Dispatch<React.SetStateAction<Image | null>>;
+  setModal: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   return (
     <div className="flex flex-col gap-4">
@@ -390,7 +416,10 @@ function UploadEstablishmentFilesForm({
                   <div
                     key={img.id}
                     className="relative"
-                    onClick={() => handleDeleteImage(img.id)}
+                    onClick={() => {
+                      setSelectedImage(img);
+                      setModal(true);
+                    }}
                   >
                     <img
                       src={generateImageUrl("establishment", img.fileName)}

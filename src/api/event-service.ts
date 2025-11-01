@@ -21,4 +21,6 @@ export const eventService = {
     api.postForm(`/event/${id}/images`, formData),
   uploadImage: (id: string, formData: FormData): UploadEventImagesResponse =>
     api.postForm(`/event/${id}/image`, formData),
+  deleteImage: (id: string, imageId: string) =>
+    api.delete(`/event/${id}/image/${imageId}`),
 };

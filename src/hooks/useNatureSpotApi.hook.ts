@@ -9,14 +9,14 @@ export const useNatureSpotApi = () => {
   const useGetNatureSpots = () => {
     const { data, isLoading, error } = useQuery({
       queryKey: ["nature-spots"],
-      queryFn: () => natureSpotService.findAll(),
+      queryFn: () => natureSpotService.findAll().then((res) => res?.data),
     });
     return { data, isLoading, error };
   };
   const useGetNatureSpotById = (id: string) => {
     const { data, isLoading, error } = useQuery({
       queryKey: ["nature-spot", id],
-      queryFn: () => natureSpotService.findOne(id),
+      queryFn: () => natureSpotService.findOne(id).then((res) => res?.data),
     });
     return { data, isLoading, error };
   };
@@ -86,6 +86,21 @@ export const useNatureSpotApi = () => {
     },
   });
 
+  const useDeleteNatureSpotImage = useMutation({
+    mutationFn: ({ id, imageId }: { id: string; imageId: string }) =>
+      natureSpotService.deleteImage(id, imageId).then((res) => res?.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["nature-spots"] });
+      queryClient.refetchQueries({ queryKey: ["nature-spot"] });
+      toast.success("Imagen eliminada");
+    },
+    onError: (error) => {
+      if (error instanceof AxiosError)
+        toast.error(error.response?.data.message);
+      else toast.error("Error al eliminar la imagen");
+    },
+  });
+
   return {
     useGetNatureSpots,
     useGetNatureSpotById,
@@ -94,5 +109,6 @@ export const useNatureSpotApi = () => {
     useDeleteNatureSpot,
     useUploadNatureSpotImage,
     useUploadNatureSpotImages,
+    useDeleteNatureSpotImage,
   };
 };

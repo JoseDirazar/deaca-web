@@ -11,6 +11,11 @@ export const useAppReviewsApi = () => {
     queryFn: () => appReviewService.findAll().then((res) => res.data),
   });
 
+  const useGetReviewForUser = useQuery({
+    queryFn: () => appReviewService.getReviewForUser().then((res) => res?.data),
+    queryKey: ["app-reviews", "me"],
+  });
+
   const useCreateAppReview = useMutation({
     mutationFn: (payload: AppReviewDto) =>
       appReviewService.createAppReview(payload),
@@ -71,6 +76,7 @@ export const useAppReviewsApi = () => {
     useCreateAppReview,
     useUpdateAppReview,
     useDeleteAppReview,
+    useGetReviewForUser,
     useUpdateAppReviewStatus,
   };
 };

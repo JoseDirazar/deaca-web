@@ -1,6 +1,7 @@
 import type { Image } from "../common/image.interface";
+import type { BaseEntity } from "../common/base.interface";
 
-export interface NatureSpot {
+export interface NatureSpot extends BaseEntity {
   name: string;
   description: string;
   comment: string | null;

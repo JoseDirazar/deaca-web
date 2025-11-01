@@ -22,7 +22,6 @@ import DiscoverEstablishmentsPage from "./pages/establishment/DiscoverEstablishm
 import AboutUsPage from "./pages/AboutUsPage";
 import Open24HoursAndWeekendsPage from "./pages/Open24HoursAndWeekendsPage";
 import WhatToDoPage from "./pages/WhatToDoPage";
-import { Roles } from "@/types/common/roles.interface";
 import { Suspense } from "react";
 import Loader from "./component/ui/Loader";
 import UserDashboardPage from "./pages/user/UserDashboardPage";
@@ -30,6 +29,13 @@ import AdminCommentsPage from "./pages/admin/AdminCommentsPage";
 import BecomeBusinessOwnerPage from "./pages/BecomeBusinessOwnerPage";
 import AdminTendenciesPage from "./pages/admin/AdminTendenciesPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import AdminEventsPage from "./pages/admin/AdminEventsPage";
+import AdminNatureSpotsPage from "./pages/admin/AdminNatureSpotsPage";
+import EditEventPage from "./pages/admin/EditEventPage";
+import CreateEventPage from "./pages/admin/CreateEventPage";
+import EditNatureSpotPage from "./pages/admin/EditNatureSpotPage";
+import CreateNatureSpotPage from "./pages/admin/CreateNatureSpotPage";
+import { Roles } from "./types/enums/roles.interface.enum";
 
 function App() {
   return (
@@ -126,6 +132,16 @@ function App() {
         <Route path="usuarios" element={<AdminUsersPage />} />
         <Route path="emprendimientos" element={<AdminEstablishmentsPage />} />
         <Route path="categorias" element={<AdminCategoriesPage />} />
+        <Route path="eventos">
+          <Route index element={<AdminEventsPage />} />
+          <Route path="nuevo" element={<CreateEventPage />} />
+          <Route path=":id" element={<EditEventPage />} />
+        </Route>
+        <Route path="paseos-naturales">
+          <Route index element={<AdminNatureSpotsPage />} />
+          <Route path="nuevo" element={<CreateNatureSpotPage />} />
+          <Route path=":id" element={<EditNatureSpotPage />} />
+        </Route>
         <Route path="tendencias" element={<AdminTendenciesPage />} />
       </Route>
 

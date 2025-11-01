@@ -1,20 +1,20 @@
-import { useAppReviewApi } from "@/hooks/useAppReviewApi.hook";
 import Button from "../ui/Button";
 import Modal from "../ui/Modal";
 import { useState } from "react";
 import TestimonyCard from "./TestimonyCard";
 import { FaStar } from "react-icons/fa6";
 import { FaEdit } from "react-icons/fa";
+import { useAppReviewsApi } from "@/hooks/useAppReviewsApi.hook";
 
 export default function AppReviewForm() {
-  const { createReviewMutation, getReviewForUser } = useAppReviewApi();
-  const { data } = getReviewForUser;
+  const { useCreateAppReview, useGetReviewForUser } = useAppReviewsApi();
+  const { data } = useGetReviewForUser;
 
   const [isOpen, setIsOpen] = useState(false);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    createReviewMutation.mutate({
+    useCreateAppReview.mutateAsync({
       comment: e.currentTarget.comment.value,
     });
     setIsOpen(false);
@@ -66,7 +66,7 @@ export default function AppReviewForm() {
             <Button
               label="Enviar"
               type="submit"
-              disabled={createReviewMutation.isPending}
+              disabled={useCreateAppReview.isPending}
             />
           </div>
         </form>

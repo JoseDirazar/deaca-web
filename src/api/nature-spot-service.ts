@@ -29,4 +29,6 @@ export const natureSpotService = {
     formData: FormData,
   ): UploadNatureSpotImagesResponse =>
     api.postForm(`/nature-spot/${id}/image`, formData),
+  deleteImage: (id: string, imageId: string) =>
+    api.delete(`/nature-spot/${id}/image/${imageId}`),
 };

@@ -1,5 +1,5 @@
 import type { BaseEntity } from "../common/base.interface";
-import type { Roles } from "../common/roles.interface";
+import type { Roles } from "../enums/roles.interface.enum";
 import type { Review } from "../reviews/review.interface";
 import type { Session } from "../common/session.interface";
 import type { AccountStatus } from "../enums/account-status.enum";

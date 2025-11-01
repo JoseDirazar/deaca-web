@@ -9,14 +9,14 @@ export const useEventApi = () => {
   const useGetEvents = () => {
     const { data, isLoading, error } = useQuery({
       queryKey: ["events"],
-      queryFn: () => eventService.findAll(),
+      queryFn: () => eventService.findAll().then((res) => res?.data),
     });
     return { data, isLoading, error };
   };
   const useGetEventById = (id: string) => {
     const { data, isLoading, error } = useQuery({
       queryKey: ["event", id],
-      queryFn: () => eventService.getEventById(id),
+      queryFn: () => eventService.getEventById(id).then((res) => res?.data),
     });
     return { data, isLoading, error };
   };
@@ -86,6 +86,21 @@ export const useEventApi = () => {
     },
   });
 
+  const useDeleteEventImage = useMutation({
+    mutationFn: ({ id, imageId }: { id: string; imageId: string }) =>
+      eventService.deleteImage(id, imageId).then((res) => res?.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["events"] });
+      queryClient.refetchQueries({ queryKey: ["event"] });
+      toast.success("Imagen eliminada");
+    },
+    onError: (error) => {
+      if (error instanceof AxiosError)
+        toast.error(error.response?.data.message);
+      else toast.error("Error al eliminar la imagen");
+    },
+  });
+
   return {
     useGetEvents,
     useGetEventById,
@@ -94,5 +109,6 @@ export const useEventApi = () => {
     useDeleteEvent,
     useUploadEventImage,
     useUploadEventImages,
+    useDeleteEventImage,
   };
 };

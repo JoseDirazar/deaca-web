@@ -1,5 +1,5 @@
 import { useUserStore } from "@/context/useUserStore";
-import type { Roles } from "@/types/common/roles.interface";
+import type { Roles } from "@/types/enums/roles.interface.enum";
 import { type ReactNode } from "react";
 import { Navigate, useLocation } from "react-router";
 
