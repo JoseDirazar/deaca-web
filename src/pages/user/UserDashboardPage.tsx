@@ -5,7 +5,7 @@ import Button from "@/component/ui/Button";
 import { useNavigate } from "react-router";
 import { EstablishmentStatus } from "@/types/enums/establishment-status.enum";
 import { useEstablishmentApi } from "@/hooks/useEstablishmentApi";
-import { useUserAnalyticsApi } from "@/hooks/userAnalyticsApi";
+import { useUserAnalyticsApi } from "@/hooks/useAnalyticsApi";
 import { useMemo, useState } from "react";
 import type { Analytics } from "@/types/analytics.interface";
 import BarMonthChart from "@/component/ui/BarMonthChart";

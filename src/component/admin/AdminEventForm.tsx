@@ -84,7 +84,6 @@ export default function AdminEventForm({ event }: AdminEventFormProps) {
     (isEditMode
       ? Boolean(event?.image) || Boolean(imageFile)
       : Boolean(imageFile));
-  console.log(form);
 
   const resetForm = () => {
     setForm({

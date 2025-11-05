@@ -28,7 +28,7 @@ export default function SearchEstablishments({
     const params = new URLSearchParams();
 
     if (searchName.trim()) {
-      params.set("name", searchName.trim());
+      params.set("search", searchName.trim());
     }
 
     if (selectedCategory) {
@@ -60,7 +60,7 @@ export default function SearchEstablishments({
           id="search-all"
           value={searchName}
           onChange={(e) => setSearchName(e.target.value)}
-          onKeyPress={handleKeyPress}
+          onKeyDown={handleKeyPress}
           className="w-full rounded border-none bg-white/50 p-4 focus:border-none focus:outline-none active:border-none md:bg-transparent"
         />
 

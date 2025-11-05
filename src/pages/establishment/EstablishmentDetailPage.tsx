@@ -1,6 +1,5 @@
 import EstablishmentGallery from "@/component/establishment/EstablishmentGallery";
 import GoogleMaps from "@/component/GoogleMaps";
-import Button from "@/component/ui/Button";
 import { useUserStore } from "@/context/useUserStore";
 import { generateImageUrl } from "@/lib/generate-image-url";
 import type { Image } from "@/types/common/image.interface";
@@ -12,6 +11,7 @@ import { useNavigate, useParams } from "react-router";
 import PageContainer from "@/component/ui/PageContainer";
 import EstablishmentReviews from "@/component/review/EstablishmentReviews";
 import { useEstablishmentApi } from "@/hooks/useEstablishmentApi";
+import DLink from "@/component/ui/DLink";
 
 export default function EstablishmentDetailPage() {
   const { slug } = useParams();
@@ -53,10 +53,8 @@ export default function EstablishmentDetailPage() {
   return (
     <PageContainer className="relative p-6">
       {user && establishment?.user?.id === user?.id && (
-        <Button
-          onClick={() =>
-            navigate(`/usuario/emprendimientos/${establishment.id}`)
-          }
+        <DLink
+          to={`/usuario/emprendimientos/${establishment.slug}`}
           icon={<FaEdit />}
           label="Editar"
           className="absolute top-2 right-2 z-30 text-xs"

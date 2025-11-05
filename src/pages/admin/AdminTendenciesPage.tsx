@@ -30,7 +30,6 @@ export default function AdminTendenciesPage() {
   const tendencies = tendenciesResp?.data ?? [];
 
   const [draft, setDraft] = useState<{ id: string; position: number }[]>([]);
-  console.log(draft);
 
   const onChangePosition = (id: string, position: number) => {
     setDraft((prev) => {

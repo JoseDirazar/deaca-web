@@ -22,8 +22,9 @@ export default function Open24HoursAndWeekendsPage() {
   return (
     <PageContainer className="flex flex-col items-center gap-4 p-4">
       <SectionHeader
-        className="text-fourth"
-        title="24/7"
+        className="font-century-gothic text-5xl font-bold text-gray-500"
+        title="Abierto 24hs y domingos"
+        descriptionClassName="text-3xl"
         description="Encontrá que esta disponible 24 horas y domingos"
         separator
       />
@@ -59,7 +60,7 @@ const CategorySelector = ({
           key={category.id}
           label={category.name}
           onClick={() => setSelected(category)}
-          className={`max-w-3xs flex-1 ${selected?.id === category.id ? "bg-primary" : ""}`}
+          className={`max-w-3xs flex-1 ${selected?.id === category.id ? "" : "border border-fourth bg-gray-50 text-fourth"}`}
         />
       ))}
     </div>

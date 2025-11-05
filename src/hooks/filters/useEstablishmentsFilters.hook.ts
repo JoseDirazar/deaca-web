@@ -12,6 +12,13 @@ export interface EstablishmentsFiltersState {
   subcategories: string[];
   sortBy?: SortBy;
   sortOrder?: SortOrder;
+  booleans: {
+    acceptCreditCard: boolean;
+    acceptDebitCard: boolean;
+    acceptMercadoPago: boolean;
+    acceptCtaDNI: boolean;
+    hasDiscount: boolean;
+  };
 }
 
 const DEFAULT_STATE: EstablishmentsFiltersState = {
@@ -23,6 +30,13 @@ const DEFAULT_STATE: EstablishmentsFiltersState = {
   subcategories: [],
   sortBy: "createdAt",
   sortOrder: "DESC",
+  booleans: {
+    acceptCreditCard: false,
+    acceptDebitCard: false,
+    acceptMercadoPago: false,
+    acceptCtaDNI: false,
+    hasDiscount: false,
+  },
 };
 
 export const useEstablishmentsFilters = (
@@ -33,6 +47,7 @@ export const useEstablishmentsFilters = (
     ...initial,
     categories: initial?.categories || [],
     subcategories: initial?.subcategories || [],
+    booleans: initial?.booleans || DEFAULT_STATE.booleans,
   });
 
   const setPage = useCallback(
@@ -66,6 +81,18 @@ export const useEstablishmentsFilters = (
       return { ...s, categories: newCategories, page: 1 };
     });
   }, []);
+
+  const toggleBooleanFilter = (
+    filter: keyof EstablishmentsFiltersState["booleans"],
+  ) => {
+    setState((prev) => ({
+      ...prev,
+      booleans: {
+        ...prev.booleans,
+        [filter]: !prev.booleans[filter],
+      },
+    }));
+  };
 
   // Establecer categorías completas (reemplaza las existentes)
   const setCategories = useCallback((categories: string[]) => {
@@ -144,6 +171,14 @@ export const useEstablishmentsFilters = (
       });
     }
 
+    if (state.booleans) {
+      Object.entries(state.booleans).forEach(([key, value]) => {
+        if (value) {
+          params.set(key, "true");
+        }
+      });
+    }
+
     // Ordenamiento: solo si está definido
     if (state.sortBy) {
       params.set("sortBy", state.sortBy);
@@ -163,6 +198,7 @@ export const useEstablishmentsFilters = (
     state.subcategories,
     state.sortBy,
     state.sortOrder,
+    state.booleans,
   ]);
 
   // Indicador de si hay filtros activos (excluyendo paginación y orden)
@@ -171,9 +207,16 @@ export const useEstablishmentsFilters = (
       state.search.trim() !== "" ||
       state.address.trim() !== "" ||
       state.categories.length > 0 ||
-      state.subcategories.length > 0
+      state.subcategories.length > 0 ||
+      Object.values(state.booleans).some((value) => value)
     );
-  }, [state.search, state.address, state.categories, state.subcategories]);
+  }, [
+    state.search,
+    state.address,
+    state.categories,
+    state.subcategories,
+    state.booleans,
+  ]);
 
   // Verificar si una categoría está seleccionada
   const isCategorySelected = useCallback(
@@ -204,5 +247,6 @@ export const useEstablishmentsFilters = (
     clearAllFilters,
     isCategorySelected,
     isSubcategorySelected,
+    toggleBooleanFilter,
   };
 };

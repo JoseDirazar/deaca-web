@@ -1,13 +1,13 @@
 import { FaLocationDot } from "react-icons/fa6";
 import { useState } from "react";
-import type { PharmacyData, PharmacyDetailData } from "./types";
+import type { PharmacyData, PharmacyDetail } from "./types";
 
 export default function Calendar({
   data,
   pharmaciesDetailsList,
 }: {
   data: PharmacyData[];
-  pharmaciesDetailsList: PharmacyDetailData[];
+  pharmaciesDetailsList: PharmacyDetail[];
 }) {
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
   const currentDate = new Date();
@@ -47,7 +47,7 @@ export default function Calendar({
   };
   return (
     <div className="my-4 mt-8 mb-8 rounded-lg bg-fifth p-6 shadow-md">
-      <h2 className="mb-6 font-nueva-bold text-2xl font-extrabold text-primary">
+      <h2 className="font-nueva-bold mb-6 text-2xl font-extrabold text-primary">
         Calendario de Farmacias de Turno
       </h2>
 
@@ -56,13 +56,13 @@ export default function Calendar({
           <>
             <div
               key={day}
-              className="text-center font-century-gothic-bold text-primary md:hidden"
+              className="font-century-gothic-bold text-center text-primary md:hidden"
             >
               {day}
             </div>
             <div
               key={`${day}-full`}
-              className="hidden text-center font-century-gothic-bold text-primary md:block"
+              className="font-century-gothic-bold hidden text-center text-primary md:block"
             >
               {formatDay(day)}
             </div>
@@ -120,18 +120,22 @@ export default function Calendar({
                       .slice(1)
                       .join(" ")
                       .toLowerCase() === farmacia.nombre.toLowerCase(),
-                )?.direccion || farmacia.direccion || "";
+                )?.direccion ||
+                farmacia.direccion ||
+                "";
               return (
                 <div
                   key={index}
-                  className="flex flex-col items-center justify-between gap-1 rounded-md bg-secondary p-6 text-center font-century-gothic-bold"
+                  className="font-century-gothic-bold flex flex-col items-center justify-between gap-1 rounded-md bg-secondary p-6 text-center"
                 >
                   <div className="mb-4 flex items-center justify-center rounded-lg bg-fourth px-3 py-2 shadow-sm">
                     <p className="font-century-gothic-bold text-lg text-white">
                       {farmacia.nombre}
                     </p>
                   </div>
-                  <p className="text-lg text-third text-shadow-black">{direccion}</p>
+                  <p className="text-lg text-third text-shadow-black">
+                    {direccion}
+                  </p>
                   <a
                     href={mapsUrl}
                     target="_blank"

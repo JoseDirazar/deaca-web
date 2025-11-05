@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { useUserApi } from "@/hooks/useUserApi.hook";
 import { useEstablishmentApi } from "@/hooks/useEstablishmentApi";
 import BarMonthChart from "@/component/ui/BarMonthChart";
-import { useUserAnalyticsApi } from "@/hooks/userAnalyticsApi";
+import { useUserAnalyticsApi } from "@/hooks/useAnalyticsApi";
 
 export default function AdminDashboardPage() {
   const { useGetAdminUsersChart } = useUserApi();

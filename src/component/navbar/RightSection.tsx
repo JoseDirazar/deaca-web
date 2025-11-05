@@ -8,6 +8,7 @@ import DLink from "../ui/DLink";
 import UserAvatar from "../ui/user/UserAvatar";
 
 export default function RightSection() {
+  // TODO: al iniciar sesión se activa el dropdown menu por alguna razón
   const [showDropdownMenu, setShowDropdownMenu] = useState(false);
   const navigate = useNavigate();
   const { user } = useUserStore();

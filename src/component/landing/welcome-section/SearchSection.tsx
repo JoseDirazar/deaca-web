@@ -14,7 +14,7 @@ export default function SearchSection({
       <div className="z-20 flex h-full w-full max-w-2/3 flex-grow flex-col justify-around">
         <SectionHeader
           title="deacá"
-          className="z-20 text-center font-nueva text-8xl font-bold text-white"
+          className="z-20 text-center font-nueva text-8xl font-bold text-white text-shadow-lg"
         />
         <TypingAnimation />
         <SearchEstablishments categories={categories} />

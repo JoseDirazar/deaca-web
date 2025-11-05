@@ -20,7 +20,7 @@ export default function TestimonyCard({ appReview }: { appReview: AppReview }) {
           {appReview.user.firstName}
         </p>
         <p className="text-gray-200">
-          {appReview.user?.establishments?.[0].name}
+          {appReview.user?.establishments?.[0]?.name}
         </p>
       </div>
     </div>

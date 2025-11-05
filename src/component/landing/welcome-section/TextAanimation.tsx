@@ -88,7 +88,7 @@ function ReactTypingLoop() {
 
   return (
     <div className="relative max-h-10">
-      <p className="font-mono text-3xl text-white md:text-4xl">
+      <p className="font-mon text-3xl text-white text-shadow-md md:text-4xl">
         {displayText}
         <span className="animate-pulse text-cyan-400">|</span>
       </p>

@@ -21,9 +21,9 @@ export default function RegisterSection() {
           Ingresa en un solo paso!
         </p>
         <DLink
-          label="Conoce Más"
+          label="Conoce Más" // TODO: al redireccionar subir el scroll
           className="bg-white font-bold text-primary"
-          to="/register"
+          to="/auth/registrarse"
         />
       </div>
     </div>

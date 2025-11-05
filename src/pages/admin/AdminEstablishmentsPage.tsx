@@ -38,7 +38,6 @@ export default function EstablishmentsTable() {
     useEstablishmentApi();
 
   const { data, isPending } = useGetEstablishments(queryString);
-  console.log(data?.data);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentEstablishment, setCurrentEstablishment] = useState<{

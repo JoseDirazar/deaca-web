@@ -2,11 +2,11 @@ import { FaLocationDot } from "react-icons/fa6";
 
 export default function PharmacyCard({
   nombre,
-  direccion,
+  direccion = "Dirección no disponible",
   className = "",
 }: {
   nombre: string;
-  direccion: string;
+  direccion?: string;
   className?: string;
 }) {
   const mapsQuery = encodeURIComponent(`Farmacia ${nombre}, ${direccion}`);
@@ -21,7 +21,7 @@ export default function PharmacyCard({
             {nombre}
           </p>
         </div>
-        <p className="text-center font-century-gothic-bold text-xl text-third sm:text-base md:text-2xl">
+        <p className="font-century-gothic-bold text-center text-xl text-third sm:text-base md:text-2xl">
           {direccion}
         </p>
       </div>

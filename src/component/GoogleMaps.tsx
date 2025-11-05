@@ -24,7 +24,7 @@ export default function GoogleMaps({
   markers,
   className,
 }: {
-  markers?: { lat: number; lng: number }[];
+  markers?: { lat: number; lng: number; title: string }[];
   className?: string;
 }) {
   return (
@@ -37,7 +37,7 @@ export default function GoogleMaps({
       <FitBounds markers={markers || []} />
 
       {markers?.map((marker, index) => (
-        <AdvancedMarker key={index} position={marker}>
+        <AdvancedMarker key={index} position={marker} title={marker.title}>
           <Pin
             background={"#FF0000"}
             borderColor={"#FFFFFF"}

@@ -1,7 +1,6 @@
 import PageContainer from "@/component/ui/PageContainer";
 import SearchEstablishmentsList from "@/component/establishment/SearchEstablishmentsList";
 import { useEstablishmentsFilters } from "@/hooks/filters/useEstablishmentsFilters.hook";
-import GoogleMaps from "@/component/GoogleMaps";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import Filters from "@/component/establishment/Filters";
@@ -11,6 +10,7 @@ import Button from "@/component/ui/Button";
 
 import { useEstablishmentApi } from "@/hooks/useEstablishmentApi";
 import { useCategoryApi } from "@/hooks/useCategoryApi.hook";
+import EstablishmentsMap from "@/component/EstablishmentsMap";
 
 export default function DiscoverEstablishmentsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -20,24 +20,34 @@ export default function DiscoverEstablishmentsPage() {
   const {
     queryString,
     state,
-    setName,
+    setSearch,
     toggleCategory,
     isCategorySelected,
     clearCategories,
     clearAllFilters,
     hasActiveFilters,
+    toggleBooleanFilter,
   } = useEstablishmentsFilters({
-    name: searchParams.get("name") || "",
+    search: searchParams.get("search") || "",
     categories: searchParams.getAll("categories[]"),
     subcategories: searchParams.getAll("subcategories[]"),
+    booleans: {
+      acceptCreditCard: searchParams.get("acceptCreditCard") === "true",
+      acceptDebitCard: searchParams.get("acceptDebitCard") === "true",
+      acceptMercadoPago: searchParams.get("acceptMercadoPago") === "true",
+      acceptCtaDNI: searchParams.get("acceptCtaDNI") === "true",
+      hasDiscount: searchParams.get("hasDiscount") === "true",
+    },
     page: Number(searchParams.get("page")) || 1,
     limit: Number(searchParams.get("limit")) || 10,
   });
-
   const { data: establishments } = useGetEstablishments(queryString);
   const markers = establishments?.data?.map((e) => ({
+    title: e.name,
     lat: Number(e.latitude),
     lng: Number(e.longitude),
+    image: e.avatar,
+    slug: e.slug,
   }));
 
   const { data: categories } = useGetCategories({});
@@ -48,8 +58,8 @@ export default function DiscoverEstablishmentsPage() {
     params.set("page", String(state.page));
     params.set("limit", String(state.limit));
 
-    if (state.name.trim()) {
-      params.set("name", state.name.trim());
+    if (state.search.trim()) {
+      params.set("search", state.search.trim());
     }
 
     state.categories.forEach((cat) => {
@@ -68,27 +78,47 @@ export default function DiscoverEstablishmentsPage() {
       params.set("sortOrder", state.sortOrder);
     }
 
+    if (state.booleans.acceptCreditCard) {
+      params.set("acceptCreditCard", "true");
+    }
+
+    if (state.booleans.acceptDebitCard) {
+      params.set("acceptDebitCard", "true");
+    }
+
+    if (state.booleans.acceptMercadoPago) {
+      params.set("acceptMercadoPago", "true");
+    }
+
+    if (state.booleans.acceptCtaDNI) {
+      params.set("acceptCtaDNI", "true");
+    }
+
+    if (state.booleans.hasDiscount) {
+      params.set("hasDiscount", "true");
+    }
+
     // Actualizar URL sin recargar la página
     setSearchParams(params, { replace: true });
   }, [
     state.page,
     state.limit,
-    state.name,
+    state.search,
     state.categories,
     state.subcategories,
     state.sortBy,
     state.sortOrder,
+    state.booleans,
     setSearchParams,
   ]);
-
-  console.log(categories);
 
   return (
     <PageContainer className="flex flex-col gap-4 p-4 md:flex-row">
       <Modal isOpen={showFilters} setIsOpen={setShowFilters}>
         <Filters
+          toggleBooleanFilter={toggleBooleanFilter}
           state={state}
-          setName={setName}
+          setSearch={setSearch}
           clearAllFilters={clearAllFilters}
           clearCategories={clearCategories}
           hasActiveFilters={hasActiveFilters}
@@ -101,8 +131,9 @@ export default function DiscoverEstablishmentsPage() {
 
       <div className="hidden w-auto md:block">
         <Filters
+          toggleBooleanFilter={toggleBooleanFilter}
           state={state}
-          setName={setName}
+          setSearch={setSearch}
           clearAllFilters={clearAllFilters}
           clearCategories={clearCategories}
           hasActiveFilters={hasActiveFilters}
@@ -114,7 +145,10 @@ export default function DiscoverEstablishmentsPage() {
       </div>
 
       <div className="flex flex-1 flex-grow flex-col gap-4">
-        <GoogleMaps className="h-90 w-full shadow-lg" markers={markers} />
+        <EstablishmentsMap
+          className="h-90 w-full shadow-lg"
+          markers={markers}
+        />
         <Button
           className="w-fit text-xl md:hidden"
           icon={<FaFilter />}

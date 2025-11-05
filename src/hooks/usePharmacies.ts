@@ -1,22 +1,6 @@
 import { useEffect, useState } from "react";
 import { pharmacyService } from "@/api/pharmacy-service";
-
-type PharmacyDay = {
-  dia_semana: string;
-  dia_mes: string;
-  farmacias: { nombre: string }[];
-};
-
-type PharmacyDetail = {
-  nombre: string;
-  direccion?: string;
-  telefono?: string;
-};
-
-type PharmaciesResponse = {
-  farmacias_por_dia: PharmacyDay[];
-  detalle_farmacias: PharmacyDetail[];
-};
+import type { PharmaciesResponse } from "@/component/pharmacy/types";
 
 export function usePharmacies() {
   const [data, setData] = useState<PharmaciesResponse | null>(null);

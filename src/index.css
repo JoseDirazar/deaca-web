@@ -11,7 +11,7 @@
 }
 
 body {
-  @apply selection:bg-primary-hover selection:text-white;
+  @apply font-poppins selection:bg-primary-hover selection:text-white;
 }
 
 /* ====================================================
@@ -28,6 +28,20 @@ body {
 
   --font-nueva: "Nueva Std", sans-serif;
   --font-century-gothic: "Century Gothic", sans-serif;
+  --font-poppins: "Poppins", sans-serif;
+
+  --animate-fade-in: animate-fade-in 0.3s ease-in-out;
+}
+
+@keyframes animate-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ====================================================
@@ -85,6 +99,23 @@ body {
   font-family: "Century Gothic";
   src: url("/src/assets/fonts/century-gothic/centurygothic_bold.ttf")
     format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* ====================================================
+   🔠 POPPINS
+==================================================== */
+@font-face {
+  font-family: "Poppins";
+  src: url("/src/assets/fonts/poppins/Poppins-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Poppins";
+  src: url("/src/assets/fonts/poppins/Poppins-Bold.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
 }

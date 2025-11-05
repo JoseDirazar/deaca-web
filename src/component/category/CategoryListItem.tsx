@@ -2,6 +2,7 @@ import { cn } from "@/lib/cn";
 import { generateImageUrl } from "@/lib/generate-image-url";
 import type { Category } from "@/types/category/category.interface";
 import { TbCategory2 } from "react-icons/tb";
+import { Link } from "react-router";
 
 export function CategoryList({
   categories,
@@ -13,7 +14,8 @@ export function CategoryList({
   return (
     <>
       {categories.map((category) => (
-        <div
+        <Link
+          to={`/emprendimientos?categories[]=${category.name}`}
           key={category.id}
           className={cn("flex flex-col items-center gap-3", className)}
         >
@@ -27,7 +29,7 @@ export function CategoryList({
             <TbCategory2 className="h-12 w-12" />
           )}
           <p className="text-center text-xs text-fourth">{category.name}</p>
-        </div>
+        </Link>
       ))}
     </>
   );
