@@ -1,7 +1,7 @@
 import PageContainer from "@/component/ui/PageContainer";
 import SearchEstablishmentsList from "@/component/establishment/SearchEstablishmentsList";
 import { useEstablishmentsFilters } from "@/hooks/filters/useEstablishmentsFilters.hook";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router";
 import Filters from "@/component/establishment/Filters";
 import { FaFilter } from "react-icons/fa6";
@@ -42,63 +42,45 @@ export default function DiscoverEstablishmentsPage() {
     limit: Number(searchParams.get("limit")) || 10,
   });
   const { data: establishments } = useGetEstablishments(queryString);
-  const markers = establishments?.data?.map((e) => ({
-    title: e.name,
-    lat: Number(e.latitude),
-    lng: Number(e.longitude),
-    image: e.avatar,
-    slug: e.slug,
-  }));
+  const markers = useMemo(() => {
+    return establishments?.data?.map((e) => ({
+      title: e.name,
+      lat: Number(e.latitude),
+      lng: Number(e.longitude),
+      image: e.avatar,
+      slug: e.slug,
+    }));
+  }, [establishments]);
 
   const { data: categories } = useGetCategories({});
 
   useEffect(() => {
-    const params = new URLSearchParams();
+    const params = new URLSearchParams(searchParams); // 👈 clona los actuales
 
     params.set("page", String(state.page));
     params.set("limit", String(state.limit));
 
     if (state.search.trim()) {
       params.set("search", state.search.trim());
+    } else {
+      params.delete("search");
     }
 
-    state.categories.forEach((cat) => {
-      params.append("categories[]", cat);
+    // ✅ Limpieza dinámica
+    params.delete("categories[]");
+    state.categories.forEach((cat) => params.append("categories[]", cat));
+
+    params.delete("subcategories[]");
+    state.subcategories.forEach((sub) => params.append("subcategories[]", sub));
+
+    Object.entries(state.booleans).forEach(([key, value]) => {
+      if (value) params.set(key, "true");
+      else params.delete(key);
     });
 
-    state.subcategories.forEach((sub) => {
-      params.append("subcategories[]", sub);
-    });
+    if (state.sortBy) params.set("sortBy", state.sortBy);
+    if (state.sortOrder) params.set("sortOrder", state.sortOrder);
 
-    if (state.sortBy) {
-      params.set("sortBy", state.sortBy);
-    }
-
-    if (state.sortOrder) {
-      params.set("sortOrder", state.sortOrder);
-    }
-
-    if (state.booleans.acceptCreditCard) {
-      params.set("acceptCreditCard", "true");
-    }
-
-    if (state.booleans.acceptDebitCard) {
-      params.set("acceptDebitCard", "true");
-    }
-
-    if (state.booleans.acceptMercadoPago) {
-      params.set("acceptMercadoPago", "true");
-    }
-
-    if (state.booleans.acceptCtaDNI) {
-      params.set("acceptCtaDNI", "true");
-    }
-
-    if (state.booleans.hasDiscount) {
-      params.set("hasDiscount", "true");
-    }
-
-    // Actualizar URL sin recargar la página
     setSearchParams(params, { replace: true });
   }, [
     state.page,
@@ -109,9 +91,9 @@ export default function DiscoverEstablishmentsPage() {
     state.sortBy,
     state.sortOrder,
     state.booleans,
+    searchParams,
     setSearchParams,
   ]);
-
   return (
     <PageContainer className="flex flex-col gap-4 p-4 md:flex-row">
       <Modal isOpen={showFilters} setIsOpen={setShowFilters}>

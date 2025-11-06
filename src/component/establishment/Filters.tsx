@@ -37,7 +37,7 @@ export default function Filters({
         >
           Buscar por nombre
         </label>
-        <SearchInput setSearch={setSearch} />
+        <SearchInput setSearch={setSearch} value={state.search} />
       </div>
 
       {/* 🧩 Resumen de filtros activos */}

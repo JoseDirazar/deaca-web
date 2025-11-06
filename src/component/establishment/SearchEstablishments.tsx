@@ -28,7 +28,7 @@ export default function SearchEstablishments({
     const params = new URLSearchParams();
 
     if (searchName.trim()) {
-      params.set("search", searchName.trim());
+      params.append("search", searchName.trim());
     }
 
     if (selectedCategory) {
@@ -38,9 +38,6 @@ export default function SearchEstablishments({
     if (selectedSubcategory) {
       params.append("subcategories[]", selectedSubcategory);
     }
-
-    params.set("page", "1");
-    params.set("limit", "10");
 
     navigate(`/emprendimientos?${params.toString()}`);
   };

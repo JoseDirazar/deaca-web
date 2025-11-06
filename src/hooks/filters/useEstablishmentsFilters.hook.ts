@@ -45,6 +45,7 @@ export const useEstablishmentsFilters = (
   const [state, setState] = useState<EstablishmentsFiltersState>({
     ...DEFAULT_STATE,
     ...initial,
+    search: initial?.search || "",
     categories: initial?.categories || [],
     subcategories: initial?.subcategories || [],
     booleans: initial?.booleans || DEFAULT_STATE.booleans,

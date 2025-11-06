@@ -20,7 +20,7 @@ export default function AdminNatureSpotsPage() {
         label="Nuevo"
         onClick={() => navigate("/admin/paseos-naturales/nuevo")}
         icon={<FaPlus />}
-        className="h-fit w-fit"
+        className="my-4 h-fit w-fit"
       />
       <AdminNatureSpotsList natureSpots={natureSpots?.data || []} />
     </>

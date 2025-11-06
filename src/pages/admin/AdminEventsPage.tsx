@@ -17,7 +17,7 @@ export default function AdminEventsPage() {
         label="Nuevo"
         onClick={() => navigate("/admin/eventos/nuevo")}
         icon={<FaPlus />}
-        className="h-fit w-fit"
+        className="my-4 h-fit w-fit"
       />
       <AdminEventsList events={events?.data || []} />
     </>
