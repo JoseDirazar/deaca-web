@@ -36,9 +36,7 @@ export default function ReviewForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="font-century-gothic-bold mb-2 block text-lg text-fourth">
-          Calificación
-        </label>
+        <label className="mb-2 block text-lg text-fourth">Calificación</label>
         <StarRating rating={rating} onRatingChange={setRating} size={32} />
         {rating === 0 && (
           <p className="mt-1 text-sm text-red-500">
@@ -48,10 +46,7 @@ export default function ReviewForm({
       </div>
 
       <div>
-        <label
-          htmlFor="comment"
-          className="font-century-gothic-bold mb-2 block text-lg text-fourth"
-        >
+        <label htmlFor="comment" className="mb-2 block text-lg text-fourth">
           Comentario
         </label>
         <textarea

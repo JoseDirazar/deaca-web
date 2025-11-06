@@ -292,7 +292,7 @@ export default function AdminEventForm({ event }: AdminEventFormProps) {
           id="description"
           placeholder="Ingresa una descripción del evento"
           rows={4}
-          className="w-full rounded-lg border border-primary p-3 font-century-gothic font-bold text-fourth placeholder:text-primary focus:border-2 focus:border-primary focus:ring-primary focus:outline-none"
+          className="w-full rounded-lg border border-primary p-3 font-bold text-fourth placeholder:text-primary focus:border-2 focus:border-primary focus:ring-primary focus:outline-none"
           value={form.description}
           onChange={(e) => setForm({ ...form, description: e.target.value })}
         />

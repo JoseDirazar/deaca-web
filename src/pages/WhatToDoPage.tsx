@@ -8,6 +8,7 @@ import Swiper from "@/context/swiper";
 import { useCategoryApi } from "@/hooks/useCategoryApi.hook";
 import { useEventApi } from "@/hooks/useEventApi.hook";
 import { useNatureSpotApi } from "@/hooks/useNatureSpotApi.hook";
+import { useMemo } from "react";
 import { SwiperSlide } from "swiper/react";
 
 export default function WhatToDoPage() {
@@ -29,7 +30,7 @@ export default function WhatToDoPage() {
     error: natureSpotsError,
   } = useNatureSpotApi().useGetNatureSpots();
 
-  const nightLifeList = data?.data?.[0].establishments;
+  const nightLifeList = useMemo(() => data?.data?.[0].establishments, [data]);
   return (
     <PageContainer>
       <SectionContainer className="flex flex-col items-center gap-4">

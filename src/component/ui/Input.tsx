@@ -29,7 +29,7 @@ export default function Input({
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = id.split("-").includes("password");
   return (
-    <div className="relative w-full font-century-gothic font-bold">
+    <div className="relative w-full">
       <input
         type={showPassword ? "text" : type}
         className={cn(

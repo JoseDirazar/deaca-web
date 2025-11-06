@@ -9,7 +9,7 @@ export default function RegisterSection() {
         className="h-1/2 object-cover md:h-full md:w-1/2"
       />
       <div className="flex flex-1 flex-col items-center justify-around px-8 md:h-1/2">
-        <h2 className="text-center text-xl font-bold text-wrap md:text-2xl">
+        <h2 className="text-center text-xl text-wrap md:text-2xl">
           En{" "}
           <span className="font-nueva text-2xl font-bold md:text-3xl">
             deacá
@@ -17,12 +17,12 @@ export default function RegisterSection() {
           podés llegar a mas gente con tu emprendimiento, ingresa en un solo
           paso y registra tu emprendimiento facilmente.
         </h2>
-        <p className="text-center text-lg font-bold md:text-xl">
+        <p className="text-center text-lg md:text-xl">
           Ingresa en un solo paso!
         </p>
         <DLink
           label="Conoce Más" // TODO: al redireccionar subir el scroll
-          className="bg-white font-bold text-primary"
+          className="bg-white text-primary"
           to="/auth/registrarse"
         />
       </div>

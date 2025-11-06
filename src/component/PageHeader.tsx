@@ -12,13 +12,10 @@ export default function PageHeader({
   className?: string;
 }) {
   return (
-    <div
-      className={cn(
-        "flex flex-col gap-2 font-century-gothic text-wrap",
-        className,
-      )}
-    >
-      <h1 className="text-3xl font-bold md:text-5xl">{title}</h1>
+    <div className={cn("flex flex-col gap-2 text-wrap", className)}>
+      <h1 className="font-century-gothic text-3xl font-bold md:text-5xl">
+        {title}
+      </h1>
       <p className="text-2xl text-gray-500">{description}</p>
       <div className="h-1 w-full rounded-full bg-fourth"></div>
       <p className="mt-4 text-lg text-gray-500">{subdescription}</p>

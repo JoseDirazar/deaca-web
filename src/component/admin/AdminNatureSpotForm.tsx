@@ -166,18 +166,21 @@ export default function AdminNatureSpotForm({
   const handleDeleteImage = (imageId?: string) => {
     if (!natureSpot || !imageId) return;
     setExistingImages((prev) => prev.filter((img) => img.id !== imageId));
-    deleteNatureSpotImage.mutate({ id: natureSpot.id, imageId }, {
-      onSuccess: () => {
-        setModal(false);
-        setSelectedImage(null);
+    deleteNatureSpotImage.mutate(
+      { id: natureSpot.id, imageId },
+      {
+        onSuccess: () => {
+          setModal(false);
+          setSelectedImage(null);
+        },
+        onError: () => {
+          // Restore image if deletion failed
+          if (natureSpot?.gallery) {
+            setExistingImages(natureSpot.gallery);
+          }
+        },
       },
-      onError: () => {
-        // Restore image if deletion failed
-        if (natureSpot?.gallery) {
-          setExistingImages(natureSpot.gallery);
-        }
-      },
-    });
+    );
   };
 
   return (
@@ -272,11 +275,11 @@ export default function AdminNatureSpotForm({
           value={form.name}
           onChange={(e) => setForm({ ...form, name: e.target.value })}
         />
-        <textarea
+        <textarea // TODO: hacer componente reutilizable, tambien para select
           id="description"
           placeholder="Ingresa una descripción del paseo natural"
           rows={4}
-          className="w-full rounded-lg border border-primary p-3 font-century-gothic font-bold text-fourth placeholder:text-primary focus:border-2 focus:border-primary focus:ring-primary focus:outline-none"
+          className="w-full rounded-lg border border-primary p-3 font-bold text-fourth placeholder:text-primary focus:border-2 focus:border-primary focus:ring-primary focus:outline-none"
           value={form.description}
           onChange={(e) => setForm({ ...form, description: e.target.value })}
         />

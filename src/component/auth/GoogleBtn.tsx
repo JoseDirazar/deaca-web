@@ -17,10 +17,9 @@ export default function GoogleBtn() {
   };
 
   return (
-    <div className="my-4 rounded-md bg-indigo-400 shadow-md">
+    <div className="my-4 rounded-md shadow-md">
       <GoogleLogin
         onSuccess={handleSuccess}
-        state_cookie_domain="localhost"
         onError={() =>
           isError && toast.error("Error al iniciar sesión con Google")
         }
