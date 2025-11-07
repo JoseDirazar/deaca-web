@@ -52,7 +52,7 @@ export default function RightSection() {
                     Mis emprendimientos
                   </button>
                 )}
-                <SignOutButton />
+                <SignOutButton setShowDropdownMenu={setShowDropdownMenu} />
               </div>
             </>
           )}

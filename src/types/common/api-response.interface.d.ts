@@ -6,6 +6,7 @@ import type { Subcategory } from "../category/subcategory.interface";
 import type { Review } from "../reviews/review.interface";
 import type { AppReview } from "../reviews/app-review.interface";
 import type { Event } from "../event/event.interface";
+import type { Sponsor } from "@/api/sponsor-service";
 
 export interface ApiPayload<T> {
   data: T;
@@ -106,3 +107,15 @@ export type UploadNatureSpotImageResponse = ApiResponse<NatureSpot>;
 export type UploadNatureSpotImagesResponse = ApiResponse<NatureSpot>;
 export type UpdateNatureSpotImageResponse = ApiResponse<NatureSpot>;
 export type UpdateNatureSpotImagesResponse = ApiResponse<NatureSpot>;
+// -------- TENDENCY ---------------- TENDENCY ---------------- TENDENCY --------
+export type GetTendenciesResponse = ApiResponse<Tendency[]>;
+export type CreateOrUpdateTendencyResponse = ApiResponse<Tendency>;
+export type ReorderTendenciesResponse = ApiResponse<Tendency[]>;
+export type RemoveTendencyResponse = ApiResponse<{ id: string }>;
+// -------- SPONSOR ---------------- SPONSOR ---------------- SPONSOR --------
+export type GetSponsorsResponse = ApiResponse<Sponsor[]>;
+export type GetSponsorByIdResponse = ApiResponse<Sponsor>;
+export type CreateSponsorResponse = ApiResponse<Sponsor>;
+export type UpdateSponsorResponse = ApiResponse<Sponsor>;
+export type DeleteSponsorResponse = ApiResponse<void>;
+export type UploadSponsorImageResponse = ApiResponse<Sponsor>;

@@ -2,6 +2,7 @@ import type { Establishment } from "@/types/establishment/etablihment.interface"
 import SearchEstablishmentsListItem from "./SearchEstablishmentsListItem";
 import CardSkeleton from "../ui/CardSkeleton";
 import { cn } from "@/lib/cn";
+import CardsLoader from "../ui/CardsLoader";
 
 interface SearchEstablishmentsListProps {
   isLoading: boolean;
@@ -24,14 +25,7 @@ export default function SearchEstablishmentsList({
         No se encontraron resultados
       </div>
     );
-  if (isLoading)
-    return (
-      <div className={cn("flex flex-col gap-3", className)}>
-        <CardSkeleton />
-        <CardSkeleton />
-        <CardSkeleton />
-      </div>
-    );
+  if (isLoading) return <CardsLoader />;
   if (isError) {
     console.error(error);
     return (

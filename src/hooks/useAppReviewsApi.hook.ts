@@ -1,17 +1,17 @@
 import { appReviewService } from "@/api/app-review-service";
 import type { AppReviewDto } from "@/types/common/api-request.interface";
 import type { AppReviewStatus } from "@/types/enums/app-review-status.enum";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
 
 export const useAppReviewsApi = () => {
-  const useGetAppReviews = useQuery({
+  const useGetAppReviews = useSuspenseQuery({
     queryKey: ["app-reviews"],
     queryFn: () => appReviewService.findAll().then((res) => res.data),
   });
 
-  const useGetReviewForUser = useQuery({
+  const useGetReviewForUser = useSuspenseQuery({
     queryFn: () => appReviewService.getReviewForUser().then((res) => res?.data),
     queryKey: ["app-reviews", "me"],
   });
@@ -26,7 +26,6 @@ export const useAppReviewsApi = () => {
       appReviewService.updateAppReview(payload),
     onSuccess: ({ data: { message } }) => {
       toast(message ?? "Comentario actualizado exitosamente");
-      // queryClient.invalidateQueries({ queryKey: ["app-reviews"] });
     },
     onError: (error) => {
       console.error(error);
@@ -41,7 +40,6 @@ export const useAppReviewsApi = () => {
       appReviewService.deleteAppReview(reviewId),
     onSuccess: ({ data: { message } }) => {
       toast(message ?? "Comentario eliminado exitosamente");
-      // queryClient.invalidateQueries({ queryKey: ["app-reviews"] });
     },
     onError: (error) => {
       console.error(error);
@@ -61,7 +59,6 @@ export const useAppReviewsApi = () => {
     }) => appReviewService.updateAppReviewStatus(reviewId, status),
     onSuccess: ({ data: { message } }) => {
       toast(message ?? "Comentario actualizado exitosamente");
-      // queryClient.invalidateQueries({ queryKey: ["app-reviews"] });
     },
     onError: (error) => {
       console.error(error);

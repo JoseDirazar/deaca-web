@@ -37,6 +37,9 @@ import EditNatureSpotPage from "./pages/admin/EditNatureSpotPage";
 import CreateNatureSpotPage from "./pages/admin/CreateNatureSpotPage";
 import FarmaciasPage from "./pages/FarmaciasPage";
 import { Roles } from "./types/enums/roles.interface.enum";
+import AdminSponsorsPage from "./pages/admin/AdminSponsorsPage";
+import CreateSponsorPage from "./pages/admin/CreateSponsorPage";
+import EditSponsorPage from "./pages/admin/EditSponsorPage";
 
 function App() {
   return (
@@ -145,6 +148,11 @@ function App() {
           <Route path=":id" element={<EditNatureSpotPage />} />
         </Route>
         <Route path="tendencias" element={<AdminTendenciesPage />} />
+        <Route path="patrocinadores">
+          <Route index element={<AdminSponsorsPage />} />
+          <Route path="nuevo" element={<CreateSponsorPage />} />
+          <Route path=":id" element={<EditSponsorPage />} />
+        </Route>
       </Route>
 
       <Route path="*" element={<NotFoundPage />} />

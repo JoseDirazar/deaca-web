@@ -17,7 +17,10 @@ export default function GoogleBtn() {
   };
 
   return (
-    <div className="my-4 rounded-md shadow-md">
+    <div
+      className="my-4 rounded-md shadow-md aria-disabled:opacity-50"
+      aria-disabled={isSigningInWithGoogle}
+    >
       <GoogleLogin
         onSuccess={handleSuccess}
         onError={() =>

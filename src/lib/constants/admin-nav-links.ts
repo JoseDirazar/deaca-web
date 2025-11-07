@@ -48,4 +48,10 @@ export const adminRoutes: NavbarRoutes = [
     icon: MdTrendingUp,
     href: "/admin/tendencias",
   },
+
+  {
+    label: "Patrocinadores",
+    icon: IoBusiness,
+    href: "/admin/patrocinadores",
+  },
 ];

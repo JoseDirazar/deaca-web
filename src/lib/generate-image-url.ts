@@ -9,7 +9,8 @@ export const generateImageUrl = (
     | "nature-spot-logo"
     | "nature-spot-image"
     | "event-logo"
-    | "event-image",
+    | "event-image"
+    | "sponsor",
   filename?: string | null,
 ) => {
   if (!filename) return "/default-avatar.png";
@@ -30,5 +31,7 @@ export const generateImageUrl = (
       return `${uploadBaseUrl}/event/logo/${filename}`;
     case "event-image":
       return `${uploadBaseUrl}/event/${filename}`;
+    case "sponsor":
+      return `${uploadBaseUrl}/sponsor/${filename}`;
   }
 };

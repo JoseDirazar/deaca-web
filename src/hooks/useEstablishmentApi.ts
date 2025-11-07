@@ -1,5 +1,5 @@
 import { establishmentService } from "@/api/establishment-service";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import type {
   CreateEstablishmentDto,
   EditEstablishmentDto,
@@ -9,21 +9,17 @@ import { AxiosError } from "axios";
 import type { EstablishmentStatus } from "@/types/enums/establishment-status.enum";
 
 export const useEstablishmentApi = () => {
-  const queryClient = useQueryClient();
-  const useGetEstablishmentBySlug = (
-    id: string,
-    options?: { enabled?: boolean },
-  ) => {
+  const useGetEstablishmentBySlug = (slug: string) => {
     return useQuery({
-      queryKey: ["establishments", id],
+      queryKey: ["establishments", slug],
       queryFn: () =>
-        establishmentService.getBySlug(id).then((res) => res?.data?.data),
-      enabled: options?.enabled ?? true,
+        establishmentService.getBySlug(slug).then((res) => res?.data?.data),
+      enabled: Boolean(slug),
     });
   };
 
   const useGetEstablishments = (queryParams: string) => {
-    return useQuery({
+    return useSuspenseQuery({
       queryKey: ["establishments", queryParams],
       queryFn: () =>
         establishmentService
@@ -33,7 +29,7 @@ export const useEstablishmentApi = () => {
   };
 
   const useGetAdminEstablishmentsChart = () => {
-    return useQuery({
+    return useSuspenseQuery({
       queryKey: ["admin-establishments-chart"],
       queryFn: () =>
         establishmentService
@@ -43,7 +39,7 @@ export const useEstablishmentApi = () => {
   };
 
   const useGetMyEstablishments = () => {
-    return useQuery({
+    return useSuspenseQuery({
       queryKey: ["establishments", "me"],
       queryFn: () => establishmentService.getMine().then((res) => res?.data),
     });
@@ -53,7 +49,6 @@ export const useEstablishmentApi = () => {
     mutationFn: (data: CreateEstablishmentDto) =>
       establishmentService.createMine(data).then((res) => res?.data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["establishments", "me"] });
       toast.success("Emprendimiento creado");
     },
     onError: (error) => {
@@ -67,7 +62,6 @@ export const useEstablishmentApi = () => {
     mutationFn: (data: EditEstablishmentDto) =>
       establishmentService.updateMine(data.id, data).then((res) => res?.data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["establishments", "me"] });
       toast.success("Emprendimiento actualizado");
     },
     onError: (error) => {
@@ -80,9 +74,7 @@ export const useEstablishmentApi = () => {
   const updateEstablishmentAvatar = useMutation({
     mutationFn: ({ id, formData }: { id: string; formData: FormData }) =>
       establishmentService.uploadAvatar(id, formData).then((res) => res?.data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["establishments", "me"] });
-    },
+    onSuccess: () => {},
     onError: (error) => {
       if (error instanceof AxiosError)
         toast.error(error.response?.data.message);
@@ -93,9 +85,7 @@ export const useEstablishmentApi = () => {
   const updateEstablishmentImages = useMutation({
     mutationFn: ({ id, formData }: { id: string; formData: FormData }) =>
       establishmentService.uploadImages(id, formData).then((res) => res?.data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["establishments", "me"] });
-    },
+    onSuccess: () => {},
     onError: (error) => {
       if (error instanceof AxiosError)
         toast.error(error.response?.data.message);
@@ -107,7 +97,6 @@ export const useEstablishmentApi = () => {
     mutationFn: (id: string) =>
       establishmentService.deleteMine(id).then((res) => res?.data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["establishments", "me"] });
       toast.success("Emprendimiento eliminado correctamente");
     },
     onError: (error) => {
@@ -121,8 +110,6 @@ export const useEstablishmentApi = () => {
     mutationFn: ({ id, imageId }: { id: string; imageId: string }) =>
       establishmentService.deleteImage(id, imageId).then((res) => res?.data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["establishments", "me"] });
-      queryClient.refetchQueries({ queryKey: ["establishments", "me"] });
       toast.success("Imagen eliminada");
     },
     onError: (error) => {
@@ -136,7 +123,6 @@ export const useEstablishmentApi = () => {
     mutationFn: ({ id, status }: { id: string; status: EstablishmentStatus }) =>
       establishmentService.changeStatus(id, status).then((res) => res?.data),
     onSuccess: ({ message }) => {
-      queryClient.invalidateQueries({ queryKey: ["establishments"] });
       toast.success(message || "Estado actualizado");
     },
     onError: (error) => {

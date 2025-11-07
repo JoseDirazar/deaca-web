@@ -1,30 +1,28 @@
 import { eventService } from "@/api/event-service";
 import type { EventDto } from "@/types/common/api-request.interface";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
 
 export const useEventApi = () => {
-  const queryClient = useQueryClient();
   const useGetEvents = () => {
-    const { data, isLoading, error } = useQuery({
+    const { data, isPending, error } = useSuspenseQuery({
       queryKey: ["events"],
       queryFn: () => eventService.findAll().then((res) => res?.data),
     });
-    return { data, isLoading, error };
+    return { data, isPending, error };
   };
   const useGetEventById = (id: string) => {
-    const { data, isLoading, error } = useQuery({
+    const { data, isPending, error } = useSuspenseQuery({
       queryKey: ["event", id],
       queryFn: () => eventService.getEventById(id).then((res) => res?.data),
     });
-    return { data, isLoading, error };
+    return { data, isPending, error };
   };
   const useCreateEvent = useMutation({
     mutationFn: (event: EventDto) =>
       eventService.createEvent(event).then((res) => res?.data),
     onSuccess: ({ message }) => {
-      queryClient.invalidateQueries({ queryKey: ["events"] });
       toast.success(message || "Evento creado");
     },
     onError: (error) => {
@@ -37,7 +35,6 @@ export const useEventApi = () => {
     mutationFn: ({ id, event }: { id: string; event: EventDto }) =>
       eventService.updateEvent(id, event).then((res) => res?.data),
     onSuccess: ({ message }) => {
-      queryClient.invalidateQueries({ queryKey: ["events"] });
       toast.success(message || "Evento actualizado");
     },
     onError: (error) => {
@@ -50,7 +47,6 @@ export const useEventApi = () => {
     mutationFn: (id: string) =>
       eventService.deleteEvent(id).then((res) => res?.data),
     onSuccess: ({ message }) => {
-      queryClient.invalidateQueries({ queryKey: ["events"] });
       toast.success(message || "Evento eliminado");
     },
     onError: (error) => {
@@ -63,7 +59,6 @@ export const useEventApi = () => {
     mutationFn: ({ id, file }: { id: string; file: FormData }) =>
       eventService.uploadImage(id, file).then((res) => res?.data),
     onSuccess: ({ message }) => {
-      queryClient.invalidateQueries({ queryKey: ["events"] });
       toast.success(message || "Imagen subida");
     },
     onError: (error) => {
@@ -76,7 +71,6 @@ export const useEventApi = () => {
     mutationFn: ({ id, files }: { id: string; files: FormData }) =>
       eventService.uploadImages(id, files).then((res) => res?.data),
     onSuccess: ({ message }) => {
-      queryClient.invalidateQueries({ queryKey: ["events"] });
       toast.success(message || "Imagenes subidas");
     },
     onError: (error) => {
@@ -90,8 +84,6 @@ export const useEventApi = () => {
     mutationFn: ({ id, imageId }: { id: string; imageId: string }) =>
       eventService.deleteImage(id, imageId).then((res) => res?.data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["events"] });
-      queryClient.refetchQueries({ queryKey: ["event"] });
       toast.success("Imagen eliminada");
     },
     onError: (error) => {

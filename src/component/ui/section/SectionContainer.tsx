@@ -1,5 +1,6 @@
 import { cn } from "@/lib/cn";
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
+import Loader from "../Loader";
 
 export default function SectionContainer({
   children,
@@ -9,8 +10,10 @@ export default function SectionContainer({
   className?: string;
 }) {
   return (
-    <div className={cn("rounded-lg bg-gray-50 md:p-4", className)}>
-      {children}
-    </div>
+    <Suspense fallback={<Loader />}>
+      <div className={cn("rounded-lg bg-gray-50 md:p-4", className)}>
+        {children}
+      </div>
+    </Suspense>
   );
 }

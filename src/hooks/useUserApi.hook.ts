@@ -2,30 +2,29 @@ import { userService } from "@/api/user-service";
 import { useUserStore } from "@/context/useUserStore";
 import type { EditProfileDto } from "@/types/common/api-request.interface";
 import type { AccountStatus } from "@/types/enums/account-status.enum";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 
 export const useUserApi = () => {
-  const queryClient = useQueryClient();
   const { setUser } = useUserStore();
 
   const navigate = useNavigate();
 
-  const getUser = useQuery({
+  const getUser = useSuspenseQuery({
     queryKey: ["user", "me"],
     queryFn: () => userService.getUser().then((res) => res?.data),
   });
 
   const useGetUsers = (queryParams: string) => {
-    return useQuery({
+    return useSuspenseQuery({
       queryKey: ["users", queryParams],
       queryFn: () => userService.getUsers(queryParams).then((res) => res?.data),
     });
   };
 
   const useGetAdminUsersChart = () => {
-    return useQuery({
+    return useSuspenseQuery({
       queryKey: ["admin-users-chart"],
       queryFn: () => userService.getAdminUsersChart().then((res) => res?.data),
     });
@@ -37,7 +36,6 @@ export const useUserApi = () => {
     onSuccess: ({ data }) => {
       setUser(data);
       toast.success("Avatar updated successfully");
-      queryClient.invalidateQueries({ queryKey: ["user", "me"] });
     },
     onError: (error) => {
       toast.error("Error updating avatar");
@@ -51,7 +49,6 @@ export const useUserApi = () => {
     onSuccess: ({ data }) => {
       setUser(data);
       toast.success("Avatar updated successfully");
-      queryClient.invalidateQueries({ queryKey: ["user", "me"] });
     },
     onError: (error) => {
       toast.error("Error updating avatar");
@@ -64,7 +61,6 @@ export const useUserApi = () => {
       userService.changeUserAccountStatus(data).then((res) => res?.data),
     onSuccess: ({ message }) => {
       toast.success(message ?? "Usuario actualizado");
-      queryClient.invalidateQueries({ queryKey: ["users"] });
     },
     onError: (error) => {
       toast.error("Error changing user account status");
@@ -89,7 +85,6 @@ export const useUserApi = () => {
       userService.promoteUserToAdmin(data).then((res) => res?.data),
     onSuccess: ({ message }) => {
       toast.success(message ?? "Usuario actualizado");
-      queryClient.invalidateQueries({ queryKey: ["users"] });
     },
     onError: (error) => {
       toast.error("Error changing user account status");
@@ -103,7 +98,6 @@ export const useUserApi = () => {
     onSuccess: ({ message, data }) => {
       setUser(data);
       toast.success(message ?? "Usuario actualizado");
-      queryClient.invalidateQueries({ queryKey: ["user", "me"] });
       navigate("/usuario/emprendimientos", {
         state: { from: "become-business-owner" },
       });

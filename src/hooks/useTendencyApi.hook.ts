@@ -1,34 +1,33 @@
 import { tendencyService, type Tendency } from "@/api/tendency-service";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
 
 export const useTendencyApi = () => {
-  const qc = useQueryClient();
-
-  const useListTendencies = useQuery<{ data: Tendency[] }>({
+  const useListTendencies = useSuspenseQuery<{ data: Tendency[] }>({
     queryKey: ["tendencies"],
-    queryFn: () => tendencyService.list(),
+    queryFn: () => tendencyService.list().then((res) => res?.data),
   });
 
   const useCreateOrUpdateTendency = useMutation({
     mutationFn: (payload: { establishmentId: string; position: number }) =>
-      tendencyService.createOrUpdate(payload),
+      tendencyService.createOrUpdate(payload).then((res) => res?.data),
     onSuccess: ({ message }) => {
-      qc.invalidateQueries({ queryKey: ["tendencies"] });
       toast.success(message ?? "Tendencia guardada");
     },
     onError: (error) => {
       if (error instanceof AxiosError) {
-        toast.error(error.response?.data?.message ?? "Error al guardar tendencia");
+        toast.error(
+          error.response?.data?.message ?? "Error al guardar tendencia",
+        );
       }
     },
   });
 
   const useReorderTendencies = useMutation({
-    mutationFn: (items: { id: string; position: number }[]) => tendencyService.reorder(items),
+    mutationFn: (items: { id: string; position: number }[]) =>
+      tendencyService.reorder(items).then((res) => res?.data),
     onSuccess: ({ message }) => {
-      qc.invalidateQueries({ queryKey: ["tendencies"] });
       toast.success(message ?? "Tendencias reordenadas");
     },
     onError: (error) => {
@@ -39,19 +38,24 @@ export const useTendencyApi = () => {
   });
 
   const useRemoveTendency = useMutation({
-    mutationFn: (id: string) => tendencyService.remove(id),
+    mutationFn: (id: string) =>
+      tendencyService.remove(id).then((res) => res?.data),
     onSuccess: ({ message }) => {
-      qc.invalidateQueries({ queryKey: ["tendencies"] });
       toast.success(message ?? "Tendencia eliminada");
     },
     onError: (error) => {
       if (error instanceof AxiosError) {
-        toast.error(error.response?.data?.message ?? "Error al eliminar tendencia");
+        toast.error(
+          error.response?.data?.message ?? "Error al eliminar tendencia",
+        );
       }
     },
   });
 
-  return { useListTendencies, useCreateOrUpdateTendency, useReorderTendencies, useRemoveTendency };
+  return {
+    useListTendencies,
+    useCreateOrUpdateTendency,
+    useReorderTendencies,
+    useRemoveTendency,
+  };
 };
-
-

@@ -7,12 +7,13 @@ import ShowCalendarButton from "./ShowCalendarButton";
 import XDivider from "./ui/XDivider";
 import type { PharmacyData, PharmacyDetail } from "./types";
 import GoogleMaps from "../GoogleMaps";
+import Loader from "../ui/Loader";
 
 export default function PharmaciesPreview() {
   const { data, loading, error } = usePharmacies();
   const [showAllPharmacies, setShowAllPharmacies] = useState(false);
 
-  if (loading) return <div>Cargando farmacias...</div>;
+  if (loading) return <Loader />;
   if (error) return <div>{error}</div>;
   if (!data) return <div>Sin datos</div>;
 

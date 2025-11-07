@@ -3,6 +3,7 @@ import { pharmacyService } from "@/api/pharmacy-service";
 import type { PharmaciesResponse } from "@/component/pharmacy/types";
 
 export function usePharmacies() {
+  // TODO: que es esto!
   const [data, setData] = useState<PharmaciesResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);

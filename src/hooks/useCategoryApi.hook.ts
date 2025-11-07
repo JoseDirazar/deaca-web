@@ -1,11 +1,9 @@
 import { categoryService } from "@/api/category-service";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
 
 export const useCategoryApi = () => {
-  const qc = useQueryClient();
-
   const useGetCategories = ({
     exclude,
     select,
@@ -13,7 +11,7 @@ export const useCategoryApi = () => {
     exclude?: string[];
     select?: string[];
   }) => {
-    return useQuery({
+    return useSuspenseQuery({
       queryFn: () =>
         categoryService
           .getCategories({ exclude, select })
@@ -26,7 +24,6 @@ export const useCategoryApi = () => {
     mutationFn: (payload: string) =>
       categoryService.createCategory(payload).then((res) => res?.data),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["categories"] });
       toast.success("Categoría creada correctamente");
     },
     onError: (error) => {
@@ -42,7 +39,6 @@ export const useCategoryApi = () => {
     mutationFn: ({ id, payload }: { id: string; payload: string }) =>
       categoryService.updateCategory(id, payload).then((res) => res?.data),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["categories"] });
       toast.success("Categoría actualizada correctamente");
     },
     onError: (error) => {
@@ -58,7 +54,6 @@ export const useCategoryApi = () => {
     mutationFn: (id: string) =>
       categoryService.deleteCategory(id).then((res) => res?.data),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["categories"] });
       toast.success("Categoría eliminada correctamente");
     },
     onError: (error) => {
@@ -73,9 +68,7 @@ export const useCategoryApi = () => {
   const uploadCategoryIcon = useMutation({
     mutationFn: ({ id, formData }: { id: string; formData: FormData }) =>
       categoryService.uploadCategoryIcon(id, formData).then((res) => res?.data),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["categories"] });
-    },
+    onSuccess: () => {},
     onError: (error) => {
       if (error instanceof AxiosError) {
         toast.error(error?.response?.data?.message);

@@ -6,19 +6,19 @@ import type { Image } from "@/types/common/image.interface";
 import { useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import { FaFacebook, FaInstagram, FaWebAwesome } from "react-icons/fa6";
-import { useNavigate, useParams } from "react-router";
+import { useParams } from "react-router";
 
 import PageContainer from "@/component/ui/PageContainer";
 import EstablishmentReviews from "@/component/review/EstablishmentReviews";
 import { useEstablishmentApi } from "@/hooks/useEstablishmentApi";
 import DLink from "@/component/ui/DLink";
+import Loader from "@/component/ui/Loader";
 
 export default function EstablishmentDetailPage() {
   const { slug } = useParams();
-  const navigate = useNavigate();
   const { user } = useUserStore();
 
-  const { data: establishment } =
+  const { data: establishment, isPending } =
     useEstablishmentApi().useGetEstablishmentBySlug(slug as string);
 
   const [imageSelected, setImageSelected] = useState<Image | null>(null);
@@ -43,12 +43,7 @@ export default function EstablishmentDetailPage() {
     setImageSelected(establishment.images[newIndex]);
   };
 
-  if (!establishment)
-    return (
-      <PageContainer className="text-4xl text-gray-400">
-        No se encontro la informacion
-      </PageContainer>
-    );
+  if (isPending) return <Loader />;
 
   return (
     <PageContainer className="relative p-6">
@@ -92,7 +87,7 @@ export default function EstablishmentDetailPage() {
                 establishment?.avatar,
               )}
               alt={`${establishment?.name} avatar`}
-              className="absolute -bottom-7 left-5 h-36 w-36 rounded-full bg-white object-cover p-2"
+              className="absolute -bottom-7 left-5 h-36 w-36 rounded-full bg-white object-cover p-2 drop-shadow-2xl"
             />
           </div>
           <div className="flex w-full items-center justify-between">
@@ -119,6 +114,7 @@ export default function EstablishmentDetailPage() {
               {
                 lat: Number(establishment.latitude),
                 lng: Number(establishment.longitude),
+                title: establishment.name,
               },
             ]}
           />
