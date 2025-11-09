@@ -19,7 +19,7 @@ export const useEstablishmentApi = () => {
   };
 
   const useGetEstablishments = (queryParams: string) => {
-    return useSuspenseQuery({
+    return useQuery({
       queryKey: ["establishments", queryParams],
       queryFn: () =>
         establishmentService

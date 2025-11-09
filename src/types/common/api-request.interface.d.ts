@@ -39,6 +39,11 @@ export interface CreateEstablishmentDto {
   longitude?: string;
   categories?: { id: string }[];
   subcategories?: { id: string }[];
+  acceptCreditCard?: boolean;
+  acceptDebitCard?: boolean;
+  cashDiscount?: number;
+  acceptMercadoPago?: boolean;
+  acceptCtaDNI?: boolean;
 }
 
 export interface SignInDto {

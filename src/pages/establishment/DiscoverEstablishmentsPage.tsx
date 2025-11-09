@@ -27,6 +27,7 @@ export default function DiscoverEstablishmentsPage() {
     clearAllFilters,
     hasActiveFilters,
     toggleBooleanFilter,
+    toggleSubcategory,
   } = useEstablishmentsFilters({
     search: searchParams.get("search") || "",
     categories: searchParams.getAll("categories[]"),
@@ -41,6 +42,7 @@ export default function DiscoverEstablishmentsPage() {
     page: Number(searchParams.get("page")) || 1,
     limit: Number(searchParams.get("limit")) || 10,
   });
+  console.log(queryString);
   const { data: establishments } = useGetEstablishments(queryString);
   const markers = useMemo(() => {
     return establishments?.data?.map((e) => ({
@@ -108,6 +110,8 @@ export default function DiscoverEstablishmentsPage() {
           toggleCategory={toggleCategory}
           categories={categories?.data}
           isLoadingCategories={false}
+          selectedCategories={state.categories}
+          toggleSubcategory={toggleSubcategory}
         />
       </Modal>
 
@@ -123,6 +127,8 @@ export default function DiscoverEstablishmentsPage() {
           toggleCategory={toggleCategory}
           categories={categories?.data}
           isLoadingCategories={false}
+          selectedCategories={state.categories}
+          toggleSubcategory={toggleSubcategory}
         />
       </div>
 

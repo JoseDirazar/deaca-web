@@ -21,6 +21,11 @@ export interface Establishment extends BaseEntity {
   longitude: string;
   status: EstablishmentStatus;
   rating: number;
+  acceptDebitCard: boolean;
+  acceptCreditCard: boolean;
+  cashDiscount: number;
+  acceptMercadoPago: boolean;
+  acceptCtaDNI: boolean;
   reviewsReceived?: Review[] | null;
   categories: Category[] | Partial<Category>[];
   subcategories: Subcategory[];

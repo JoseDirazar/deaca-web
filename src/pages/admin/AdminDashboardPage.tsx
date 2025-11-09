@@ -78,7 +78,7 @@ export default function AdminDashboardPage() {
     new Date().getFullYear(),
   );
   const visitsAvailableYears = useMemo(() => {
-    const raw = analyticsData?.data?.data ?? [];
+    const raw = analyticsData?.data ?? [];
     const years = new Set<number>();
     raw.forEach((v: { createdAt: string }) => {
       const d = new Date(String(v.createdAt));
@@ -94,7 +94,7 @@ export default function AdminDashboardPage() {
       count: 0,
     }));
     const currentYear = visitsYear;
-    const raw = analyticsData?.data?.data ?? [];
+    const raw = analyticsData?.data ?? [];
     raw.forEach((v: { createdAt: string }) => {
       const d = new Date(String(v.createdAt));
       if (!isNaN(d.getTime()) && d.getFullYear() === currentYear) {

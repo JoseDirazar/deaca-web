@@ -43,7 +43,7 @@ function ReactTypingLoop() {
 
   useEffect(() => {
     const currentPhrase = phrases[currentPhraseIndex];
-    const typingSpeed = isDeleting ? 50 : 100;
+    const typingSpeed = isDeleting ? 500 : 200;
     const pauseAfterTyping = 2000;
     const pauseAfterDeleting = 500;
 

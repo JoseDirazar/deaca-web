@@ -2,30 +2,31 @@ import { userService } from "@/api/user-service";
 import { useUserStore } from "@/context/useUserStore";
 import type { EditProfileDto } from "@/types/common/api-request.interface";
 import type { AccountStatus } from "@/types/enums/account-status.enum";
-import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
+import { QueryKeys } from "@/api/query-keys";
 
 export const useUserApi = () => {
   const { setUser } = useUserStore();
-
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const getUser = useSuspenseQuery({
-    queryKey: ["user", "me"],
+  const getUser = useQuery({
+    queryKey: [QueryKeys.USER],
     queryFn: () => userService.getUser().then((res) => res?.data),
   });
 
   const useGetUsers = (queryParams: string) => {
     return useSuspenseQuery({
-      queryKey: ["users", queryParams],
+      queryKey: [QueryKeys.USERS, queryParams],
       queryFn: () => userService.getUsers(queryParams).then((res) => res?.data),
     });
   };
 
   const useGetAdminUsersChart = () => {
-    return useSuspenseQuery({
-      queryKey: ["admin-users-chart"],
+    return useQuery({
+      queryKey: [QueryKeys.ADMIN_USERS_CHART],
       queryFn: () => userService.getAdminUsersChart().then((res) => res?.data),
     });
   };

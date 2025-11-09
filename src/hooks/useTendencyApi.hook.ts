@@ -1,9 +1,14 @@
 import { tendencyService, type Tendency } from "@/api/tendency-service";
-import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
 
 export const useTendencyApi = () => {
+  const qc = useQueryClient();
   const useListTendencies = useSuspenseQuery<{ data: Tendency[] }>({
     queryKey: ["tendencies"],
     queryFn: () => tendencyService.list().then((res) => res?.data),
@@ -14,6 +19,7 @@ export const useTendencyApi = () => {
       tendencyService.createOrUpdate(payload).then((res) => res?.data),
     onSuccess: ({ message }) => {
       toast.success(message ?? "Tendencia guardada");
+      qc.invalidateQueries({ queryKey: ["tendencies"] });
     },
     onError: (error) => {
       if (error instanceof AxiosError) {
@@ -29,6 +35,7 @@ export const useTendencyApi = () => {
       tendencyService.reorder(items).then((res) => res?.data),
     onSuccess: ({ message }) => {
       toast.success(message ?? "Tendencias reordenadas");
+      qc.invalidateQueries({ queryKey: ["tendencies"] });
     },
     onError: (error) => {
       if (error instanceof AxiosError) {
@@ -42,6 +49,7 @@ export const useTendencyApi = () => {
       tendencyService.remove(id).then((res) => res?.data),
     onSuccess: ({ message }) => {
       toast.success(message ?? "Tendencia eliminada");
+      qc.invalidateQueries({ queryKey: ["tendencies"] });
     },
     onError: (error) => {
       if (error instanceof AxiosError) {

@@ -1,24 +1,58 @@
-import Button from "../ui/Button";
-import Modal from "../ui/Modal";
 import { useState } from "react";
-import TestimonyCard from "./TestimonyCard";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { FaStar } from "react-icons/fa6";
 import { FaEdit } from "react-icons/fa";
 import { useAppReviewsApi } from "@/hooks/useAppReviewsApi.hook";
+import Button from "../ui/Button";
+import Modal from "../ui/Modal";
+import TestimonyCard from "./TestimonyCard";
+import { useUserStore } from "@/context/useUserStore";
+import { Roles } from "@/types/enums/roles.interface.enum";
+
+const reviewFormSchema = z.object({
+  comment: z
+    .string()
+    .min(10, "El comentario debe tener al menos 10 caracteres"),
+});
+
+type ReviewFormData = z.infer<typeof reviewFormSchema>;
 
 export default function AppReviewForm() {
   const { useCreateAppReview, useGetReviewForUser } = useAppReviewsApi();
   const { data } = useGetReviewForUser;
-
+  const { user } = useUserStore();
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    useCreateAppReview.mutateAsync({
-      comment: e.currentTarget.comment.value,
-    });
-    setIsOpen(false);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<ReviewFormData>({
+    resolver: zodResolver(reviewFormSchema),
+    defaultValues: {
+      comment: data?.data?.comment || "",
+    },
+  });
+
+  const onSubmit = async (data: ReviewFormData) => {
+    try {
+      await useCreateAppReview.mutateAsync({
+        comment: data.comment,
+      });
+      setIsOpen(false);
+      reset();
+    } catch (error) {
+      console.error("Error submitting review:", error);
+    }
   };
+
+  // Only show the form for users with role "user"
+  if (user?.role === Roles.USER) {
+    return null;
+  }
 
   return (
     <>
@@ -53,20 +87,39 @@ export default function AppReviewForm() {
         </div>
       )}
       <Modal setIsOpen={setIsOpen} isOpen={isOpen}>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <textarea
-            name="comment"
-            id="user-dashboard-app-review"
-            title="Comentario"
-            className="w-full resize-none rounded-md border border-gray-300 p-2 focus:ring-2 focus:ring-primary focus:outline-none"
-            rows={4}
-            value={data?.data?.comment || ""}
-          />
-          <div className="flex items-center justify-end">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+          <div>
+            <textarea
+              id="user-dashboard-app-review"
+              title="Comentario"
+              className={`w-full resize-none rounded-md border p-2 focus:ring-2 focus:outline-none ${
+                errors.comment
+                  ? "border-red-500 focus:ring-red-200"
+                  : "border-gray-300 focus:ring-primary"
+              }`}
+              rows={4}
+              {...register("comment")}
+              disabled={useCreateAppReview.isPending}
+            />
+            {errors.comment && (
+              <p className="mt-1 text-sm text-red-500">
+                {errors.comment.message}
+              </p>
+            )}
+          </div>
+          <div className="flex items-center justify-end gap-2">
             <Button
-              label="Enviar"
+              type="button"
+              variant="secondary"
+              onClick={() => setIsOpen(false)}
+              disabled={useCreateAppReview.isPending}
+              label="Cancelar"
+            />
+            <Button
               type="submit"
               disabled={useCreateAppReview.isPending}
+              loading={useCreateAppReview.isPending}
+              label={useCreateAppReview.isPending ? "Enviando..." : "Enviar"}
             />
           </div>
         </form>

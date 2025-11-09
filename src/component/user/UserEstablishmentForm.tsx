@@ -46,6 +46,11 @@ export default function UserEstablishmentForm({
     facebook: "",
     latitude: "",
     longitude: "",
+    acceptCreditCard: false,
+    acceptDebitCard: false,
+    acceptMercadoPago: false,
+    acceptCtaDNI: false,
+    cashDiscount: 0,
   });
 
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
@@ -95,6 +100,11 @@ export default function UserEstablishmentForm({
         facebook: establishment.facebook || "",
         latitude: establishment.latitude || "",
         longitude: establishment.longitude || "",
+        acceptCreditCard: establishment.acceptCreditCard || false,
+        acceptDebitCard: establishment.acceptDebitCard || false,
+        acceptMercadoPago: establishment.acceptMercadoPago || false,
+        acceptCtaDNI: establishment.acceptCtaDNI || false,
+        cashDiscount: establishment.cashDiscount || 0,
       });
       setSelectedCategoryIds(
         establishment.categories
@@ -123,6 +133,11 @@ export default function UserEstablishmentForm({
       facebook: "",
       latitude: "",
       longitude: "",
+      acceptCreditCard: false,
+      acceptDebitCard: false,
+      acceptMercadoPago: false,
+      acceptCtaDNI: false,
+      cashDiscount: 0,
     });
     setSelectedCategoryIds([]);
     setSelectedSubcategoryIds([]);
@@ -146,6 +161,11 @@ export default function UserEstablishmentForm({
       facebook: form.facebook,
       latitude: form.latitude,
       longitude: form.longitude,
+      acceptCreditCard: form.acceptCreditCard,
+      acceptDebitCard: form.acceptDebitCard,
+      acceptMercadoPago: form.acceptMercadoPago,
+      acceptCtaDNI: form.acceptCtaDNI,
+      cashDiscount: form.cashDiscount,
     };
 
     createEstablishment.mutate(payload, {
@@ -195,6 +215,11 @@ export default function UserEstablishmentForm({
       facebook: form.facebook,
       latitude: form.latitude,
       longitude: form.longitude,
+      acceptCreditCard: form.acceptCreditCard,
+      acceptDebitCard: form.acceptDebitCard,
+      acceptMercadoPago: form.acceptMercadoPago,
+      acceptCtaDNI: form.acceptCtaDNI,
+      cashDiscount: form.cashDiscount,
     };
 
     try {
@@ -227,6 +252,7 @@ export default function UserEstablishmentForm({
       console.error("Error updating establishment:", error);
     }
   }
+
   const canSubmit = useMemo(() => {
     // Dev minimal: name + at least 1 category + avatar (file or existing)
     const nameOk = (form.name?.trim() || "").length > 0;
@@ -285,6 +311,96 @@ export default function UserEstablishmentForm({
       />
 
       <ContactForm form={form} setForm={setForm} />
+      
+      <div className="mt-8">
+        <h3 className="text-2xl font-bold text-gray-500 mb-4">Métodos de pago</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <div className="flex items-center">
+              <input
+                id="acceptCreditCard"
+                type="checkbox"
+                checked={form.acceptCreditCard || false}
+                onChange={(e) =>
+                  setForm({ ...form, acceptCreditCard: e.target.checked })
+                }
+                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+              />
+              <label htmlFor="acceptCreditCard" className="ml-2 text-sm text-gray-700">
+                Acepta Tarjeta de Crédito
+              </label>
+            </div>
+
+            <div className="flex items-center">
+              <input
+                id="acceptDebitCard"
+                type="checkbox"
+                checked={form.acceptDebitCard || false}
+                onChange={(e) =>
+                  setForm({ ...form, acceptDebitCard: e.target.checked })
+                }
+                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+              />
+              <label htmlFor="acceptDebitCard" className="ml-2 text-sm text-gray-700">
+                Acepta Tarjeta de Débito
+              </label>
+            </div>
+
+            <div className="flex items-center">
+              <input
+                id="acceptMercadoPago"
+                type="checkbox"
+                checked={form.acceptMercadoPago || false}
+                onChange={(e) =>
+                  setForm({ ...form, acceptMercadoPago: e.target.checked })
+                }
+                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+              />
+              <label htmlFor="acceptMercadoPago" className="ml-2 text-sm text-gray-700">
+                Acepta Mercado Pago
+              </label>
+            </div>
+
+            <div className="flex items-center">
+              <input
+                id="acceptCtaDNI"
+                type="checkbox"
+                checked={form.acceptCtaDNI || false}
+                onChange={(e) =>
+                  setForm({ ...form, acceptCtaDNI: e.target.checked })
+                }
+                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+              />
+              <label htmlFor="acceptCtaDNI" className="ml-2 text-sm text-gray-700">
+                Acepta Cuenta DNI
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="cashDiscount" className="block text-sm font-medium text-gray-700 mb-1">
+              Descuento por pago en efectivo (%)
+            </label>
+            <div className="mt-1">
+              <input
+                type="number"
+                id="cashDiscount"
+                min="0"
+                max="100"
+                value={form.cashDiscount || 0}
+                onChange={(e) =>
+                  setForm({ ...form, cashDiscount: parseFloat(e.target.value) || 0 })
+                }
+                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                placeholder="0"
+              />
+            </div>
+            <p className="mt-1 text-xs text-gray-500">
+              Ingrese el porcentaje de descuento por pago en efectivo (opcional)
+            </p>
+          </div>
+        </div>
+      </div>
 
       <SubmitFormSection
         isLoading={isLoading}
@@ -566,28 +682,20 @@ function CategoryForm({
             <select
               className="flex-1 rounded-md border border-primary p-2 text-primary"
               value={currentCategoryId}
-              onChange={(e) => setCurrentCategoryId(e.target.value)}
+              onChange={(e) => {
+                const categoryId = e.target.value;
+                setCurrentCategoryId(categoryId);
+                if (categoryId && !selectedCategoryIds.includes(categoryId)) {
+                  setSelectedCategoryIds([...selectedCategoryIds, categoryId]);
+                  setCurrentCategoryId("");
+                }
+              }}
             >
               <option value="">Seleccionar categoría...</option>
               {data
                 ?.filter((c) => !selectedCategoryIds.includes(c.id))
                 .map((c) => (
-                  <option
-                    key={c.id}
-                    value={c.id}
-                    onClick={() => {
-                      if (
-                        currentCategoryId &&
-                        !selectedCategoryIds.includes(currentCategoryId)
-                      ) {
-                        setSelectedCategoryIds([
-                          ...selectedCategoryIds,
-                          currentCategoryId,
-                        ]);
-                        setCurrentCategoryId("");
-                      }
-                    }}
-                  >
+                  <option key={c.id} value={c.id}>
                     {c.name}
                   </option>
                 ))}
@@ -632,29 +740,21 @@ function CategoryForm({
             <select
               className="flex-1 rounded-md border border-primary p-2 text-primary"
               value={currentSubcategoryId}
-              onChange={(e) => setCurrentSubcategoryId(e.target.value)}
+              onChange={(e) => {
+                const subcategoryId = e.target.value;
+                setCurrentSubcategoryId(subcategoryId);
+                if (subcategoryId && !selectedSubcategoryIds.includes(subcategoryId)) {
+                  setSelectedSubcategoryIds([...selectedSubcategoryIds, subcategoryId]);
+                  setCurrentSubcategoryId("");
+                }
+              }}
               disabled={availableSubcategories.length === 0}
             >
               <option value="">Seleccionar subcategoría...</option>
               {availableSubcategories
                 .filter((s) => !selectedSubcategoryIds.includes(s.id))
                 .map((s) => (
-                  <option
-                    key={s.id}
-                    value={s.id}
-                    onClick={() => {
-                      if (
-                        currentSubcategoryId &&
-                        !selectedSubcategoryIds.includes(currentSubcategoryId)
-                      ) {
-                        setSelectedSubcategoryIds([
-                          ...selectedSubcategoryIds,
-                          currentSubcategoryId,
-                        ]);
-                        setCurrentSubcategoryId("");
-                      }
-                    }}
-                  >
+                  <option key={s.id} value={s.id}>
                     {s.name}
                   </option>
                 ))}

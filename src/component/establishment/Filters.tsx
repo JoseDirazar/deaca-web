@@ -13,6 +13,8 @@ export default function Filters({
   toggleBooleanFilter,
   categories,
   isLoadingCategories,
+  selectedCategories = [],
+  toggleSubcategory,
 }: {
   state: EstablishmentsFiltersState;
   setSearch: (name: string) => void;
@@ -26,6 +28,8 @@ export default function Filters({
   ) => void;
   categories?: Category[];
   isLoadingCategories: boolean;
+  selectedCategories: string[];
+  toggleSubcategory: (subcategory: string) => void;
 }) {
   return (
     <aside className="flex w-64 flex-col gap-4 rounded-lg bg-white p-4 shadow-sm">
@@ -80,30 +84,6 @@ export default function Filters({
           )}
         </div>
 
-        {isLoadingCategories ? (
-          <Loader />
-        ) : categories?.length ? (
-          <select
-            onChange={(e) => {
-              const selected = e.target.value;
-              if (selected) toggleCategory(selected);
-              e.target.value = ""; // reset select
-            }}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">Seleccionar categoría...</option>
-            {categories.map((category) => (
-              <option key={category.id} value={category.name}>
-                {category.name}
-              </option>
-            ))}
-          </select>
-        ) : (
-          <p className="py-4 text-center text-sm text-gray-500">
-            No hay categorías disponibles
-          </p>
-        )}
-
         {/* 🏷️ Etiquetas de categorías seleccionadas */}
         {state.categories.length > 0 && (
           <div className="mt-4 border-t border-gray-200 pt-4">
@@ -130,6 +110,68 @@ export default function Filters({
           </div>
         )}
       </div>
+
+      {isLoadingCategories ? ( // TODO: hacer skeleton para los filtros
+        <Loader />
+      ) : categories?.length ? (
+        <select
+          onChange={(e) => {
+            const selected = e.target.value;
+            if (selected) toggleCategory(selected);
+            e.target.value = ""; // reset select
+          }}
+          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="">Seleccionar categoría...</option>
+          {categories.map((category) => (
+            <option key={category.id} value={category.name}>
+              {category.name}
+            </option>
+          ))}
+        </select>
+      ) : (
+        <p className="py-4 text-center text-sm text-gray-500">
+          No hay categorías disponibles
+        </p>
+      )}
+
+      {/* 🏷️ Subcategorías */}
+      {selectedCategories.length > 0 && !isLoadingCategories && (
+        <div>
+          <label className="mb-2 block text-sm font-semibold text-gray-700">
+            Subcategorías
+          </label>
+          <div className="space-y-2">
+            {categories
+              ?.filter((cat) => selectedCategories.includes(cat.name))
+              .flatMap((cat) => cat.subcategories || [])
+              .map((subcategory) => {
+                const subcategoryName =
+                  typeof subcategory === "string"
+                    ? subcategory
+                    : subcategory.name;
+
+                return (
+                  <div key={subcategoryName} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id={`sub-${subcategoryName}`}
+                      checked={state.subcategories.includes(subcategoryName)}
+                      onChange={() => toggleSubcategory(subcategoryName)}
+                      className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <label
+                      htmlFor={`sub-${subcategoryName}`}
+                      className="ml-2 text-sm text-gray-700"
+                    >
+                      {subcategoryName}
+                    </label>
+                  </div>
+                );
+              })}
+          </div>
+        </div>
+      )}
 
       {/* 💳 Filtros booleanos */}
       <div className="border-t border-gray-200 pt-4">

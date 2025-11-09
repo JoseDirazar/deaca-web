@@ -20,6 +20,7 @@ export default function LandingPage() {
   const { useGetAppReviews } = useAppReviewsApi();
   const { data: appReviews } = useGetAppReviews;
 
+  console.log(appReviews, categories);
   useEffect(() => {
     analyticsService.registerVisit();
   }, []);

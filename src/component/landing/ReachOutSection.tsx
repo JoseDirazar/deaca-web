@@ -1,21 +1,56 @@
+import { useState } from "react";
+import { toast } from "sonner";
 import { IoSend } from "react-icons/io5";
 import Input from "../ui/Input";
-import { useState } from "react";
-import { useUserApi } from "@/hooks/useUserApi.hook";
-import { toast } from "sonner";
+import api from "@/api/axios-instance";
+
+interface FormData {
+  name: string;
+  email: string;
+  message: string;
+}
 
 export default function ReachOutSection() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
+  const [formData, setFormData] = useState<FormData>({
+    name: "",
+    email: "",
+    message: "",
+  });
 
-  const { sendContactEmail } = useUserApi();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !email || !message)
-      return toast("Todos los campos son obligatorios");
-    sendContactEmail.mutateAsync({ name, email, message });
+    console.log("Formulario enviado:", formData);
+
+    // Validación simple
+    if (!formData.name || !formData.email || !formData.message) {
+      return toast.warning("Todos los campos son obligatorios");
+    }
+
+    try {
+      setIsSubmitting(true);
+      // Aquí iría tu llamada a la API
+      await api.post("/contact", formData);
+      console.log("Datos a enviar:", formData);
+      toast.success("Mensaje enviado con éxito");
+      setFormData({ name: "", email: "", message: "" });
+    } catch (error) {
+      console.error("Error al enviar el formulario:", error);
+      toast.error("Error al enviar el mensaje");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -43,31 +78,39 @@ export default function ReachOutSection() {
         <Input
           title="Nombre"
           type="text"
-          id="name"
+          id="landing-name"
+          name="name"
           className="bg-fifth"
-          onChange={(e) => setName(e.target.value)}
+          value={formData.name}
+          onChange={handleChange}
+          required
         />
         <Input
           title="Email"
           type="email"
-          id="email"
+          id="landing-email"
+          name="email"
           className="bg-fifth"
-          onChange={(e) => setEmail(e.target.value)}
+          value={formData.email}
+          onChange={handleChange}
+          required
         />
         <textarea
+          name="message"
           className="rounded border border-primary p-3 placeholder:font-bold placeholder:text-primary focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
           placeholder="Mensaje"
           rows={4}
-          onChange={(e) => setMessage(e.target.value)}
+          value={formData.message}
+          onChange={handleChange}
+          required
         />
         <button
-          className="flex items-center justify-center gap-2 rounded bg-primary p-2 text-white disabled:opacity-50"
           type="submit"
-          onClick={() => sendContactEmail.mutateAsync({ name, email, message })}
-          disabled={sendContactEmail.isPending}
+          className="flex items-center justify-center gap-2 rounded bg-primary p-2 text-white disabled:opacity-50"
+          disabled={isSubmitting}
         >
           <IoSend size={16} />
-          {sendContactEmail.isPending ? "Enviando..." : "Enviar"}
+          {isSubmitting ? "Enviando..." : "Enviar"}
         </button>
       </form>
     </div>

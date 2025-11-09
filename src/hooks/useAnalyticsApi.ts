@@ -1,23 +1,38 @@
 import { analyticsService } from "@/api/analytics-service";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
+import { QueryKeys } from "@/api/query-keys";
 
 export const useUserAnalyticsApi = () => {
+  const queryClient = useQueryClient();
+
   const useGetTotalVisitsForEstablishmentOwner = () => {
-    return useSuspenseQuery({
-      queryKey: ["total-visits-for-establishment-owner"],
-      queryFn: () => analyticsService.getTotalVisitsForEstablishmentOwner(),
+    return useQuery({
+      queryKey: [QueryKeys.TOTAL_VISITS],
+      queryFn: () =>
+        analyticsService
+          .getTotalVisitsForEstablishmentOwner()
+          .then((res) => res.data),
     });
   };
 
   const useGetAdminAnalyticsChart = () => {
-    return useSuspenseQuery({
-      queryKey: ["admin-analytics-chart"],
-      queryFn: () => analyticsService.getAdminAnalyticsChart(),
+    return useQuery({
+      queryKey: [QueryKeys.ADMIN_ANALYTICS_CHART],
+      queryFn: () =>
+        analyticsService.getAdminAnalyticsChart().then((res) => res.data),
+    });
+  };
+
+  // Invalidation function for analytics queries
+  const invalidateAnalyticsQueries = () => {
+    return queryClient.invalidateQueries({
+      queryKey: [QueryKeys.TOTAL_VISITS, QueryKeys.ADMIN_ANALYTICS_CHART],
     });
   };
 
   return {
     useGetTotalVisitsForEstablishmentOwner,
     useGetAdminAnalyticsChart,
+    invalidateAnalyticsQueries,
   };
 };
