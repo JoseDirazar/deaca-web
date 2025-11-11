@@ -1,4 +1,13 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
+import {
+  useForm,
+  FormProvider,
+  Controller,
+  useFormContext,
+  type Resolver,
+} from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
 import ImageUpload from "../ui/ImageUpload";
@@ -18,6 +27,40 @@ interface UserEstablishmentFormProps {
   establishment?: Establishment | null;
 }
 
+const formSchema = z.object({
+  name: z.string().min(1, "Nombre requerido"),
+  address: z.string().optional().or(z.literal("")),
+  phone: z.string().optional().or(z.literal("")),
+  email: z
+    .string()
+    .optional()
+    .or(z.literal(""))
+    .refine((v) => !v || /.+@.+\..+/.test(v), "Email inválido"),
+  website: z
+    .string()
+    .optional()
+    .or(z.literal(""))
+    .refine(
+      (v) => !v || /^(https?:\/\/)?[^\s]+\.[^\s]+/.test(v),
+      "URL inválida",
+    ),
+  description: z.string().optional().or(z.literal("")),
+  avatar: z.string().optional().or(z.literal("")),
+  instagram: z.string().optional().or(z.literal("")),
+  facebook: z.string().optional().or(z.literal("")),
+  latitude: z.string().optional().or(z.literal("")),
+  longitude: z.string().optional().or(z.literal("")),
+  acceptCreditCard: z.boolean(),
+  acceptDebitCard: z.boolean(),
+  acceptMercadoPago: z.boolean(),
+  acceptCtaDNI: z.boolean(),
+  cashDiscount: z.number().min(0).max(100),
+  categoryIds: z.array(z.string()).min(1, "Selecciona al menos 1 categoría"),
+  subcategoryIds: z.array(z.string()),
+});
+
+type FormValues = z.infer<typeof formSchema>;
+
 export default function UserEstablishmentForm({
   establishment,
 }: UserEstablishmentFormProps) {
@@ -25,37 +68,41 @@ export default function UserEstablishmentForm({
   const from = useLocation().state?.from ?? "/usuario/emprendimientos";
   const navigate = useNavigate();
 
-  const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>([]);
-  const [availableSubcategories, setAvailableSubcategories] = useState<
-    Subcategory[]
-  >([]);
-  const [selectedSubcategoryIds, setSelectedSubcategoryIds] = useState<
-    string[]
-  >([]);
-  const [currentCategoryId, setCurrentCategoryId] = useState<string>("");
-  const [currentSubcategoryId, setCurrentSubcategoryId] = useState<string>("");
-  const [form, setForm] = useState<Partial<Establishment>>({
-    name: "",
-    address: "",
-    phone: "",
-    email: "",
-    website: "",
-    description: "",
-    avatar: "",
-    instagram: "",
-    facebook: "",
-    latitude: "",
-    longitude: "",
-    acceptCreditCard: false,
-    acceptDebitCard: false,
-    acceptMercadoPago: false,
-    acceptCtaDNI: false,
-    cashDiscount: 0,
+  const methods = useForm<FormValues>({
+    resolver: zodResolver(formSchema) as unknown as Resolver<FormValues>,
+    mode: "onChange",
+    defaultValues: {
+      name: "",
+      address: "",
+      phone: "",
+      email: "",
+      website: "",
+      description: "",
+      avatar: "",
+      instagram: "",
+      facebook: "",
+      latitude: "",
+      longitude: "",
+      acceptCreditCard: false,
+      acceptDebitCard: false,
+      acceptMercadoPago: false,
+      acceptCtaDNI: false,
+      cashDiscount: 10,
+      categoryIds: [],
+      subcategoryIds: [],
+    },
   });
+  const { watch, setValue, reset, handleSubmit } = methods;
+
+  const selectedCategoryIds = watch("categoryIds") as string[];
+  const selectedSubcategoryIds = watch("subcategoryIds") as string[];
 
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [galleryFiles, setGalleryFiles] = useState<FileList | null>(null);
   const [existingImages, setExistingImages] = useState<Image[]>([]);
+  const [availableSubcategories, setAvailableSubcategories] = useState<
+    Subcategory[]
+  >([]);
 
   const [modal, setModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState<Image | null>(null);
@@ -81,14 +128,20 @@ export default function UserEstablishmentForm({
       ?.filter((c) => selectedCategoryIds.includes(c.id))
       .flatMap((c) => c.subcategories || []);
     setAvailableSubcategories(subs || []);
-    setSelectedSubcategoryIds((prev) =>
-      prev.filter((id) => subs?.some((s) => s.id === id)),
+    const filtered = selectedSubcategoryIds.filter((id) =>
+      (subs || []).some((s) => s.id === id),
     );
-  }, [selectedCategoryIds, data?.data]);
+    if (filtered.length !== selectedSubcategoryIds.length) {
+      setValue("subcategoryIds", filtered, {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+    }
+  }, [selectedCategoryIds, selectedSubcategoryIds, data?.data, setValue]);
 
   useEffect(() => {
     if (establishment) {
-      setForm({
+      reset({
         name: establishment.name || "",
         address: establishment.address || "",
         phone: establishment.phone || "",
@@ -105,23 +158,21 @@ export default function UserEstablishmentForm({
         acceptMercadoPago: establishment.acceptMercadoPago || false,
         acceptCtaDNI: establishment.acceptCtaDNI || false,
         cashDiscount: establishment.cashDiscount || 0,
+        categoryIds:
+          establishment.categories
+            ?.map((c) => c.id)
+            .filter((id): id is string => Boolean(id)) || [],
+        subcategoryIds:
+          establishment.subcategories
+            ?.map((s) => s.id)
+            .filter((id): id is string => Boolean(id)) || [],
       });
-      setSelectedCategoryIds(
-        establishment.categories
-          ?.map((c) => c.id)
-          .filter((id): id is string => Boolean(id)) || [],
-      );
-      setSelectedSubcategoryIds(
-        establishment.subcategories
-          ?.map((s) => s.id)
-          .filter((id): id is string => Boolean(id)) || [],
-      );
       setExistingImages(establishment.images || []);
     }
-  }, [establishment]);
+  }, [establishment, reset]);
 
   const resetForm = () => {
-    setForm({
+    reset({
       name: "",
       address: "",
       phone: "",
@@ -138,37 +189,37 @@ export default function UserEstablishmentForm({
       acceptMercadoPago: false,
       acceptCtaDNI: false,
       cashDiscount: 0,
+      categoryIds: [],
+      subcategoryIds: [],
     });
-    setSelectedCategoryIds([]);
-    setSelectedSubcategoryIds([]);
     setAvatarFile(null);
     setGalleryFiles(null);
   };
 
-  function handleCreate() {
-    if (!canSubmit) return;
+  function onCreate(values: FormValues) {
+    if (!canSubmit()) return;
 
     const payload: CreateEstablishmentDto = {
-      name: form.name,
-      categories: selectedCategoryIds.map((id) => ({ id })),
-      subcategories: selectedSubcategoryIds.map((id) => ({ id })),
-      address: form.address,
-      phone: form.phone,
-      email: form.email,
-      website: form.website,
-      description: form.description,
-      instagram: form.instagram,
-      facebook: form.facebook,
-      latitude: form.latitude,
-      longitude: form.longitude,
-      acceptCreditCard: form.acceptCreditCard,
-      acceptDebitCard: form.acceptDebitCard,
-      acceptMercadoPago: form.acceptMercadoPago,
-      acceptCtaDNI: form.acceptCtaDNI,
-      cashDiscount: form.cashDiscount,
+      name: values.name,
+      categories: values.categoryIds.map((id) => ({ id })),
+      subcategories: values.subcategoryIds.map((id) => ({ id })),
+      address: values.address,
+      phone: values.phone,
+      email: values.email,
+      website: values.website,
+      description: values.description,
+      instagram: values.instagram,
+      facebook: values.facebook,
+      latitude: values.latitude,
+      longitude: values.longitude,
+      acceptCreditCard: values.acceptCreditCard,
+      acceptDebitCard: values.acceptDebitCard,
+      acceptMercadoPago: values.acceptMercadoPago,
+      acceptCtaDNI: values.acceptCtaDNI,
+      cashDiscount: values.cashDiscount,
     };
 
-    createEstablishment.mutate(payload, {
+    createEstablishment.mutateAsync(payload, {
       onSuccess: async ({ data }) => {
         // Upload avatar if provided
         if (data && avatarFile) {
@@ -196,30 +247,30 @@ export default function UserEstablishmentForm({
     });
   }
 
-  async function handleUpdate() {
-    if (!establishment || !canSubmit) return;
+  async function onUpdate(values: FormValues) {
+    if (!establishment || !canSubmit()) return;
 
     const payload = {
       id: establishment.id,
       createdAt: establishment.createdAt,
       updatedAt: establishment.updatedAt,
-      name: form.name,
-      categories: selectedCategoryIds.map((id) => ({ id })),
-      subcategories: selectedSubcategoryIds.map((id) => ({ id })),
-      address: form.address,
-      phone: form.phone,
-      email: form.email,
-      website: form.website,
-      description: form.description,
-      instagram: form.instagram,
-      facebook: form.facebook,
-      latitude: form.latitude,
-      longitude: form.longitude,
-      acceptCreditCard: form.acceptCreditCard,
-      acceptDebitCard: form.acceptDebitCard,
-      acceptMercadoPago: form.acceptMercadoPago,
-      acceptCtaDNI: form.acceptCtaDNI,
-      cashDiscount: form.cashDiscount,
+      name: values.name,
+      categories: values.categoryIds.map((id) => ({ id })),
+      subcategories: values.subcategoryIds.map((id) => ({ id })),
+      address: values.address,
+      phone: values.phone,
+      email: values.email,
+      website: values.website,
+      description: values.description,
+      instagram: values.instagram,
+      facebook: values.facebook,
+      latitude: values.latitude,
+      longitude: values.longitude,
+      acceptCreditCard: values.acceptCreditCard,
+      acceptDebitCard: values.acceptDebitCard,
+      acceptMercadoPago: values.acceptMercadoPago,
+      acceptCtaDNI: values.acceptCtaDNI,
+      cashDiscount: values.cashDiscount,
     };
 
     try {
@@ -253,14 +304,12 @@ export default function UserEstablishmentForm({
     }
   }
 
-  const canSubmit = useMemo(() => {
-    // Dev minimal: name + at least 1 category + avatar (file or existing)
-    const nameOk = (form.name?.trim() || "").length > 0;
-    const hasCategory = selectedCategoryIds.length >= 1;
-    const hasAvatar =
-      Boolean(avatarFile) || (isEditMode && Boolean(form.avatar));
-    return nameOk && hasCategory && hasAvatar;
-  }, [form.name, selectedCategoryIds, avatarFile, isEditMode, form.avatar]);
+  const canSubmit = () => {
+    const values = methods.getValues();
+    const nameOk = (values.name?.trim() || "").length > 0;
+    const hasCategory = (values.categoryIds?.length || 0) >= 1;
+    return nameOk && hasCategory && !isLoading;
+  };
 
   const handleDeleteImage = (imageId?: string) => {
     if (!establishment || !imageId) return;
@@ -269,168 +318,205 @@ export default function UserEstablishmentForm({
   };
 
   return (
-    <div className="space-y-4 rounded-lg">
-      <PageHeader
-        className="mb-8"
-        title={
-          isEditMode ? "Editar emprendimiento" : "Registra tu emprendimiento"
-        }
-        description={
-          isEditMode
-            ? `Edita los datos de ${establishment?.name ?? ""}.`
-            : "Ingresa los datos de tu emprendimiento/local." +
-              (isEditMode
-                ? " Tener en cuenta que los cambios aplicados deberan ser aprobados por un administrador"
-                : " Tener encuenta que el emprendimiento/local sera visible luego de que sea aprobado por un administrador")
-        }
-      />
-      <UploadEstablishmentFilesForm
-        form={form}
-        isEditMode={isEditMode}
-        existingImages={existingImages}
-        avatarFile={avatarFile}
-        setAvatarFile={setAvatarFile}
-        setGalleryFiles={setGalleryFiles}
-        setModal={setModal}
-        setSelectedImage={setSelectedImage}
-      />
-      <NameAndDescriptionForm form={form} setForm={setForm} />
+    <FormProvider {...methods}>
+      <div className="space-y-4 rounded-lg">
+        <PageHeader
+          className="mb-8"
+          title={
+            isEditMode ? "Editar emprendimiento" : "Registra tu emprendimiento"
+          }
+          description={
+            isEditMode
+              ? `Edita los datos de ${establishment?.name ?? ""}.`
+              : "Ingresa los datos de tu emprendimiento/local." +
+                (isEditMode
+                  ? " Tener en cuenta que los cambios aplicados deberan ser aprobados por un administrador"
+                  : " Tener encuenta que el emprendimiento/local sera visible luego de que sea aprobado por un administrador")
+          }
+        />
+        <UploadEstablishmentFilesForm
+          isEditMode={isEditMode}
+          existingImages={existingImages}
+          avatarFile={avatarFile}
+          setAvatarFile={setAvatarFile}
+          setGalleryFiles={setGalleryFiles}
+          setModal={setModal}
+          setSelectedImage={setSelectedImage}
+        />
+        <NameAndDescriptionForm />
 
-      <LocationForm form={form} setForm={setForm} />
-      <CategoryForm
-        currentCategoryId={currentCategoryId}
-        setCurrentCategoryId={setCurrentCategoryId}
-        selectedCategoryIds={selectedCategoryIds}
-        data={data?.data ?? []}
-        setSelectedCategoryIds={setSelectedCategoryIds}
-        currentSubcategoryId={currentSubcategoryId}
-        setCurrentSubcategoryId={setCurrentSubcategoryId}
-        selectedSubcategoryIds={selectedSubcategoryIds}
-        setSelectedSubcategoryIds={setSelectedSubcategoryIds}
-        availableSubcategories={availableSubcategories}
-      />
+        <LocationForm />
+        <CategoryForm
+          data={data?.data ?? []}
+          availableSubcategories={availableSubcategories}
+        />
 
-      <ContactForm form={form} setForm={setForm} />
-      
-      <div className="mt-8">
-        <h3 className="text-2xl font-bold text-gray-500 mb-4">Métodos de pago</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-4">
-            <div className="flex items-center">
-              <input
-                id="acceptCreditCard"
-                type="checkbox"
-                checked={form.acceptCreditCard || false}
-                onChange={(e) =>
-                  setForm({ ...form, acceptCreditCard: e.target.checked })
-                }
-                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-              />
-              <label htmlFor="acceptCreditCard" className="ml-2 text-sm text-gray-700">
-                Acepta Tarjeta de Crédito
-              </label>
+        <ContactForm />
+
+        <div className="mt-8">
+          <h3 className="mb-4 text-2xl font-bold text-gray-500">
+            Métodos de pago
+          </h3>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div className="space-y-4">
+              <div className="flex items-center">
+                <Controller
+                  name="acceptCreditCard"
+                  render={({ field }) => (
+                    <input
+                      id="acceptCreditCard"
+                      type="checkbox"
+                      checked={field.value || false}
+                      onChange={(e) => field.onChange(e.target.checked)}
+                      className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                    />
+                  )}
+                />
+                <label
+                  htmlFor="acceptCreditCard"
+                  className="ml-2 text-sm text-gray-700"
+                >
+                  Acepta Tarjeta de Crédito
+                </label>
+              </div>
+
+              <div className="flex items-center">
+                <Controller
+                  name="acceptDebitCard"
+                  render={({ field }) => (
+                    <input
+                      id="acceptDebitCard"
+                      type="checkbox"
+                      checked={field.value || false}
+                      onChange={(e) => field.onChange(e.target.checked)}
+                      className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                    />
+                  )}
+                />
+                <label
+                  htmlFor="acceptDebitCard"
+                  className="ml-2 text-sm text-gray-700"
+                >
+                  Acepta Tarjeta de Débito
+                </label>
+              </div>
+
+              <div className="flex items-center">
+                <Controller
+                  name="acceptMercadoPago"
+                  render={({ field }) => (
+                    <input
+                      id="acceptMercadoPago"
+                      type="checkbox"
+                      checked={field.value || false}
+                      onChange={(e) => field.onChange(e.target.checked)}
+                      className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                    />
+                  )}
+                />
+                <label
+                  htmlFor="acceptMercadoPago"
+                  className="ml-2 text-sm text-gray-700"
+                >
+                  Acepta Mercado Pago
+                </label>
+              </div>
+
+              <div className="flex items-center">
+                <Controller
+                  name="acceptCtaDNI"
+                  render={({ field }) => (
+                    <input
+                      id="acceptCtaDNI"
+                      type="checkbox"
+                      checked={field.value || false}
+                      onChange={(e) => field.onChange(e.target.checked)}
+                      className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                    />
+                  )}
+                />
+                <label
+                  htmlFor="acceptCtaDNI"
+                  className="ml-2 text-sm text-gray-700"
+                >
+                  Acepta Cuenta DNI
+                </label>
+              </div>
             </div>
 
-            <div className="flex items-center">
-              <input
-                id="acceptDebitCard"
-                type="checkbox"
-                checked={form.acceptDebitCard || false}
-                onChange={(e) =>
-                  setForm({ ...form, acceptDebitCard: e.target.checked })
-                }
-                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-              />
-              <label htmlFor="acceptDebitCard" className="ml-2 text-sm text-gray-700">
-                Acepta Tarjeta de Débito
+            <div>
+              <label
+                htmlFor="cashDiscount"
+                className="mb-1 block text-sm font-medium text-gray-700"
+              >
+                Descuento por pago en efectivo (%)
               </label>
-            </div>
-
-            <div className="flex items-center">
-              <input
-                id="acceptMercadoPago"
-                type="checkbox"
-                checked={form.acceptMercadoPago || false}
-                onChange={(e) =>
-                  setForm({ ...form, acceptMercadoPago: e.target.checked })
-                }
-                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-              />
-              <label htmlFor="acceptMercadoPago" className="ml-2 text-sm text-gray-700">
-                Acepta Mercado Pago
-              </label>
-            </div>
-
-            <div className="flex items-center">
-              <input
-                id="acceptCtaDNI"
-                type="checkbox"
-                checked={form.acceptCtaDNI || false}
-                onChange={(e) =>
-                  setForm({ ...form, acceptCtaDNI: e.target.checked })
-                }
-                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-              />
-              <label htmlFor="acceptCtaDNI" className="ml-2 text-sm text-gray-700">
-                Acepta Cuenta DNI
-              </label>
+              <div className="mt-1">
+                <Controller
+                  name="cashDiscount"
+                  render={({ field }) => (
+                    <input
+                      type="number"
+                      id="cashDiscount"
+                      min={0}
+                      max={100}
+                      value={field.value || 0}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                      placeholder="0"
+                    />
+                  )}
+                />
+              </div>
+              {methods.formState.errors.cashDiscount?.message && (
+                <p className="mt-1 text-xs text-red-600">
+                  {methods.formState.errors.cashDiscount.message as string}
+                </p>
+              )}
+              <p className="mt-1 text-xs text-gray-500">
+                Ingrese el porcentaje de descuento por pago en efectivo
+                (opcional)
+              </p>
             </div>
           </div>
+        </div>
 
-          <div>
-            <label htmlFor="cashDiscount" className="block text-sm font-medium text-gray-700 mb-1">
-              Descuento por pago en efectivo (%)
-            </label>
-            <div className="mt-1">
-              <input
-                type="number"
-                id="cashDiscount"
-                min="0"
-                max="100"
-                value={form.cashDiscount || 0}
-                onChange={(e) =>
-                  setForm({ ...form, cashDiscount: parseFloat(e.target.value) || 0 })
-                }
-                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
-                placeholder="0"
-              />
-            </div>
-            <p className="mt-1 text-xs text-gray-500">
-              Ingrese el porcentaje de descuento por pago en efectivo (opcional)
+        {(() => {
+          const onSubmit: (values: FormValues) => void = isEditMode
+            ? onUpdate
+            : onCreate;
+          return (
+            <SubmitFormSection
+              isLoading={isLoading}
+              isEditMode={isEditMode}
+              canSubmit={canSubmit}
+              onSubmit={handleSubmit(onSubmit)}
+              from={from}
+              navigate={navigate}
+            />
+          );
+        })()}
+
+        <Modal setIsOpen={setModal} isOpen={modal}>
+          <div className="flex flex-col gap-4">
+            <p className="text-center text-4xl text-gray-500">
+              Estas seguro que quieres eliminar la imagen?
             </p>
+            <img
+              src={generateImageUrl("establishment", selectedImage?.fileName)}
+              alt=""
+              className="m-auto"
+            />
+            <Button
+              className="w-full"
+              label="Eliminar"
+              onClick={() => handleDeleteImage(selectedImage?.id)}
+              disabled={!selectedImage || deleteEstablishmentImage.isPending}
+            />
           </div>
-        </div>
+        </Modal>
       </div>
-
-      <SubmitFormSection
-        isLoading={isLoading}
-        isEditMode={isEditMode}
-        canSubmit={canSubmit}
-        handleCreate={handleCreate}
-        handleUpdate={handleUpdate}
-        from={from}
-        navigate={navigate}
-      />
-
-      <Modal setIsOpen={setModal} isOpen={modal}>
-        <div className="flex flex-col gap-4">
-          <p className="text-center text-4xl text-gray-500">
-            Estas seguro que quieres eliminar la imagen?
-          </p>
-          <img
-            src={generateImageUrl("establishment", selectedImage?.fileName)}
-            alt=""
-            className="m-auto"
-          />
-          <Button
-            className="w-full"
-            label="Eliminar"
-            onClick={() => handleDeleteImage(selectedImage?.id)}
-            disabled={!selectedImage || deleteEstablishmentImage.isPending}
-          />
-        </div>
-      </Modal>
-    </div>
+    </FormProvider>
   );
 }
 
@@ -438,16 +524,14 @@ function SubmitFormSection({
   isLoading,
   isEditMode,
   canSubmit,
-  handleCreate,
-  handleUpdate,
+  onSubmit,
   from,
   navigate,
 }: {
   isLoading: boolean;
   isEditMode: boolean;
-  canSubmit: boolean;
-  handleCreate: () => void;
-  handleUpdate: () => void;
+  canSubmit: () => boolean;
+  onSubmit: () => void;
   from: string;
   navigate: NavigateFunction;
 }) {
@@ -464,15 +548,15 @@ function SubmitFormSection({
               ? "Actualizar datos"
               : "Registrar emprendimiento"
         }
-        disabled={!canSubmit || isLoading}
-        onClick={isEditMode ? handleUpdate : handleCreate}
+        onClick={onSubmit}
+        disabled={!canSubmit() || isLoading}
+        loading={isLoading}
       />
     </div>
   );
 }
 
 function UploadEstablishmentFilesForm({
-  form,
   isEditMode,
   existingImages,
   avatarFile,
@@ -481,7 +565,6 @@ function UploadEstablishmentFilesForm({
   setSelectedImage,
   setModal,
 }: {
-  form: Partial<Establishment>;
   isEditMode: boolean;
   existingImages: Image[];
   avatarFile: File | null;
@@ -490,6 +573,8 @@ function UploadEstablishmentFilesForm({
   setSelectedImage: React.Dispatch<React.SetStateAction<Image | null>>;
   setModal: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
+  const { watch } = useFormContext<FormValues>();
+  const avatar = watch("avatar");
   return (
     <div className="flex flex-col gap-4">
       <div>
@@ -505,10 +590,10 @@ function UploadEstablishmentFilesForm({
           <label className="mb-1 block text-sm font-extrabold text-primary">
             Logo
           </label>
-          {isEditMode && form.avatar && !avatarFile && (
+          {isEditMode && avatar && !avatarFile && (
             <div className="mb-2">
               <img
-                src={generateImageUrl("establishment-logo", form.avatar)}
+                src={generateImageUrl("establishment-logo", avatar)}
                 alt="Avatar actual"
                 className="h-24 w-24 rounded object-cover"
               />
@@ -562,47 +647,55 @@ function UploadEstablishmentFilesForm({
   );
 }
 
-function NameAndDescriptionForm({
-  form,
-  setForm,
-}: {
-  form: Partial<Establishment>;
-  setForm: React.Dispatch<React.SetStateAction<Partial<Establishment>>>;
-}) {
+function NameAndDescriptionForm() {
+  const { control, formState } = useFormContext<FormValues>();
+  const { errors } = formState;
   return (
     <div className="flex flex-col gap-4">
       <label className="text-2xl font-bold text-gray-500">
         Nombre y descripción.
       </label>
-      <Input
-        id="name"
-        type="text"
-        title="Nombre"
-        value={form.name}
-        onChange={(e) => setForm({ ...form, name: e.target.value })}
+      <Controller
+        name="name"
+        control={control}
+        render={({ field }) => (
+          <Input
+            id="name"
+            type="text"
+            title="Nombre"
+            value={field.value}
+            onChange={(e) => field.onChange(e.target.value)}
+          />
+        )}
       />
+      {errors.name?.message && (
+        <p className="-mt-3 text-xs text-red-600">
+          {errors.name.message as string}
+        </p>
+      )}
 
-      <textarea
-        id="description"
-        placeholder="Ingresa una descripción de tu emprendimiento e indica que productos
+      <Controller
+        name="description"
+        control={control}
+        render={({ field }) => (
+          <textarea
+            id="description"
+            placeholder="Ingresa una descripción de tu emprendimiento e indica que productos
             o servicios ofrece"
-        about="asdf"
-        rows={4}
-        className="w-full rounded-lg border border-primary p-3 font-century-gothic font-bold text-fourth placeholder:text-primary focus:border-2 focus:border-primary focus:ring-primary focus:outline-none"
-        value={form.description}
-        onChange={(e) => setForm({ ...form, description: e.target.value })}
+            about="asdf"
+            rows={4}
+            className="w-full rounded-lg border border-primary p-3 font-century-gothic font-bold text-fourth placeholder:text-primary focus:border-2 focus:border-primary focus:ring-primary focus:outline-none"
+            value={field.value}
+            onChange={(e) => field.onChange(e.target.value)}
+          />
+        )}
       />
     </div>
   );
 }
 
-function LocationForm({
-  form,
-  setForm,
-}: {
-  form: Partial<Establishment>;
-  setForm: React.Dispatch<React.SetStateAction<Partial<Establishment>>>;
-}) {
+function LocationForm() {
+  const { control } = useFormContext<FormValues>();
   return (
     <div className="flex flex-col gap-4">
       <div>
@@ -623,19 +716,31 @@ function LocationForm({
         </p>
       </div>
       <div className="flex gap-2">
-        <Input
-          id="latitude"
-          type="text"
-          title="Latitud"
-          value={form.latitude}
-          onChange={(e) => setForm({ ...form, latitude: e.target.value })}
+        <Controller
+          name="latitude"
+          control={control}
+          render={({ field }) => (
+            <Input
+              id="latitude"
+              type="text"
+              title="Latitud"
+              value={field.value}
+              onChange={(e) => field.onChange(e.target.value)}
+            />
+          )}
         />
-        <Input
-          id="longitude"
-          type="text"
-          title="Longitud"
-          value={form.longitude}
-          onChange={(e) => setForm({ ...form, longitude: e.target.value })}
+        <Controller
+          name="longitude"
+          control={control}
+          render={({ field }) => (
+            <Input
+              id="longitude"
+              type="text"
+              title="Longitud"
+              value={field.value}
+              onChange={(e) => field.onChange(e.target.value)}
+            />
+          )}
         />
       </div>
     </div>
@@ -643,28 +748,18 @@ function LocationForm({
 }
 
 function CategoryForm({
-  currentCategoryId,
-  setCurrentCategoryId,
-  selectedCategoryIds,
   data,
-  setSelectedCategoryIds,
-  currentSubcategoryId,
-  setCurrentSubcategoryId,
-  selectedSubcategoryIds,
-  setSelectedSubcategoryIds,
   availableSubcategories,
 }: {
-  currentCategoryId: string;
-  setCurrentCategoryId: React.Dispatch<React.SetStateAction<string>>;
-  selectedCategoryIds: string[];
   data: Category[];
-  setSelectedCategoryIds: React.Dispatch<React.SetStateAction<string[]>>;
-  currentSubcategoryId: string;
-  setCurrentSubcategoryId: React.Dispatch<React.SetStateAction<string>>;
-  selectedSubcategoryIds: string[];
-  setSelectedSubcategoryIds: React.Dispatch<React.SetStateAction<string[]>>;
   availableSubcategories: Subcategory[];
 }) {
+  const { watch, setValue, formState } = useFormContext<FormValues>();
+  const { errors } = formState;
+  const selectedCategoryIds = watch("categoryIds");
+  const selectedSubcategoryIds = watch("subcategoryIds");
+  const [currentCategoryId, setCurrentCategoryId] = useState<string>("");
+  const [currentSubcategoryId, setCurrentSubcategoryId] = useState<string>("");
   return (
     <div>
       <label className="text-2xl font-bold text-gray-500">
@@ -686,7 +781,14 @@ function CategoryForm({
                 const categoryId = e.target.value;
                 setCurrentCategoryId(categoryId);
                 if (categoryId && !selectedCategoryIds.includes(categoryId)) {
-                  setSelectedCategoryIds([...selectedCategoryIds, categoryId]);
+                  setValue(
+                    "categoryIds",
+                    [...selectedCategoryIds, categoryId],
+                    {
+                      shouldDirty: true,
+                      shouldValidate: true,
+                    },
+                  );
                   setCurrentCategoryId("");
                 }
               }}
@@ -703,7 +805,7 @@ function CategoryForm({
           </div>
           {selectedCategoryIds.length > 0 && (
             <div className="mt-2 flex flex-wrap gap-2">
-              {selectedCategoryIds.map((catId) => {
+              {selectedCategoryIds.map((catId: string) => {
                 const category = data?.find((c) => c.id === catId);
                 return (
                   <div
@@ -714,8 +816,12 @@ function CategoryForm({
                     <button
                       type="button"
                       onClick={() => {
-                        setSelectedCategoryIds(
-                          selectedCategoryIds.filter((id) => id !== catId),
+                        setValue(
+                          "categoryIds",
+                          selectedCategoryIds.filter(
+                            (id: string) => id !== catId,
+                          ),
+                          { shouldDirty: true, shouldValidate: true },
                         );
                       }}
                       className="hover:text-black"
@@ -726,6 +832,11 @@ function CategoryForm({
                 );
               })}
             </div>
+          )}
+          {errors.categoryIds?.message && (
+            <p className="mt-2 text-xs text-red-600">
+              {errors.categoryIds.message as string}
+            </p>
           )}
         </div>
         <div className="">
@@ -743,8 +854,15 @@ function CategoryForm({
               onChange={(e) => {
                 const subcategoryId = e.target.value;
                 setCurrentSubcategoryId(subcategoryId);
-                if (subcategoryId && !selectedSubcategoryIds.includes(subcategoryId)) {
-                  setSelectedSubcategoryIds([...selectedSubcategoryIds, subcategoryId]);
+                if (
+                  subcategoryId &&
+                  !selectedSubcategoryIds.includes(subcategoryId)
+                ) {
+                  setValue(
+                    "subcategoryIds",
+                    [...selectedSubcategoryIds, subcategoryId],
+                    { shouldDirty: true, shouldValidate: true },
+                  );
                   setCurrentSubcategoryId("");
                 }
               }}
@@ -762,7 +880,7 @@ function CategoryForm({
           </div>
           {selectedSubcategoryIds.length > 0 && (
             <div className="mt-2 flex flex-wrap gap-2">
-              {selectedSubcategoryIds.map((subId) => {
+              {selectedSubcategoryIds.map((subId: string) => {
                 const subcategory = availableSubcategories.find(
                   (s) => s.id === subId,
                 );
@@ -775,8 +893,12 @@ function CategoryForm({
                     <button
                       type="button"
                       onClick={() => {
-                        setSelectedSubcategoryIds(
-                          selectedSubcategoryIds.filter((id) => id !== subId),
+                        setValue(
+                          "subcategoryIds",
+                          selectedSubcategoryIds.filter(
+                            (id: string) => id !== subId,
+                          ),
+                          { shouldDirty: true, shouldValidate: true },
                         );
                       }}
                       className="font-bold text-white hover:text-black"
@@ -794,60 +916,102 @@ function CategoryForm({
   );
 }
 
-function ContactForm({
-  form,
-  setForm,
-}: {
-  form: Partial<Establishment>;
-  setForm: React.Dispatch<React.SetStateAction<Partial<Establishment>>>;
-}) {
+function ContactForm() {
+  const { control, formState } = useFormContext<FormValues>();
+  const { errors } = formState;
   return (
     <div className="flex flex-col gap-4">
       <label className="text-2xl font-bold text-gray-500">
         Datos de contacto.
       </label>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <Input
-          id="phone"
-          type="tel"
-          title="Teléfono"
-          value={form.phone}
-          onChange={(e) => setForm({ ...form, phone: e.target.value })}
+        <Controller
+          name="phone"
+          control={control}
+          render={({ field }) => (
+            <Input
+              id="phone"
+              type="tel"
+              title="Teléfono"
+              value={field.value}
+              onChange={(e) => field.onChange(e.target.value)}
+            />
+          )}
         />
-        <Input
-          id="email"
-          type="email"
-          title="Email"
-          value={form.email}
-          onChange={(e) => setForm({ ...form, email: e.target.value })}
+        <Controller
+          name="email"
+          control={control}
+          render={({ field }) => (
+            <Input
+              id="email"
+              type="email"
+              title="Email"
+              value={field.value}
+              onChange={(e) => field.onChange(e.target.value)}
+            />
+          )}
         />
-        <Input
-          id="website"
-          type="url"
-          title="Website"
-          value={form.website}
-          onChange={(e) => setForm({ ...form, website: e.target.value })}
+        {errors.email?.message && (
+          <p className="-mt-3 text-xs text-red-600">
+            {errors.email.message as string}
+          </p>
+        )}
+        <Controller
+          name="website"
+          control={control}
+          render={({ field }) => (
+            <Input
+              id="website"
+              type="url"
+              title="Website"
+              value={field.value}
+              onChange={(e) => field.onChange(e.target.value)}
+            />
+          )}
         />
-        <Input
-          id="instagram"
-          type="text"
-          title="Instagram"
-          value={form.instagram}
-          onChange={(e) => setForm({ ...form, instagram: e.target.value })}
+        {errors.website?.message && (
+          <p className="-mt-3 text-xs text-red-600">
+            {errors.website.message as string}
+          </p>
+        )}
+        <Controller
+          name="instagram"
+          control={control}
+          render={({ field }) => (
+            <Input
+              id="instagram"
+              type="text"
+              title="Instagram"
+              value={field.value}
+              onChange={(e) => field.onChange(e.target.value)}
+            />
+          )}
         />
-        <Input
-          id="facebook"
-          type="text"
-          title="Facebook"
-          value={form.facebook}
-          onChange={(e) => setForm({ ...form, facebook: e.target.value })}
+        <Controller
+          name="facebook"
+          control={control}
+          render={({ field }) => (
+            <Input
+              id="facebook"
+              type="text"
+              title="Facebook"
+              value={field.value}
+              onChange={(e) => field.onChange(e.target.value)}
+            />
+          )}
         />
-        <Input
-          id="address"
-          type="text"
-          title="Dirección"
-          value={form.address}
-          onChange={(e) => setForm({ ...form, address: e.target.value })}
+        <Controller
+          name="address"
+          control={control}
+          render={({ field }) => (
+            <Input
+              id="address"
+              type="text"
+              title="Dirección"
+              value={field.value}
+              onChange={(e) => field.onChange(e.target.value)}
+            />
+          )}
         />
       </div>
     </div>

@@ -2,7 +2,12 @@ import { userService } from "@/api/user-service";
 import { useUserStore } from "@/context/useUserStore";
 import type { EditProfileDto } from "@/types/common/api-request.interface";
 import type { AccountStatus } from "@/types/enums/account-status.enum";
-import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { QueryKeys } from "@/api/query-keys";
@@ -36,10 +41,11 @@ export const useUserApi = () => {
       userService.updateUser(data).then((res) => res?.data),
     onSuccess: ({ data }) => {
       setUser(data);
-      toast.success("Avatar updated successfully");
+      toast.success("Perfil actualizado");
+      queryClient.invalidateQueries({ queryKey: [QueryKeys.USER] });
     },
     onError: (error) => {
-      toast.error("Error updating avatar");
+      toast.error("Error actualizando perfil");
       console.error(error);
     },
   });
@@ -49,10 +55,10 @@ export const useUserApi = () => {
       userService.updateAvatar(formData).then((res) => res?.data),
     onSuccess: ({ data }) => {
       setUser(data);
-      toast.success("Avatar updated successfully");
+      queryClient.invalidateQueries({ queryKey: [QueryKeys.USER] });
     },
     onError: (error) => {
-      toast.error("Error updating avatar");
+      toast.error("Error actualizando avatar");
       console.error(error);
     },
   });
@@ -61,6 +67,7 @@ export const useUserApi = () => {
     mutationFn: (data: { email: string; status: AccountStatus }) =>
       userService.changeUserAccountStatus(data).then((res) => res?.data),
     onSuccess: ({ message }) => {
+      queryClient.invalidateQueries({ queryKey: [QueryKeys.USER] });
       toast.success(message ?? "Usuario actualizado");
     },
     onError: (error) => {

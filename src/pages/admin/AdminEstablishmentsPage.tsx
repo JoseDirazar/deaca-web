@@ -124,7 +124,9 @@ export default function EstablishmentsTable() {
           return (
             <>
               <button
-                onClick={() => navigate(`/emprendimientos/${establishment.id}`)}
+                onClick={() =>
+                  navigate(`/emprendimientos/${establishment.slug}`)
+                }
                 className="px-2 py-1 text-xs font-medium hover:cursor-pointer hover:text-primary"
               >
                 {info.getValue() as string}

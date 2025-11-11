@@ -1,27 +1,27 @@
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useUserStore } from "@/context/useUserStore";
 import { useUserApi } from "@/hooks/useUserApi.hook";
-import { z } from 'zod';
+import { z } from "zod";
 
 // Definir los esquemas de validación
 const userProfileSchema = z.object({
-  firstName: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
-  lastName: z.string().min(2, 'El apellido debe tener al menos 2 caracteres'),
+  firstName: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
+  lastName: z.string().min(2, "El apellido debe tener al menos 2 caracteres"),
 });
 
 type UserProfileFormData = z.infer<typeof userProfileSchema>;
 
 const avatarSchema = z
   .instanceof(FileList)
-  .refine(files => files.length > 0, 'Se requiere una imagen')
+  .refine((files) => files.length > 0, "Se requiere una imagen")
   .refine(
-    files => files[0]?.type.startsWith('image/'),
-    'El archivo debe ser una imagen'
+    (files) => files[0]?.type.startsWith("image/"),
+    "El archivo debe ser una imagen",
   )
   .refine(
-    files => files[0]?.size <= 5 * 1024 * 1024, // 5MB
-    'La imagen no puede pesar más de 5MB'
+    (files) => files[0]?.size <= 5 * 1024 * 1024, // 5MB
+    "La imagen no puede pesar más de 5MB",
   );
 import { LuLoader } from "react-icons/lu";
 import { IoAdd } from "react-icons/io5";
@@ -30,75 +30,48 @@ import Input from "@/component/ui/Input";
 import UserAvatar from "@/component/ui/user/UserAvatar";
 import PageHeader from "@/component/PageHeader";
 import { toast } from "sonner";
-import { useState } from 'react';
 
 export default function UserProfilePage() {
   const { user } = useUserStore();
   const { updateAvatar, updateUser } = useUserApi();
-  const [isUploading, setIsUploading] = useState(false);
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    reset
+    reset,
   } = useForm<UserProfileFormData>({
     resolver: zodResolver(userProfileSchema),
     defaultValues: {
-      firstName: user?.firstName || '',
-      lastName: user?.lastName || ''
-    }
+      firstName: user?.firstName || "",
+      lastName: user?.lastName || "",
+    },
   });
-
-  const { mutateAsync: updateUserAsync } = updateUser;
-  const { mutateAsync: updateAvatarAsync } = updateAvatar;
 
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
-    try {
-      setIsUploading(true);
-      
-      // Validar el archivo
-      const file = files[0];
-      if (!file.type.startsWith('image/')) {
-        toast.error('El archivo debe ser una imagen');
-        return;
-      }
-      if (file.size > 5 * 1024 * 1024) { // 5MB
-        toast.error('La imagen no puede pesar más de 5MB');
-        return;
-      }
-
-      const formData = new FormData();
-      formData.append("file", file);
-
-      await updateAvatarAsync(formData);
-      toast.success('Foto de perfil actualizada correctamente');
-    } catch (error) {
-      console.error('Error al actualizar el avatar:', error);
-      toast.error('Error al actualizar la foto de perfil');
-    } finally {
-      setIsUploading(false);
+    // Validar el archivo
+    const file = files[0];
+    if (!file.type.startsWith("image/")) {
+      toast.error("El archivo debe ser una imagen");
+      return;
     }
+    const formData = new FormData();
+    formData.append("file", file);
+    await updateAvatar.mutateAsync(formData);
   };
 
   const onSubmit = async (data: UserProfileFormData) => {
-    try {
-      await updateUserAsync(data);
-      toast.success('Perfil actualizado correctamente');
-      reset(data); // Resetear el formulario con los nuevos valores
-    } catch (error) {
-      console.error('Error al actualizar el perfil:', error);
-      toast.error('Error al actualizar el perfil');
-    }
+    updateUser.mutate(data);
+    reset(data); // Resetear el formulario con los nuevos valores
   };
 
   return (
     <>
       <PageHeader title="Perfil" description="Gestiona tu perfil de usuario" />
-      
+
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Avatar Upload */}
         <div className="relative w-fit">
@@ -108,14 +81,20 @@ export default function UserProfilePage() {
             className="hidden"
             accept="image/*"
             onChange={handlePhotoUpload}
-            disabled={isUploading}
+            disabled={updateAvatar.isPending}
           />
           <UserAvatar avatar={user?.avatar} />
           <Button
             type="button"
             onClick={() => document.getElementById("photo")?.click()}
-            disabled={isUploading}
-            icon={isUploading ? <LuLoader className="animate-spin" size={20} /> : <IoAdd size={20} />}
+            disabled={updateAvatar.isPending}
+            icon={
+              updateAvatar.isPending ? (
+                <LuLoader className="animate-spin" size={20} />
+              ) : (
+                <IoAdd size={20} />
+              )
+            }
             className="absolute right-0 bottom-0 flex items-center justify-center rounded-full bg-primary p-2 text-white hover:bg-primary/90"
           />
         </div>
@@ -127,43 +106,47 @@ export default function UserProfilePage() {
               type="text"
               id="firstName"
               title="Nombre"
-              {...register('firstName')}
+              {...register("firstName")}
             />
             {errors.firstName?.message && (
-              <p className="mt-1 text-sm text-red-500">{errors.firstName.message}</p>
+              <p className="mt-1 text-sm text-red-500">
+                {errors.firstName.message}
+              </p>
             )}
           </div>
-          
+
           <div>
             <Input
               type="text"
               id="lastName"
               title="Apellido"
-              {...register('lastName')}
+              {...register("lastName")}
             />
             {errors.lastName?.message && (
-              <p className="mt-1 text-sm text-red-500">{errors.lastName.message}</p>
+              <p className="mt-1 text-sm text-red-500">
+                {errors.lastName.message}
+              </p>
             )}
           </div>
-          
+
           <div>
             <Input
               type="email"
               id="email"
               title="Email"
-              value={user?.email || ''}
+              value={user?.email || ""}
               disabled
-              className="opacity-70 cursor-not-allowed"
+              className="cursor-not-allowed opacity-70"
             />
           </div>
         </div>
 
         <button
           type="submit"
-          disabled={isSubmitting || isUploading}
-          className="w-full sm:w-auto px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 disabled:opacity-50"
+          disabled={updateUser.isPending || isSubmitting}
+          className="w-full rounded bg-primary px-4 py-2 text-white hover:bg-primary/90 disabled:opacity-50 sm:w-auto"
         >
-          {isSubmitting ? 'Actualizando...' : 'Actualizar perfil'}
+          {updateUser.isPending ? "Actualizando..." : "Actualizar perfil"}
         </button>
       </form>
     </>

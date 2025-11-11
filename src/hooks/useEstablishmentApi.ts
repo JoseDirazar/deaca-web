@@ -9,7 +9,7 @@ import { AxiosError } from "axios";
 import type { EstablishmentStatus } from "@/types/enums/establishment-status.enum";
 
 export const useEstablishmentApi = () => {
-  const useGetEstablishmentBySlug = (slug: string) => {
+  const useGetEstablishmentBySlug = (slug?: string) => {
     return useQuery({
       queryKey: ["establishments", slug],
       queryFn: () =>

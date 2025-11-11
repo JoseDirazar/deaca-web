@@ -21,10 +21,9 @@ type ReviewFormData = z.infer<typeof reviewFormSchema>;
 
 export default function AppReviewForm() {
   const { useCreateAppReview, useGetReviewForUser } = useAppReviewsApi();
-  const { data } = useGetReviewForUser;
+  const { data, isPending } = useGetReviewForUser;
   const { user } = useUserStore();
   const [isOpen, setIsOpen] = useState(false);
-
   const {
     register,
     handleSubmit,
@@ -37,9 +36,16 @@ export default function AppReviewForm() {
     },
   });
 
+  const { mutateAsync: createReview, isPending: isCreating } =
+    useCreateAppReview;
+  const { mutateAsync: updateReview, isPending: isUpdating } =
+    useAppReviewsApi().useUpdateAppReview;
+
   const onSubmit = async (data: ReviewFormData) => {
+    const mutation =
+      data.comment === data.comment.trim() ? updateReview : createReview;
     try {
-      await useCreateAppReview.mutateAsync({
+      await mutation({
         comment: data.comment,
       });
       setIsOpen(false);
@@ -52,6 +58,11 @@ export default function AppReviewForm() {
   // Only show the form for users with role "user"
   if (user?.role === Roles.USER) {
     return null;
+  }
+
+  if (isPending) {
+    //TODO LOADER
+    return <div>Cargando...</div>;
   }
 
   return (
@@ -99,7 +110,7 @@ export default function AppReviewForm() {
               }`}
               rows={4}
               {...register("comment")}
-              disabled={useCreateAppReview.isPending}
+              disabled={isCreating || isUpdating}
             />
             {errors.comment && (
               <p className="mt-1 text-sm text-red-500">
@@ -112,14 +123,14 @@ export default function AppReviewForm() {
               type="button"
               variant="secondary"
               onClick={() => setIsOpen(false)}
-              disabled={useCreateAppReview.isPending}
+              disabled={isCreating || isUpdating}
               label="Cancelar"
             />
             <Button
               type="submit"
-              disabled={useCreateAppReview.isPending}
-              loading={useCreateAppReview.isPending}
-              label={useCreateAppReview.isPending ? "Enviando..." : "Enviar"}
+              disabled={isCreating || isUpdating}
+              loading={isCreating || isUpdating}
+              label={isCreating || isUpdating ? "Enviando..." : "Enviar"}
             />
           </div>
         </form>

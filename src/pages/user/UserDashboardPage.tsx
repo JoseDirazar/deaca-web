@@ -108,11 +108,10 @@ export default function UserDashboardPage() {
       </div>
     );
   }
-  console.log(hasActiveEstablishment);
   return (
     <>
       <PageHeader title="Dashboard" description="Bienvenido al dashboard" />
-      {true && <AppReviewForm />}
+      {hasActiveEstablishment && <AppReviewForm />}
       <div className="mt-6">
         <h3 className="text-lg font-semibold">
           Visitas{" "}
