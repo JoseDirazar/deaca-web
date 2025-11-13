@@ -31,7 +31,6 @@ export default function ReachOutSection() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Formulario enviado:", formData);
 
     // Validación simple
     if (!formData.name || !formData.email || !formData.message) {
@@ -42,7 +41,6 @@ export default function ReachOutSection() {
       setIsSubmitting(true);
       // Aquí iría tu llamada a la API
       await api.post("/contact", formData);
-      console.log("Datos a enviar:", formData);
       toast.success("Mensaje enviado con éxito");
       setFormData({ name: "", email: "", message: "" });
     } catch (error) {

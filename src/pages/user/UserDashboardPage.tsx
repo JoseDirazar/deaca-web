@@ -8,7 +8,6 @@ import { EstablishmentStatus } from "@/types/enums/establishment-status.enum";
 import { useEstablishmentApi } from "@/hooks/useEstablishmentApi";
 import { useUserAnalyticsApi } from "@/hooks/useAnalyticsApi";
 import { toast } from "sonner";
-import type { Analytics } from "@/types/analytics.interface";
 import BarMonthChart from "@/component/ui/BarMonthChart";
 import type { Establishment } from "@/types/establishment/etablihment.interface";
 
@@ -31,9 +30,13 @@ export default function UserDashboardPage() {
   );
 
   // Only fetch analytics if user has the right role
-  const [totalVisits, setTotalVisits] = useState<any>(null);
+  const [totalVisits, setTotalVisits] = useState<{
+    visits: { createdAt: string }[];
+    total: number;
+  } | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [year, setYear] = useState<number>(new Date().getFullYear());
+
   const analyticsApi = useUserAnalyticsApi();
   const {
     data: analyticsData,
@@ -41,11 +44,9 @@ export default function UserDashboardPage() {
     isLoading: isAnalyticsLoading,
   } = analyticsApi.useGetTotalVisitsForEstablishmentOwner();
 
-  console.log("Analytics data:", analyticsData);
-
   useEffect(() => {
     if (user?.role !== "user" && analyticsData) {
-      setTotalVisits(analyticsData);
+      setTotalVisits(analyticsData.data);
     }
   }, [analyticsData, user?.role]);
 
@@ -62,9 +63,9 @@ export default function UserDashboardPage() {
   }, [isAnalyticsLoading]);
 
   const availableYears = useMemo(() => {
-    const raw = totalVisits?.data?.visits ?? [];
+    const raw = totalVisits?.visits ?? [];
     const years = new Set<number>();
-    raw.forEach((v: any) => {
+    raw.forEach((v) => {
       const d = new Date(String(v.createdAt));
       if (!isNaN(d.getTime())) years.add(d.getFullYear());
     });
@@ -82,8 +83,8 @@ export default function UserDashboardPage() {
     if (!totalVisits) return months;
 
     const currentYear = year;
-    const raw = totalVisits?.data?.visits ?? [];
-    raw.forEach((v: any) => {
+    const raw = totalVisits?.visits ?? [];
+    raw.forEach((v) => {
       const d = new Date(String(v.createdAt));
       if (!isNaN(d.getTime()) && d.getFullYear() === currentYear) {
         months[d.getMonth()].count += 1;
@@ -115,9 +116,9 @@ export default function UserDashboardPage() {
       <div className="mt-6">
         <h3 className="text-lg font-semibold">
           Visitas{" "}
-          {totalVisits?.data?.total !== undefined && (
+          {totalVisits?.total !== undefined && (
             <span className="text-sm text-gray-600">
-              (total: {totalVisits.data.total})
+              (total: {totalVisits.total})
             </span>
           )}
         </h3>

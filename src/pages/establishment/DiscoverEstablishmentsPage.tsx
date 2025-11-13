@@ -42,7 +42,6 @@ export default function DiscoverEstablishmentsPage() {
     page: Number(searchParams.get("page")) || 1,
     limit: Number(searchParams.get("limit")) || 10,
   });
-  console.log(queryString);
   const { data: establishments } = useGetEstablishments(queryString);
   const markers = useMemo(() => {
     return establishments?.data?.map((e) => ({

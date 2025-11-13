@@ -20,9 +20,6 @@ export default function CreateSponsorPage() {
         }
         resetForm();
       },
-      onError: (error) => {
-        console.log(error);
-      },
     });
   };
   const resetForm = () => {
