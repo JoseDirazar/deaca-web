@@ -8,17 +8,22 @@ import { generateImageUrl } from "@/lib/generate-image-url";
 export default function TendenciesSection() {
   const { useListTendencies } = useTendencyApi();
   const { data } = useListTendencies;
-  const establishments = data?.data?.map((t) => t.establishment).slice(0, 3) || [];
   return (
     <SectionContainer className="flex flex-col items-center justify-center gap-8">
       <SectionHeader title="Tendencias" separator />
       <SectionBody className="flex w-full flex-wrap items-center justify-center gap-4 md:gap-10">
-        {establishments?.map((establishment) => (
-          <EstablishmentTendencyCard
-            key={establishment.id}
-            establishment={establishment}
-          />
-        ))}
+        {data?.data.length > 0 ? (
+          data?.data?.map((tendency) => (
+            <EstablishmentTendencyCard
+              key={tendency.id}
+              establishment={tendency.establishment}
+            />
+          ))
+        ) : (
+          <p className="text-center font-century-gothic text-3xl font-bold text-gray-300">
+            No se encontraron tendencias por el momento, intente mas tarde
+          </p>
+        )}
       </SectionBody>
     </SectionContainer>
   );

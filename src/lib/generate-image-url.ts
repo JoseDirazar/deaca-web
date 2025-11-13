@@ -13,7 +13,8 @@ export const generateImageUrl = (
     | "sponsor",
   filename?: string | null,
 ) => {
-  if (!filename) return "/default-avatar.png";
+  if (!filename && type === "user") return "/default-avatar.png";
+  if (!filename) return "/default-image.png";
   switch (type) {
     case "user":
       return `${uploadBaseUrl}/user/${filename}`;

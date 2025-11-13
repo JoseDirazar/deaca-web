@@ -1,18 +1,13 @@
 import { Suspense } from "react";
 import Loader from "@/component/ui/Loader";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { sponsorService } from "@/api/sponsor-service";
 import PageHeader from "@/component/PageHeader";
 
 import DLink from "@/component/ui/DLink";
 import { generateImageUrl } from "@/lib/generate-image-url";
+import { useSponsorsApi } from "@/hooks/useSponsorsApi";
 
 export default function AdminSponsorsPage() {
-  const { data } = useSuspenseQuery({
-    queryKey: ["sponsors"],
-    queryFn: () => sponsorService.getSponsors().then((res) => res?.data),
-  });
-  console.log(data);
+  const { data } = useSponsorsApi().useGetSponsors();
   return (
     <Suspense fallback={<Loader />}>
       <PageHeader
@@ -25,7 +20,11 @@ export default function AdminSponsorsPage() {
         <div className="flex flex-col gap-4">
           {data?.data?.map((sponsor) => (
             <div key={sponsor.id} className="flex gap-2">
-              <img src={generateImageUrl("sponsor", sponsor.image)} alt="" />
+              <img
+                src={generateImageUrl("sponsor", sponsor.image)}
+                alt={sponsor.name}
+                className="w-44 object-cover"
+              />
               <p>{sponsor.name}</p>
             </div>
           ))}

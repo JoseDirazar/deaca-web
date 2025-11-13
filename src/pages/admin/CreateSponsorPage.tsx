@@ -1,27 +1,18 @@
-import { sponsorService } from "@/api/sponsor-service";
 import Button from "@/component/ui/Button";
 import ImageUpload from "@/component/ui/ImageUpload";
 import Input from "@/component/ui/Input";
-import { useMutation } from "@tanstack/react-query";
+import { useSponsorsApi } from "@/hooks/useSponsorsApi";
 import { useState } from "react";
 
 export default function CreateSponsorPage() {
   const [name, setName] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const { createSponsor, uploadSponsorImage } = useSponsorsApi();
 
-  const createSponsor = useMutation({
-    mutationFn: (name: string) =>
-      sponsorService.createSponsor({ name }).then((res) => res?.data),
-  });
-  const uploadSponsorImage = useMutation({
-    mutationFn: ({ id, formData }: { id: number; formData: FormData }) =>
-      sponsorService.uploadSponsorImage(id, formData).then((res) => res?.data),
-  });
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     createSponsor.mutateAsync(name, {
       onSuccess: async ({ data }) => {
-        console.log("SUCEESS ", data);
         if (data && imageFile) {
           const formData = new FormData();
           formData.append("file", imageFile);

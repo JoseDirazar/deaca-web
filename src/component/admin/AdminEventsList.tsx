@@ -6,9 +6,7 @@ interface AdminEventsListProps {
   events: Event[] | undefined;
 }
 
-export default function AdminEventsList({
-  events,
-}: AdminEventsListProps) {
+export default function AdminEventsList({ events }: AdminEventsListProps) {
   const navigate = useNavigate();
   if (!events || events.length === 0)
     return <div>Aún no hay eventos registrados</div>;
@@ -18,15 +16,13 @@ export default function AdminEventsList({
         <AdminEventListItem
           key={event.id}
           event={event}
-          navigate={(edit?: "edit" | null) =>
-            navigate(
-              `/admin/eventos/${event.id}`,
-              { state: { from: location.pathname } },
-            )
+          navigate={() =>
+            navigate(`/admin/eventos/${event.id}`, {
+              state: { from: location.pathname },
+            })
           }
         />
       ))}
     </div>
   );
 }
-

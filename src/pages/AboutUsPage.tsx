@@ -56,7 +56,7 @@ export default function AboutUsPage() {
               deacá
             </p>
             <p className="text-2xl font-bold tracking-wide text-white">
-              sobre nosotros
+              El valor de lo cercano
             </p>
           </div>
         </div>

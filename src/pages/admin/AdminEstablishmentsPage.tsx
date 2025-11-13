@@ -148,7 +148,6 @@ export default function EstablishmentsTable() {
           </a>
         ),
       },
-
       {
         header: () => (
           <button
@@ -171,6 +170,26 @@ export default function EstablishmentsTable() {
                 minute: "2-digit",
               })
             : "";
+        },
+      },
+      {
+        header: "Acciones",
+        cell: (info) => {
+          const establishment = info.row.original;
+          return (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() =>
+                  navigate(`/usuario/emprendimientos/${establishment.slug}`, {
+                    state: { from: location.pathname },
+                  })
+                }
+                className="text-blue-600 hover:underline"
+              >
+                Editar
+              </button>
+            </div>
+          );
         },
       },
     ],

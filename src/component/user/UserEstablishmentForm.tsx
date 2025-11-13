@@ -66,6 +66,7 @@ export default function UserEstablishmentForm({
 }: UserEstablishmentFormProps) {
   const isEditMode = Boolean(establishment);
   const from = useLocation().state?.from ?? "/usuario/emprendimientos";
+  console.log(from);
   const navigate = useNavigate();
 
   const methods = useForm<FormValues>({
@@ -242,7 +243,9 @@ export default function UserEstablishmentForm({
           });
         }
         resetForm();
-        navigate(from);
+        navigate(from, {
+          replace: true,
+        });
       },
     });
   }
@@ -297,7 +300,7 @@ export default function UserEstablishmentForm({
           formData,
         });
       }
-      navigate(from);
+      navigate(from, { replace: true });
       resetForm();
     } catch (error) {
       console.error("Error updating establishment:", error);

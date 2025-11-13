@@ -58,7 +58,7 @@ export default function AdminTendenciesPage() {
       position: newPosition,
     });
     setSelectedEstablishment("");
-    setNewPosition((tendencies.length || 0) + 1);
+    setNewPosition((tendencies.length || 0) + 2);
   };
 
   return (
